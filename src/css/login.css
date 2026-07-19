@@ -1,0 +1,209 @@
+.login-container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* LEFT PANEL */
+
+.left-panel{
+    width:50%;
+    background:linear-gradient(135deg,#E31937,#B5122A);
+    padding:80px;
+
+    display:flex;
+    justify-content:flex-start;
+    align-items:flex-start;
+
+    color:white;
+}
+
+.overlay{
+    width:100%;
+    max-width:550px;
+    text-align:left;
+}
+
+.logo{
+    width:180px;
+    margin-bottom:30px;
+}
+
+
+/* LOGO */
+
+.logo{
+    width:200px;
+    display:block;
+    margin:0 0 35px 0;
+}
+
+/* TITLE */
+
+.overlay h1{
+
+    font-size:52px;
+
+    line-height:1.1;
+
+    margin-bottom:22px;
+
+}
+
+/* DESCRIPTION */
+
+.description{
+
+    font-size:18px;
+
+    line-height:1.9;
+
+    opacity:.92;
+
+    margin-bottom:45px;
+
+}
+
+/* FEATURE BOX */
+
+.features{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+.feature{
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    padding:15px 18px;
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+}
+
+/* RIGHT */
+
+.right-panel{
+
+    width:50%;
+
+    background:#FFF8F2;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.login-card{
+
+    width:430px;
+
+    background:white;
+
+    padding:45px;
+
+    border-radius:18px;
+
+    box-shadow:0 12px 40px rgba(0,0,0,.08);
+
+}
+
+.login-card h2{
+
+    color:#E31937;
+
+    margin-bottom:8px;
+
+    font-size:32px;
+
+}
+
+.login-card p{
+
+    color:#777;
+
+    margin-bottom:35px;
+
+}
+
+button{
+
+    width:100%;
+
+    background:#E31937;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:16px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#B5122A;
+
+    transform:translateY(-2px);
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.login-container{
+
+    flex-direction:column;
+
+}
+
+.left-panel,
+.right-panel{
+
+    width:100%;
+
+}
+
+.left-panel{
+
+    padding:45px;
+
+}
+
+.overlay h1{
+
+    font-size:38px;
+
+}
+
+.login-card{
+
+    margin:40px 20px;
+
+}
+
+}
