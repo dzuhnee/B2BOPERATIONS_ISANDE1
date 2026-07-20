@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Supply Chain Officer Dashboard | Bee-to-Bee Operations</title>
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/dashboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-body">
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><img src="images/b2blogo.svg" alt="Bee-to-Bee Logo"><div><strong>Bee-to-Bee</strong><span>Operations</span></div></div>
+  <nav class="nav-menu">
+    <button class="nav-item active" data-section="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+    <button class="nav-item" data-section="readiness"><i data-lucide="clipboard-check"></i><span>Supply Readiness</span><em>4</em></button>
+    <button class="nav-item" data-section="deliveries"><i data-lucide="truck"></i><span>Deliveries</span><em class="danger">3</em></button>
+    <button class="nav-item" data-section="receiving"><i data-lucide="package-check"></i><span>Receiving</span></button>
+    <button class="nav-item" data-section="inventory"><i data-lucide="warehouse"></i><span>Inventory</span></button>
+    <button class="nav-item" data-section="issues"><i data-lucide="triangle-alert"></i><span>Supplier Issues</span><em class="danger">2</em></button>
+    <button class="nav-item" data-section="launch"><i data-lucide="store"></i><span>Launch Confirmation</span></button>
+  </nav>
+  <div class="sidebar-footer"><button class="nav-item" data-section="settings"><i data-lucide="settings"></i><span>Settings</span></button><button class="nav-item logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Log Out</span></button></div>
+</aside>
+<main class="main-content">
+<header class="topbar"><button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button><div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search deliveries, branches, suppliers, or items..."></div><div class="topbar-actions"><button class="icon-btn notification-btn"><i data-lucide="bell"></i><span></span></button><div class="user-profile"><div class="avatar">LM</div><div><strong>Lara Mendoza</strong><span>Supply Chain Officer</span></div><i data-lucide="chevron-down"></i></div></div></header>
+<section class="page-content" data-current-section="overview">
+  <div class="welcome-row"><div><p class="eyebrow">STORE LAUNCH SUPPLY OPERATIONS</p><h1>Good morning, Lara!</h1><p>Monitor equipment and inventory deliveries required for upcoming branch openings.</p></div><div class="date-control"><i data-lucide="calendar-days"></i><span>July 20, 2026</span></div></div>
+  <div class="alert-banner"><div class="alert-icon"><i data-lucide="triangle-alert"></i></div><div><strong>3 deliveries may affect launch schedules</strong><span>Two delayed shipments and one incomplete delivery require corrective action.</span></div><button data-open-section="issues">Review issues <i data-lucide="arrow-right"></i></button></div>
+  <div class="stats-grid">
+    <article class="stat-card"><div class="stat-icon red"><i data-lucide="store"></i></div><div><span>Branches Preparing</span><strong>6</strong><small>Opening within 45 days</small></div></article>
+    <article class="stat-card"><div class="stat-icon yellow"><i data-lucide="truck"></i></div><div><span>Incoming Deliveries</span><strong>12</strong><small>Scheduled this week</small></div></article>
+    <article class="stat-card"><div class="stat-icon orange"><i data-lucide="clock-alert"></i></div><div><span>Delayed / Incomplete</span><strong>3</strong><small><b>Needs supplier follow-up</b></small></div></article>
+    <article class="stat-card"><div class="stat-icon green"><i data-lucide="badge-check"></i></div><div><span>Supply Ready</span><strong>4<span>/6</span></strong><small>Two branches still pending</small></div></article>
+  </div>
+  <div class="dashboard-grid">
+    <section class="panel"><div class="panel-heading"><div><h2>Launch Supply Readiness</h2><p>Completion status by upcoming branch</p></div><button class="text-btn" data-open-section="readiness">View all <i data-lucide="arrow-up-right"></i></button></div><div class="branch-list">
+      <article class="branch-row" data-search="Alabang Town Center 96 ready"><div class="branch-rank">1</div><div class="branch-name"><strong>Alabang Town Center</strong><span>Opening July 28 • 8 days</span></div><div class="score"><strong>96%</strong><div><span style="width:96%"></span></div></div><span class="status strong">Ready</span></article>
+      <article class="branch-row" data-search="UP Town Center 88 on track"><div class="branch-rank">2</div><div class="branch-name"><strong>UP Town Center</strong><span>Opening August 3 • 14 days</span></div><div class="score"><strong>88%</strong><div><span style="width:88%"></span></div></div><span class="status good">On Track</span></article>
+      <article class="branch-row" data-search="Nuvali Santa Rosa 71 risk"><div class="branch-rank">5</div><div class="branch-name"><strong>Nuvali Santa Rosa</strong><span>Opening August 8 • 19 days</span></div><div class="score"><strong>71%</strong><div><span style="width:71%"></span></div></div><span class="status attention">At Risk</span></article>
+      <article class="branch-row" data-search="Antipolo City Center 64 delayed"><div class="branch-rank">6</div><div class="branch-name"><strong>Antipolo City Center</strong><span>Opening August 12 • 23 days</span></div><div class="score"><strong>64%</strong><div><span style="width:64%"></span></div></div><span class="status attention">Delayed</span></article>
+    </div></section>
+    <section class="panel"><div class="panel-heading"><div><h2>Recent Supply Activity</h2><p>Latest delivery and inventory updates</p></div></div><div class="timeline">
+      <div class="timeline-item"><span class="dot green"><i data-lucide="package-check"></i></span><div><strong>Equipment delivery received</strong><p>Alabang branch received 14 kitchen equipment units.</p><small>18 minutes ago</small></div></div>
+      <div class="timeline-item"><span class="dot red"><i data-lucide="package-x"></i></span><div><strong>Damaged item recorded</strong><p>One upright freezer for Nuvali had a dented door.</p><small>47 minutes ago</small></div></div>
+      <div class="timeline-item"><span class="dot yellow"><i data-lucide="calendar-clock"></i></span><div><strong>Delivery rescheduled</strong><p>Antipolo POS terminals moved to July 24.</p><small>1 hour ago</small></div></div>
+      <div class="timeline-item"><span class="dot gray"><i data-lucide="boxes"></i></span><div><strong>Stock availability updated</strong><p>Opening inventory for UP Town Center is now 92% complete.</p><small>2 hours ago</small></div></div>
+    </div></section>
+  </div>
+  <section class="panel"><div class="panel-heading"><div><h2>Deliveries Requiring Action</h2><p>Shipments that may affect branch opening dates</p></div><button class="text-btn" data-open-section="deliveries">Open delivery tracker <i data-lucide="arrow-right"></i></button></div><div class="table-wrap"><table><thead><tr><th>Delivery</th><th>Branch</th><th>Supplier</th><th>Expected</th><th>Status</th><th></th></tr></thead><tbody>
+    <tr data-search="POS terminals Antipolo TechPro delayed"><td><strong>POS Terminals × 4</strong><span>DEL-2026-0731</span></td><td>Antipolo City Center</td><td>TechPro Systems</td><td>July 22</td><td><span class="table-status action">Delayed</span></td><td><button class="review-btn edit-delivery" data-id="DEL-2026-0731">Update</button></td></tr>
+    <tr data-search="upright freezer Nuvali ColdLine damaged"><td><strong>Upright Freezer × 2</strong><span>DEL-2026-0728</span></td><td>Nuvali Santa Rosa</td><td>ColdLine Equipment</td><td>Received today</td><td><span class="table-status action">1 Damaged</span></td><td><button class="review-btn edit-delivery" data-id="DEL-2026-0728">Resolve</button></td></tr>
+    <tr data-search="opening inventory UP Town Center FoodHub incomplete"><td><strong>Opening Inventory Batch B</strong><span>DEL-2026-0725</span></td><td>UP Town Center</td><td>FoodHub Distribution</td><td>July 20</td><td><span class="table-status investigating">Incomplete</span></td><td><button class="review-btn edit-delivery" data-id="DEL-2026-0725">Update</button></td></tr>
+  </tbody></table></div></section>
+</section>
+</main></div>
+<div class="modal" id="deliveryModal" aria-hidden="true"><div class="modal-card"><button class="modal-close" id="closeModal"><i data-lucide="x"></i></button><div class="modal-icon"><i data-lucide="truck"></i></div><p class="eyebrow">DELIVERY UPDATE</p><h2 id="modalTitle">Update delivery</h2><p>Record the latest status, revised schedule, received quantity, condition, and corrective action.</p><label>Delivery Status</label><select id="deliveryStatus"><option>Scheduled</option><option>In Transit</option><option>Received</option><option>Incomplete</option><option>Delayed</option><option>Damaged</option></select><label>Received Quantity</label><input id="receivedQty" type="number" min="0" placeholder="Enter quantity received"><label>Revised Delivery Date</label><input id="revisedDate" type="date"><label>Condition / Corrective Action</label><textarea id="deliveryNote" placeholder="Describe missing or damaged items, supplier contact, and corrective action..."></textarea><div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveDelivery">Save Update</button></div></div></div>
+<div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Delivery updated successfully.</span></div>
+<script src="js/supply-chain.js"></script>
+</body></html>

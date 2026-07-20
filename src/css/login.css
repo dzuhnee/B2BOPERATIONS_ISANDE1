@@ -207,3 +207,9 @@ button:hover{
 }
 
 }
+.login-message{
+    min-height:20px;
+    margin:-6px 0 14px;
+    font-size:13px;
+    color:#B5122A;
+}

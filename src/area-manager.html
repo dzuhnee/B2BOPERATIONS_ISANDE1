@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Manager Dashboard | Bee-to-Bee Operations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-body">
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <img src="images/b2blogo.svg" alt="Bee-to-Bee Logo">
+            <div><strong>Bee-to-Bee</strong><span>Operations</span></div>
+        </div>
+
+        <nav class="nav-menu">
+            <button class="nav-item active" data-section="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+            <button class="nav-item" data-section="branches"><i data-lucide="store"></i><span>Branches</span></button>
+            <button class="nav-item" data-section="reports"><i data-lucide="file-text"></i><span>Daily Reports</span><em>8</em></button>
+            <button class="nav-item" data-section="incidents"><i data-lucide="triangle-alert"></i><span>Incident Logs</span><em class="danger">3</em></button>
+            <button class="nav-item" data-section="actions"><i data-lucide="clipboard-check"></i><span>Corrective Actions</span></button>
+            <button class="nav-item" data-section="performance"><i data-lucide="chart-no-axes-combined"></i><span>Performance</span></button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="nav-item" data-section="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+            <button class="nav-item logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Log Out</span></button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
+            <div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search branches, reports, or incidents..."></div>
+            <div class="topbar-actions">
+                <button class="icon-btn notification-btn"><i data-lucide="bell"></i><span></span></button>
+                <div class="user-profile">
+                    <div class="avatar">BH</div>
+                    <div><strong>Bea Hernandez</strong><span>Area Manager</span></div>
+                    <i data-lucide="chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="page-content">
+            <div class="welcome-row">
+                <div>
+                    <p class="eyebrow">AREA OPERATIONS</p>
+                    <h1>Good morning, Bea!</h1>
+                    <p>Here is today’s performance overview for your assigned franchise branches.</p>
+                </div>
+                <div class="date-control"><i data-lucide="calendar-days"></i><span>July 20, 2026</span></div>
+            </div>
+
+            <div class="alert-banner">
+                <div class="alert-icon"><i data-lucide="triangle-alert"></i></div>
+                <div><strong>3 incidents require your attention</strong><span>Two high-priority incidents and one overdue corrective action need review.</span></div>
+                <button data-open-section="incidents">Review now <i data-lucide="arrow-right"></i></button>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card"><div class="stat-icon red"><i data-lucide="store"></i></div><div><span>Branches Monitored</span><strong>8</strong><small><b>8 active</b> across Metro Manila</small></div></article>
+                <article class="stat-card"><div class="stat-icon yellow"><i data-lucide="file-check-2"></i></div><div><span>Reports Submitted</span><strong>6<span>/8</span></strong><small>2 branches pending today</small></div></article>
+                <article class="stat-card"><div class="stat-icon orange"><i data-lucide="triangle-alert"></i></div><div><span>Open Incidents</span><strong>5</strong><small><b>2 high priority</b> for review</small></div></article>
+                <article class="stat-card"><div class="stat-icon green"><i data-lucide="trending-up"></i></div><div><span>Average Performance</span><strong>91%</strong><small><b>+3.2%</b> from last month</small></div></article>
+            </div>
+
+            <div class="dashboard-grid">
+                <section class="panel branch-panel">
+                    <div class="panel-heading"><div><h2>Branch Performance</h2><p>Current operational standing of assigned branches</p></div><button class="text-btn" data-open-section="branches">View all <i data-lucide="arrow-up-right"></i></button></div>
+                    <div class="branch-list" id="branchList">
+                        <article class="branch-row" data-search="BGC High Street strong 96"><div class="branch-rank">1</div><div class="branch-name"><strong>BGC High Street</strong><span>Branch 001 • Taguig</span></div><div class="score"><strong>96%</strong><div><span style="width:96%"></span></div></div><span class="status strong">Strong</span></article>
+                        <article class="branch-row" data-search="Makati Central strong 94"><div class="branch-rank">2</div><div class="branch-name"><strong>Makati Central</strong><span>Branch 003 • Makati</span></div><div class="score"><strong>94%</strong><div><span style="width:94%"></span></div></div><span class="status strong">Strong</span></article>
+                        <article class="branch-row" data-search="Quezon Avenue good 91"><div class="branch-rank">3</div><div class="branch-name"><strong>Quezon Avenue</strong><span>Branch 006 • Quezon City</span></div><div class="score"><strong>91%</strong><div><span style="width:91%"></span></div></div><span class="status good">Good</span></article>
+                        <article class="branch-row" data-search="Pasig Capitol attention 78"><div class="branch-rank">8</div><div class="branch-name"><strong>Pasig Capitol</strong><span>Branch 008 • Pasig</span></div><div class="score"><strong>78%</strong><div><span style="width:78%"></span></div></div><span class="status attention">Needs Attention</span></article>
+                    </div>
+                </section>
+
+                <section class="panel activity-panel">
+                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest branch updates</p></div><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></div>
+                    <div class="timeline">
+                        <div class="timeline-item"><span class="dot green"><i data-lucide="check"></i></span><div><strong>Daily report submitted</strong><p>BGC High Street completed its operations report.</p><small>12 minutes ago</small></div></div>
+                        <div class="timeline-item"><span class="dot red"><i data-lucide="alert-triangle"></i></span><div><strong>New incident reported</strong><p>Equipment issue logged by Pasig Capitol.</p><small>38 minutes ago</small></div></div>
+                        <div class="timeline-item"><span class="dot yellow"><i data-lucide="clipboard-check"></i></span><div><strong>Corrective action updated</strong><p>Makati Central submitted improvement evidence.</p><small>1 hour ago</small></div></div>
+                        <div class="timeline-item"><span class="dot gray"><i data-lucide="message-square"></i></span><div><strong>Branch manager comment</strong><p>Quezon Avenue responded to your review note.</p><small>2 hours ago</small></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel incident-panel">
+                <div class="panel-heading"><div><h2>Incidents Requiring Review</h2><p>Open items that may affect branch operations</p></div><button class="text-btn" data-open-section="incidents">View incident log <i data-lucide="arrow-right"></i></button></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Incident</th><th>Branch</th><th>Reported</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+                        <tbody id="incidentTable">
+                            <tr data-search="Freezer temperature fluctuation Pasig Capitol high under investigation"><td><strong>Freezer temperature fluctuation</strong><span>INC-2026-0719</span></td><td>Pasig Capitol</td><td>Today, 9:12 AM</td><td><span class="priority high">High</span></td><td><span class="table-status investigating">Under Investigation</span></td><td><button class="review-btn" data-incident="Freezer temperature fluctuation">Review</button></td></tr>
+                            <tr data-search="Delayed opening due to staffing Ortigas Center high action required"><td><strong>Delayed opening due to staffing</strong><span>INC-2026-0718</span></td><td>Ortigas Center</td><td>Yesterday, 7:45 AM</td><td><span class="priority high">High</span></td><td><span class="table-status action">Action Required</span></td><td><button class="review-btn" data-incident="Delayed opening due to staffing">Review</button></td></tr>
+                            <tr data-search="POS terminal intermittent error Quezon Avenue medium monitoring"><td><strong>POS terminal intermittent error</strong><span>INC-2026-0716</span></td><td>Quezon Avenue</td><td>July 18, 2026</td><td><span class="priority medium">Medium</span></td><td><span class="table-status monitoring">Monitoring</span></td><td><button class="review-btn" data-incident="POS terminal intermittent error">Review</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="reviewModal" aria-hidden="true">
+    <div class="modal-card">
+        <button class="modal-close" id="closeModal"><i data-lucide="x"></i></button>
+        <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
+        <p class="eyebrow">INCIDENT REVIEW</p>
+        <h2 id="modalTitle">Incident details</h2>
+        <p>Review the branch report, confirm the corrective action owner, and record your management note.</p>
+        <label for="managerNote">Area Manager Note</label>
+        <textarea id="managerNote" placeholder="Enter your review or instruction..."></textarea>
+        <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveReview">Save Review</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Review saved successfully.</span></div>
+<script src="js/area-manager.js"></script>
+</body>
+</html>
