@@ -23,19 +23,15 @@
     text-align:left;
 }
 
-.logo{
-    width:180px;
-    margin-bottom:30px;
+.logo {
+    width: 100px;
+    height: 100px;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
 }
 
-
-/* LOGO */
-
-.logo{
-    width:200px;
-    display:block;
-    margin:0 0 35px 0;
-}
+/* TITLE */
 
 /* TITLE */
 
