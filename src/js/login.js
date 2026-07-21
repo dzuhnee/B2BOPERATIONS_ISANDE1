@@ -18,6 +18,21 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         return;
     }
 
+    if (role === 'Department Head') {
+        localStorage.setItem('b2bUserRole', role);
+        localStorage.setItem('b2bUserName', 'Daniel Reyes');
+        localStorage.setItem('b2bDepartment', localStorage.getItem('b2bDepartment') || 'Operations');
+        window.location.href = 'department-head.html';
+        return;
+    }
+
+    if (role === 'HR Specialist') {
+        localStorage.setItem('b2bUserRole', role);
+        localStorage.setItem('b2bUserName', 'Camille Navarro');
+        window.location.href = 'hr-specialist.html';
+        return;
+    }
+
     message.textContent = role
         ? 'A dashboard for this role has not been connected yet.'
         : 'Please select a user role.';
