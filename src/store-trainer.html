@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Trainer Dashboard | Bee-to-Bee Operations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-body">
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <img src="images/b2blogo.png" alt="Bee-to-Bee Logo">
+            <div><strong>Bee-to-Bee</strong><span>Operations</span></div>
+        </div>
+
+        <nav class="nav-menu">
+            <button class="nav-item active" data-section="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+            <button class="nav-item" data-section="batches"><i data-lucide="users"></i><span>Training Batches</span></button>
+            <button class="nav-item" data-section="sessions"><i data-lucide="calendar-check"></i><span>Training Sessions</span></button>
+            <button class="nav-item" data-section="assessments"><i data-lucide="clipboard-list"></i><span>Assessments</span><em>3</em></button>
+            <button class="nav-item" data-section="certifications"><i data-lucide="badge-check"></i><span>Certifications</span></button>
+            <button class="nav-item" data-section="progress"><i data-lucide="chart-no-axes-combined"></i><span>Training Progress</span></button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="nav-item" data-section="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+            <button class="nav-item logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Log Out</span></button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
+            <div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search trainees, batches, or assessments..."></div>
+            <div class="topbar-actions">
+                <button class="icon-btn notification-btn"><i data-lucide="bell"></i><span></span></button>
+                <div class="user-profile">
+                    <div class="avatar">MD</div>
+                    <div><strong>Michael Dela Cruz</strong><span>Store Trainer</span></div>
+                    <i data-lucide="chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="page-content">
+            <div class="welcome-row">
+                <div>
+                    <p class="eyebrow">EMPLOYEE TRAINING</p>
+                    <h1>Good morning, Michael!</h1>
+                    <p>Here is today’s training overview for your assigned employee batches.</p>
+                </div>
+                <div class="date-control"><i data-lucide="calendar-days"></i><span>July 21, 2026</span></div>
+            </div>
+
+            <div class="alert-banner">
+                <div class="alert-icon"><i data-lucide="clipboard-alert"></i></div>
+                <div><strong>3 trainees require assessment</strong><span>Complete their competency evaluations before the scheduled deployment.</span></div>
+                <button data-open-section="assessments">Review now <i data-lucide="arrow-right"></i></button>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card"><div class="stat-icon red"><i data-lucide="users"></i></div><div><span>Assigned Trainees</span><strong>24</strong><small><b>2 active batches</b> this month</small></div></article>
+                <article class="stat-card"><div class="stat-icon yellow"><i data-lucide="calendar-check"></i></div><div><span>Sessions Completed</span><strong>8<span>/10</span></strong><small>2 sessions scheduled this week</small></div></article>
+                <article class="stat-card"><div class="stat-icon orange"><i data-lucide="clipboard-list"></i></div><div><span>Pending Assessments</span><strong>3</strong><small><b>Due before deployment</b></small></div></article>
+                <article class="stat-card"><div class="stat-icon green"><i data-lucide="badge-check"></i></div><div><span>Certification Rate</span><strong>88%</strong><small><b>21 certified</b> employees</small></div></article>
+            </div>
+
+            <div class="dashboard-grid">
+                <section class="panel branch-panel">
+                    <div class="panel-heading"><div><h2>Training Batch Progress</h2><p>Current standing of assigned employee batches</p></div><button class="text-btn" data-open-section="batches">View all <i data-lucide="arrow-up-right"></i></button></div>
+                    <div class="branch-list" id="batchList">
+                        <article class="branch-row" data-search="Taft Crew Batch A ongoing 75"><div class="branch-rank">1</div><div class="branch-name"><strong>Taft Crew Batch A</strong><span>TRN-2607-A • 12 trainees</span></div><div class="score"><strong>75%</strong><div><span style="width:75%"></span></div></div><span class="status good">Ongoing</span></article>
+                        <article class="branch-row" data-search="Makati Crew Batch B in progress 60"><div class="branch-rank">2</div><div class="branch-name"><strong>Makati Crew Batch B</strong><span>TRN-2607-B • 12 trainees</span></div><div class="score"><strong>60%</strong><div><span style="width:60%"></span></div></div><span class="status good">In Progress</span></article>
+                        <article class="branch-row" data-search="Pasay Crew Batch C completed 100"><div class="branch-rank">3</div><div class="branch-name"><strong>Pasay Crew Batch C</strong><span>TRN-2606-C • 10 trainees</span></div><div class="score"><strong>100%</strong><div><span style="width:100%"></span></div></div><span class="status strong">Completed</span></article>
+                        <article class="branch-row" data-search="Quezon Crew Batch D needs attention 45"><div class="branch-rank">4</div><div class="branch-name"><strong>Quezon Crew Batch D</strong><span>TRN-2607-D • 11 trainees</span></div><div class="score"><strong>45%</strong><div><span style="width:45%"></span></div></div><span class="status attention">Needs Attention</span></article>
+                    </div>
+                </section>
+
+                <section class="panel activity-panel">
+                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest training and certification updates</p></div><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></div>
+                    <div class="timeline">
+                        <div class="timeline-item"><span class="dot green"><i data-lucide="check"></i></span><div><strong>Attendance recorded</strong><p>Attendance for Taft Crew Batch A was completed.</p><small>15 minutes ago</small></div></div>
+                        <div class="timeline-item"><span class="dot yellow"><i data-lucide="clipboard-check"></i></span><div><strong>Assessment submitted</strong><p>Andrea Reyes completed her service competency assessment.</p><small>42 minutes ago</small></div></div>
+                        <div class="timeline-item"><span class="dot green"><i data-lucide="badge-check"></i></span><div><strong>Employee certified</strong><p>Carlo Mendoza was marked ready for deployment.</p><small>1 hour ago</small></div></div>
+                        <div class="timeline-item"><span class="dot red"><i data-lucide="rotate-ccw"></i></span><div><strong>Retraining required</strong><p>Joshua Lim needs additional kitchen simulation coaching.</p><small>2 hours ago</small></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel incident-panel">
+                <div class="panel-heading"><div><h2>Trainees Requiring Action</h2><p>Pending assessments, certifications, and coaching requirements</p></div><button class="text-btn" data-open-section="assessments">View assessments <i data-lucide="arrow-right"></i></button></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Trainee</th><th>Batch</th><th>Requirement</th><th>Deadline</th><th>Status</th><th></th></tr></thead>
+                        <tbody id="traineeTable">
+                            <tr data-search="Nicole Garcia Taft Crew Batch A assessment pending"><td><strong>Nicole Garcia</strong><span>EMP-26124 • Service Crew</span></td><td>Taft Crew Batch A</td><td>Competency Assessment</td><td>July 23, 2026</td><td><span class="table-status action">Pending</span></td><td><button class="review-btn" data-trainee="Nicole Garcia">Assess</button></td></tr>
+                            <tr data-search="Paolo Cruz Taft Crew Batch A missed training coaching"><td><strong>Paolo Cruz</strong><span>EMP-26125 • Kitchen Crew</span></td><td>Taft Crew Batch A</td><td>Missed Training Session</td><td>July 22, 2026</td><td><span class="table-status investigating">For Coaching</span></td><td><button class="review-btn" data-trainee="Paolo Cruz">Review</button></td></tr>
+                            <tr data-search="Andrea Reyes Makati Crew Batch B certification"><td><strong>Andrea Reyes</strong><span>EMP-26121 • Service Crew</span></td><td>Makati Crew Batch B</td><td>Final Certification</td><td>July 24, 2026</td><td><span class="table-status monitoring">For Certification</span></td><td><button class="review-btn" data-trainee="Andrea Reyes">Review</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="reviewModal" aria-hidden="true">
+    <div class="modal-card">
+        <button class="modal-close" id="closeModal"><i data-lucide="x"></i></button>
+        <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
+        <p class="eyebrow">TRAINEE ASSESSMENT</p>
+        <h2 id="modalTitle">Trainee assessment</h2>
+        <p>Review the trainee’s competency results and record any coaching or certification remarks.</p>
+        <label for="trainerNote">Store Trainer Remarks</label>
+        <textarea id="trainerNote" placeholder="Enter assessment remarks or coaching instructions..."></textarea>
+        <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveReview">Save Assessment</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Assessment saved successfully.</span></div>
+<script src="js/store-trainer.js"></script>
+</body>
+</html>
