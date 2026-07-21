@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Manager Dashboard | Bee-to-Bee Operations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-body">
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><img src="images/b2blogo.png" alt="Bee-to-Bee Logo"><div><strong>Bee-to-Bee</strong><span>Operations</span></div></div>
+        <nav class="nav-menu">
+            <button class="nav-item active" data-section="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+            <button class="nav-item" data-section="readiness"><i data-lucide="clipboard-check"></i><span>Launch Readiness</span><em id="readinessBadge">3</em></button>
+            <button class="nav-item" data-section="tasks"><i data-lucide="list-checks"></i><span>Readiness Tasks</span></button>
+            <button class="nav-item" data-section="issues"><i data-lucide="triangle-alert"></i><span>Launch Issues</span><em class="danger" id="issueBadge">2</em></button>
+            <button class="nav-item" data-section="clearance"><i data-lucide="badge-check"></i><span>Opening Clearance</span></button>
+            <button class="nav-item" data-section="postlaunch"><i data-lucide="file-up"></i><span>Post-Launch Reports</span></button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="nav-item" data-section="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+            <button class="nav-item logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Log Out</span></button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
+            <div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search readiness tasks, issues, or reports..."></div>
+            <div class="topbar-actions"><button class="icon-btn notification-btn"><i data-lucide="bell"></i><span></span></button><div class="user-profile"><div class="avatar">RT</div><div><strong>Ruth Torres</strong><span>Store Manager</span></div><i data-lucide="chevron-down"></i></div></div>
+        </header>
+
+        <section class="page-content" id="pageContent"></section>
+    </main>
+</div>
+
+<div class="modal" id="recordModal" aria-hidden="true">
+    <div class="modal-card">
+        <button class="modal-close" id="closeModal" type="button" aria-label="Close modal"><i data-lucide="x"></i></button>
+        <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
+        <p class="eyebrow" id="modalEyebrow">STORE UPDATE</p>
+        <h2 id="modalTitle">Update Record</h2>
+        <p>Update the selected store readiness record and save your changes.</p>
+        <div id="modalBody"></div>
+        <div class="modal-actions"><button class="secondary-btn" id="cancelModal" type="button">Cancel</button><button class="primary-btn" id="saveModal" type="button">Save Update</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="check-circle-2"></i><span>Changes saved successfully.</span></div>
+<script src="js/store-manager.js"></script>
+</body>
+</html>
