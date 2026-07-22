@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Executive Management Dashboard | Bee-to-Bee Operations</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+
+<body class="dashboard-body">
+
+
+<div class="app-shell">
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar" id="sidebar">
+
+
+<div class="brand">
+
+<img src="images/b2blogo.png" alt="Bee-to-Bee Logo">
+
+<div>
+
+<strong>
+Bee-to-Bee
+</strong>
+
+<span>
+Operations
+</span>
+
+</div>
+
+</div>
+
+
+
+
+<nav class="nav-menu">
+
+
+<button class="nav-item active" data-section="overview">
+
+<i data-lucide="layout-dashboard"></i>
+
+<span>
+Executive Overview
+</span>
+
+</button>
+
+
+
+<button class="nav-item" data-section="expansion">
+
+<i data-lucide="building-2"></i>
+
+<span>
+Branch Expansion
+</span>
+
+</button>
+
+
+
+<button class="nav-item" data-section="performance">
+
+<i data-lucide="chart-column"></i>
+
+<span>
+Performance Analytics
+</span>
+
+</button>
+
+
+
+<button class="nav-item" data-section="alerts">
+
+<i data-lucide="triangle-alert"></i>
+
+<span>
+Executive Alerts
+</span>
+
+<em>
+3
+</em>
+
+</button>
+
+
+
+<button class="nav-item" data-section="reports">
+
+<i data-lucide="clipboard-list"></i>
+
+<span>
+Reports
+</span>
+
+</button>
+
+
+</nav>
+
+
+
+
+
+<div class="sidebar-footer">
+
+
+<button class="nav-item" data-section="settings">
+
+<i data-lucide="settings"></i>
+
+<span>
+Settings
+</span>
+
+</button>
+
+
+
+
+<button class="nav-item logout" id="logoutBtn">
+
+<i data-lucide="log-out"></i>
+
+<span>
+Log Out
+</span>
+
+</button>
+
+
+</div>
+
+
+</aside>
+
+
+
+
+
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<main class="main-content">
+
+
+
+
+
+<!-- ================= TOPBAR ================= -->
+
+
+<header class="topbar">
+
+
+<button class="icon-btn mobile-menu" id="menuBtn">
+
+<i data-lucide="menu"></i>
+
+</button>
+
+
+
+
+
+<div class="search-box">
+
+<i data-lucide="search"></i>
+
+<input 
+type="search"
+id="globalSearch"
+placeholder="Search projects, branches, or regions..."
+>
+
+</div>
+
+
+
+
+
+<div class="topbar-actions">
+
+
+<button class="icon-btn notification-btn">
+
+<i data-lucide="bell"></i>
+
+<span></span>
+
+</button>
+
+
+
+
+
+<div class="user-profile">
+
+
+<div class="avatar">
+MS
+</div>
+
+
+
+<div>
+
+<strong>
+Maria Santos
+</strong>
+
+
+<span>
+Executive Management
+</span>
+
+
+</div>
+
+
+<i data-lucide="chevron-down"></i>
+
+
+</div>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+<!-- ================= PAGE CONTENT ================= -->
+
+
+<section class="page-content" id="pageContent">
+
+
+
+<!-- ================= OVERVIEW ================= -->
+
+
+<div class="welcome-row">
+
+
+<div>
+
+<p class="eyebrow">
+EXECUTIVE MANAGEMENT
+</p>
+
+
+<h1>
+Franchise Expansion Command Center
+</h1>
+
+
+<p>
+Monitor organization-wide expansion progress, approvals,
+operational readiness, and branch performance.
+</p>
+
+
+</div>
+
+
+
+<div class="date-control">
+
+<i data-lucide="calendar-days"></i>
+
+<span>
+July 22, 2026
+</span>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<!-- ALERT -->
+
+
+<div class="alert-banner">
+
+
+<div class="alert-icon">
+
+<i data-lucide="sparkles"></i>
+
+</div>
+
+
+
+<div>
+
+<strong>
+3 branches are ready for executive approval.
+</strong>
+
+
+<span>
+Review expansion milestones before deployment.
+</span>
+
+
+</div>
+
+
+
+<button data-open-section="alerts">
+
+Review
+
+<i data-lucide="arrow-right"></i>
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- KPI CARDS -->
+
+
+<div class="stats-grid">
+
+
+<article class="stat-card">
+
+
+<div class="stat-icon red">
+
+<i data-lucide="building-2"></i>
+
+</div>
+
+
+<div>
+
+<span>
+Total Projects
+</span>
+
+
+<strong>
+48
+</strong>
+
+
+<small>
+Nationwide expansion
+</small>
+
+
+</div>
+
+
+</article>
+
+
+
+
+
+<article class="stat-card">
+
+
+<div class="stat-icon green">
+
+<i data-lucide="circle-check-big"></i>
+
+</div>
+
+
+<div>
+
+<span>
+Approved Sites
+</span>
+
+
+<strong>
+31
+</strong>
+
+
+<small>
+Ready for deployment
+</small>
+
+
+</div>
+
+
+</article>
+
+
+
+
+
+<article class="stat-card">
+
+
+<div class="stat-icon yellow">
+
+<i data-lucide="clock-3"></i>
+
+</div>
+
+
+<div>
+
+<span>
+Active Projects
+</span>
+
+
+<strong>
+14
+</strong>
+
+
+<small>
+Currently progressing
+</small>
+
+
+</div>
+
+
+</article>
+
+
+
+
+
+<article class="stat-card">
+
+
+<div class="stat-icon orange">
+
+<i data-lucide="triangle-alert"></i>
+
+</div>
+
+
+<div>
+
+<span>
+High Risk
+</span>
+
+
+<strong>
+3
+</strong>
+
+
+<small>
+Needs attention
+</small>
+
+
+</div>
+
+
+</article>
+
+
+</div>
+
+<!-- ================= DASHBOARD GRID ================= -->
+
+
+<div class="dashboard-grid">
+
+
+
+    <section class="panel">
+    
+    
+    <div class="panel-heading">
+    
+    
+    <div>
+    
+    <h2>
+    Franchise Expansion Pipeline
+    </h2>
+    
+    
+    <p>
+    Organization-wide expansion progress
+    </p>
+    
+    </div>
+    
+    
+    
+    <button class="text-btn" data-open-section="expansion">
+    
+    View pipeline
+    
+    <i data-lucide="arrow-right"></i>
+    
+    </button>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    <div class="pipeline">
+    
+    
+    
+    <div class="pipeline-step active">
+    
+    <strong>
+    48
+    </strong>
+    
+    <span>
+    Applications
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step active">
+    
+    <strong>
+    41
+    </strong>
+    
+    <span>
+    Approvals
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step active">
+    
+    <strong>
+    35
+    </strong>
+    
+    <span>
+    Engineering
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step">
+    
+    <strong>
+    28
+    </strong>
+    
+    <span>
+    Construction
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step">
+    
+    <strong>
+    19
+    </strong>
+    
+    <span>
+    Training
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step">
+    
+    <strong>
+    12
+    </strong>
+    
+    <span>
+    Launch
+    </span>
+    
+    </div>
+    
+    
+    
+    
+    <div class="pipeline-step">
+    
+    <strong>
+    7
+    </strong>
+    
+    <span>
+    Operational
+    </span>
+    
+    </div>
+    
+    
+    
+    </div>
+    
+    
+    </section>
+    
+    
+    
+    
+    
+    
+    
+    <section class="panel">
+    
+    
+    <div class="panel-heading">
+    
+    
+    <div>
+    
+    <h2>
+    Executive Summary
+    </h2>
+    
+    
+    <p>
+    Current organization status
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="timeline">
+    
+    
+    
+    <div class="timeline-item">
+    
+    
+    <span class="dot green">
+    
+    <i data-lucide="circle-check"></i>
+    
+    </span>
+    
+    
+    
+    <div>
+    
+    <strong>
+    Average Completion
+    </strong>
+    
+    
+    <p>
+    82% across all expansion projects.
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    <div class="timeline-item">
+    
+    
+    <span class="dot yellow">
+    
+    <i data-lucide="clock"></i>
+    
+    </span>
+    
+    
+    
+    <div>
+    
+    <strong>
+    Pending Decisions
+    </strong>
+    
+    
+    <p>
+    5 approvals awaiting confirmation.
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    <div class="timeline-item">
+    
+    
+    <span class="dot red">
+    
+    <i data-lucide="triangle-alert"></i>
+    
+    </span>
+    
+    
+    
+    <div>
+    
+    <strong>
+    Delayed Projects
+    </strong>
+    
+    
+    <p>
+    3 branches exceeded target timelines.
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    </div>
+    
+    
+    </section>
+    
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!-- ================= REGIONAL PERFORMANCE ================= -->
+    
+    
+    <div class="dashboard-grid">
+    
+    
+    
+    <section class="panel">
+    
+    
+    <div class="panel-heading">
+    
+    
+    <div>
+    
+    <h2>
+    Regional Performance
+    </h2>
+    
+    
+    <p>
+    Expansion performance by operating region
+    </p>
+    
+    
+    </div>
+    
+    
+    
+    <button class="text-btn" data-open-section="performance">
+    
+    View analytics
+    
+    <i data-lucide="arrow-right"></i>
+    
+    </button>
+    
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    <div class="branch-list">
+    
+    
+    
+    
+    
+    
+    <article class="branch-row">
+    
+    
+    <div class="branch-rank">
+    1
+    </div>
+    
+    
+    
+    <div class="branch-name">
+    
+    
+    <strong>
+    National Capital Region
+    </strong>
+    
+    
+    <span>
+    12 Active Projects
+    </span>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="score">
+    
+    
+    <strong>
+    95%
+    </strong>
+    
+    
+    <div>
+    
+    <span style="width:95%"></span>
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    <span class="status strong">
+    Excellent
+    </span>
+    
+    
+    
+    </article>
+    
+    
+    
+    
+    
+    
+    
+    
+    <article class="branch-row">
+    
+    
+    <div class="branch-rank">
+    2
+    </div>
+    
+    
+    
+    <div class="branch-name">
+    
+    
+    <strong>
+    North Luzon
+    </strong>
+    
+    
+    <span>
+    9 Active Projects
+    </span>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="score">
+    
+    
+    <strong>
+    88%
+    </strong>
+    
+    
+    <div>
+    
+    <span style="width:88%"></span>
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    <span class="status good">
+    Stable
+    </span>
+    
+    
+    
+    </article>
+    
+    
+    
+    
+    
+    
+    
+    
+    <article class="branch-row">
+    
+    
+    <div class="branch-rank">
+    3
+    </div>
+    
+    
+    
+    <div class="branch-name">
+    
+    
+    <strong>
+    South Luzon
+    </strong>
+    
+    
+    <span>
+    8 Active Projects
+    </span>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="score">
+    
+    
+    <strong>
+    82%
+    </strong>
+    
+    
+    <div>
+    
+    <span style="width:82%"></span>
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    <span class="status good">
+    Stable
+    </span>
+    
+    
+    
+    </article>
+    
+    
+    
+    
+    
+    </div>
+    
+    
+    
+    </section>
+    
+    
+    
+    
+    
+    
+    
+    
+    <section class="panel">
+    
+    
+    <div class="panel-heading">
+    
+    
+    <div>
+    
+    <h2>
+    Executive Alerts
+    </h2>
+    
+    
+    <p>
+    Priority organizational updates
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    <div class="timeline">
+    
+    
+    
+    <div class="timeline-item">
+    
+    
+    <span class="dot red">
+    
+    <i data-lucide="triangle-alert"></i>
+    
+    </span>
+    
+    
+    
+    <div>
+    
+    
+    <strong>
+    Delayed Branch Openings
+    </strong>
+    
+    
+    <p>
+    3 locations exceeded construction timeline.
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    <div class="timeline-item">
+    
+    
+    <span class="dot yellow">
+    
+    <i data-lucide="wallet"></i>
+    
+    </span>
+    
+    
+    
+    <div>
+    
+    
+    <strong>
+    Budget Adjustment Request
+    </strong>
+    
+    
+    <p>
+    Finance approval required.
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    </div>
+    
+    
+    
+    
+    </section>
+    
+    
+    
+    
+    
+    </div>
+
+<!-- ================= END PAGE CONTENT ================= -->
+
+
+</section>
+
+
+
+
+</main>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ================= REVIEW MODAL ================= -->
+
+
+<div class="modal" id="reviewModal" aria-hidden="true">
+
+
+<div class="modal-card">
+
+
+<button class="modal-close" id="closeModal">
+
+<i data-lucide="x"></i>
+
+</button>
+
+
+
+
+
+<div class="modal-icon">
+
+<i data-lucide="clipboard-list"></i>
+
+</div>
+
+
+
+
+<p class="eyebrow">
+EXECUTIVE REVIEW
+</p>
+
+
+
+
+<h2 id="modalTitle">
+Executive Decision
+</h2>
+
+
+
+
+<p>
+Review the selected item, provide management notes,
+and confirm the appropriate action.
+</p>
+
+
+
+
+
+
+<label for="managerNote">
+Executive Note
+</label>
+
+
+
+
+<textarea 
+id="managerNote"
+placeholder="Enter your decision or instruction..."
+></textarea>
+
+
+
+
+
+
+
+<div class="modal-actions">
+
+
+<button class="secondary-btn" id="cancelModal">
+
+Cancel
+
+</button>
+
+
+
+<button class="primary-btn" id="saveReview">
+
+Save Review
+
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ================= TOAST ================= -->
+
+
+<div class="toast" id="toast">
+
+
+<i data-lucide="circle-check"></i>
+
+
+<span>
+Changes saved successfully.
+</span>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+
+<script src="js/executive-management.js"></script>
+
+
+
+
+</body>
+
+</html>
+

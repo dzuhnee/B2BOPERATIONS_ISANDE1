@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Business Development Dashboard | Bee-to-Bee Operations</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body class="dashboard-body">
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <img src="images/b2blogo.png" alt="Bee-to-Bee Logo">
+
+            <div>
+
+                <strong>Bee-to-Bee</strong>
+                <span>Operations</span>
+
+            </div>
+
+        </div>
+
+        <nav class="nav-menu">
+
+            <button class="nav-item active" data-section="overview">
+
+                <i data-lucide="layout-dashboard"></i>
+
+                <span>Overview</span>
+
+            </button>
+
+            <button class="nav-item" data-section="applications">
+
+                <i data-lucide="map-pinned"></i>
+
+                <span>Site Applications</span>
+
+                <em id="applicationCount">14</em>
+
+            </button>
+
+            <button class="nav-item" data-section="analysis">
+
+                <i data-lucide="scan-search"></i>
+
+                <span>Viability Analysis</span>
+
+            </button>
+
+            <button class="nav-item" data-section="recommendations">
+
+                <i data-lucide="badge-check"></i>
+
+                <span>Recommendations</span>
+
+            </button>
+
+            <button class="nav-item" data-section="archives">
+
+                <i data-lucide="archive"></i>
+
+                <span>Archived Sites</span>
+
+                <em class="danger">3</em>
+
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <button class="nav-item" data-section="settings">
+
+                <i data-lucide="settings"></i>
+
+                <span>Settings</span>
+
+            </button>
+
+            <button class="nav-item logout" id="logoutBtn">
+
+                <i data-lucide="log-out"></i>
+
+                <span>Log Out</span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <button
+                class="icon-btn mobile-menu"
+                id="menuBtn"
+                aria-label="Open Navigation">
+
+                <i data-lucide="menu"></i>
+
+            </button>
+
+            <div class="search-box">
+
+                <i data-lucide="search"></i>
+
+                <input
+                    id="globalSearch"
+                    type="search"
+                    placeholder="Search sites, locations, applications..."
+                    aria-label="Search">
+
+            </div>
+
+            <div class="topbar-actions">
+
+                <button
+                    class="icon-btn notification-btn"
+                    aria-label="Notifications">
+
+                    <i data-lucide="bell"></i>
+
+                    <span></span>
+
+                </button>
+
+                <div class="user-profile">
+
+                    <div
+                        class="avatar"
+                        id="userInitials">
+
+                        BD
+
+                    </div>
+
+                    <div>
+
+                        <strong id="userName">
+
+                            Juan Dela Cruz
+
+                        </strong>
+
+                        <span id="userRole">
+
+                            Business Development Officer
+
+                        </span>
+
+                    </div>
+
+                    <i data-lucide="chevron-down"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- EVERYTHING WILL LOAD HERE -->
+
+        <section
+            class="page-content"
+            id="pageContent">
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ==========================================
+SITE DETAILS MODAL
+=========================================== -->
+
+<div
+    class="modal detail-modal"
+    id="siteModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true">
+
+    <div class="modal-card">
+
+        <div class="detail-header">
+
+            <button
+                class="modal-close"
+                data-close-modal>
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+            <p
+                class="eyebrow"
+                id="siteId">
+
+                SITE APPLICATION
+
+            </p>
+
+            <h2 id="siteTitle">
+
+                Proposed Site
+
+            </h2>
+
+            <div id="siteHeaderMeta"></div>
+
+        </div>
+
+        <div
+            class="detail-body"
+            id="siteDetail">
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+SMART ANALYSIS MODAL
+=========================================== -->
+
+<div
+    class="modal"
+    id="analysisModal"
+    aria-hidden="true">
+
+    <div class="modal-card">
+
+        <button
+            class="modal-close"
+            data-close-modal>
+
+            <i data-lucide="x"></i>
+
+        </button>
+
+        <div class="modal-icon">
+
+            <i data-lucide="cpu"></i>
+
+        </div>
+
+        <p class="eyebrow">
+
+            SMART SITE ANALYSIS
+
+        </p>
+
+        <h2>
+
+            Generate AI Recommendation?
+
+        </h2>
+
+        <p>
+
+            Bee-to-Bee Operations will evaluate the
+            proposed location using commercial,
+            demographic, and competitor intelligence.
+
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-btn"
+                data-close-modal>
+
+                Cancel
+
+            </button>
+
+            <button
+                class="primary-btn"
+                id="runAnalysis">
+
+                Run Analysis
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+TOAST
+=========================================== -->
+
+<div
+    class="toast"
+    id="toast">
+
+    <i data-lucide="circle-check"></i>
+
+    <span>
+
+        Action completed.
+
+    </span>
+
+</div>
+
+<script src="js/dashboard-utils.js"></script>
+
+<script src="js/business-development-data.js"></script>
+
+<script src="js/business-development.js"></script>
+
+</body>
+
+</html>
