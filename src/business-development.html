@@ -3,17 +3,46 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Business Development Dashboard | Bee-to-Bee Operations</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/dashboard.css">
+    <title>
+        Business Development Dashboard | Bee-to-Bee Operations
+    </title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EXISTING CSS -->
 
-<script src="https://unpkg.com/lucide@latest"></script>
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+    <!-- POPPINS FONT -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- LEAFLET MAP CSS -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- LUCIDE ICONS -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
 
@@ -21,107 +50,188 @@
 
 <div class="app-shell">
 
-    <!-- SIDEBAR -->
 
-    <aside class="sidebar" id="sidebar">
+    <!-- ==================================================
+    SIDEBAR
+    =================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
 
         <div class="brand">
 
-            <img src="images/b2blogo.png" alt="Bee-to-Bee Logo">
+            <img
+                src="images/b2blogo.png"
+                alt="Bee-to-Bee Logo"
+            >
 
             <div>
 
-                <strong>Bee-to-Bee</strong>
-                <span>Operations</span>
+                <strong>
+                    Bee-to-Bee
+                </strong>
+
+                <span>
+                    Operations
+                </span>
 
             </div>
 
         </div>
 
+
         <nav class="nav-menu">
 
-            <button class="nav-item active" data-section="overview">
+
+            <button
+                class="nav-item active"
+                data-section="overview"
+                type="button"
+            >
 
                 <i data-lucide="layout-dashboard"></i>
 
-                <span>Overview</span>
+                <span>
+                    Overview
+                </span>
 
             </button>
 
-            <button class="nav-item" data-section="applications">
+
+            <button
+                class="nav-item"
+                data-section="applications"
+                type="button"
+            >
 
                 <i data-lucide="map-pinned"></i>
 
-                <span>Site Applications</span>
+                <span>
+                    Site Applications
+                </span>
 
-                <em id="applicationCount">14</em>
+                <em id="applicationCount">
+                    14
+                </em>
 
             </button>
 
-            <button class="nav-item" data-section="analysis">
+
+            <button
+                class="nav-item"
+                data-section="analysis"
+                type="button"
+            >
 
                 <i data-lucide="scan-search"></i>
 
-                <span>Viability Analysis</span>
+                <span>
+                    Viability Analysis
+                </span>
 
             </button>
 
-            <button class="nav-item" data-section="recommendations">
+
+            <button
+                class="nav-item"
+                data-section="recommendations"
+                type="button"
+            >
 
                 <i data-lucide="badge-check"></i>
 
-                <span>Recommendations</span>
+                <span>
+                    Recommendations
+                </span>
 
             </button>
 
-            <button class="nav-item" data-section="archives">
+
+            <button
+                class="nav-item"
+                data-section="archives"
+                type="button"
+            >
 
                 <i data-lucide="archive"></i>
 
-                <span>Archived Sites</span>
+                <span>
+                    Archived Sites
+                </span>
 
-                <em class="danger">3</em>
+                <em class="danger">
+                    3
+                </em>
 
             </button>
+
 
         </nav>
 
+
         <div class="sidebar-footer">
 
-            <button class="nav-item" data-section="settings">
+
+            <button
+                class="nav-item"
+                data-section="settings"
+                type="button"
+            >
 
                 <i data-lucide="settings"></i>
 
-                <span>Settings</span>
+                <span>
+                    Settings
+                </span>
 
             </button>
 
-            <button class="nav-item logout" id="logoutBtn">
+
+            <button
+                class="nav-item logout"
+                id="logoutBtn"
+                type="button"
+            >
 
                 <i data-lucide="log-out"></i>
 
-                <span>Log Out</span>
+                <span>
+                    Log Out
+                </span>
 
             </button>
+
 
         </div>
 
     </aside>
 
-    <!-- MAIN -->
+
+    <!-- ==================================================
+    MAIN CONTENT
+    =================================================== -->
 
     <main class="main-content">
 
+
+        <!-- TOPBAR -->
+
         <header class="topbar">
+
 
             <button
                 class="icon-btn mobile-menu"
                 id="menuBtn"
-                aria-label="Open Navigation">
+                type="button"
+                aria-label="Open Navigation"
+            >
 
                 <i data-lucide="menu"></i>
 
             </button>
+
 
             <div class="search-box">
 
@@ -131,15 +241,20 @@
                     id="globalSearch"
                     type="search"
                     placeholder="Search sites, locations, applications..."
-                    aria-label="Search">
+                    aria-label="Search"
+                >
 
             </div>
 
+
             <div class="topbar-actions">
+
 
                 <button
                     class="icon-btn notification-btn"
-                    aria-label="Notifications">
+                    type="button"
+                    aria-label="Notifications"
+                >
 
                     <i data-lucide="bell"></i>
 
@@ -147,121 +262,1434 @@
 
                 </button>
 
+
                 <div class="user-profile">
+
 
                     <div
                         class="avatar"
-                        id="userInitials">
+                        id="userInitials"
+                    >
 
                         BD
 
                     </div>
 
+
                     <div>
 
                         <strong id="userName">
-
                             Juan Dela Cruz
-
                         </strong>
 
                         <span id="userRole">
-
                             Business Development Officer
-
                         </span>
 
                     </div>
 
+
                     <i data-lucide="chevron-down"></i>
+
 
                 </div>
 
+
             </div>
+
 
         </header>
 
-        <!-- EVERYTHING WILL LOAD HERE -->
+
+        <!-- JAVASCRIPT PAGES LOAD HERE -->
 
         <section
             class="page-content"
-            id="pageContent">
+            id="pageContent"
+        ></section>
 
-        </section>
 
     </main>
 
+
 </div>
 
-<!-- ==========================================
+
+<!-- ==================================================
+NEW SITE PROPOSAL MODAL
+SMART SITE PRE-QUALIFICATION MODULE
+=================================================== -->
+
+<div
+    class="modal proposal-modal"
+    id="proposalModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="proposalModalTitle"
+>
+
+    <div class="modal-card proposal-modal-card">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="proposal-modal-header">
+
+
+            <div>
+
+                <p class="eyebrow">
+                    SMART SITE PRE-QUALIFICATION
+                </p>
+
+                <h2 id="proposalModalTitle">
+                    New Site Proposal
+                </h2>
+
+                <p>
+
+                    Enter the proposed location, position the map pin,
+                    provide the lease and property information, and run
+                    the site viability assessment.
+
+                </p>
+
+            </div>
+
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close-modal
+                aria-label="Close New Site Proposal"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+
+        </div>
+
+
+        <!-- SITE PROPOSAL FORM -->
+
+        <form
+            id="siteProposalForm"
+            enctype="multipart/form-data"
+        >
+
+
+            <div class="proposal-layout">
+
+
+                <!-- ======================================
+                LEFT COLUMN
+                FORM INFORMATION
+                ======================================= -->
+
+                <div class="proposal-form-column">
+
+
+                    <!-- LOCATION SECTION -->
+
+                    <section class="proposal-section">
+
+
+                        <div class="proposal-section-title">
+
+                            <span>
+                                1
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Site Location
+                                </h3>
+
+                                <p>
+
+                                    Search for a location or manually place
+                                    the map pin.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="location-search-row">
+
+
+                            <div class="field-group location-query-field">
+
+                                <label for="locationSearch">
+
+                                    Search proposed location
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <div class="input-with-icon">
+
+                                    <i data-lucide="search"></i>
+
+                                    <input
+                                        id="locationSearch"
+                                        name="locationSearch"
+                                        type="search"
+                                        placeholder="Example: Ayala Avenue, Makati City"
+                                        autocomplete="off"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                class="secondary-btn search-location-btn"
+                                id="searchLocationBtn"
+                                type="button"
+                            >
+
+                                <i data-lucide="map-pin"></i>
+
+                                Search Map
+
+                            </button>
+
+
+                        </div>
+
+
+                        <!-- SEARCH RESULTS APPEAR HERE -->
+
+                        <div
+                            class="location-results"
+                            id="locationResults"
+                        ></div>
+
+
+                        <div class="form-grid proposal-form-grid">
+
+
+                            <div class="field-group">
+
+                                <label for="latitude">
+
+                                    Latitude
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    id="latitude"
+                                    name="latitude"
+                                    type="number"
+                                    step="any"
+                                    placeholder="14.599512"
+                                    readonly
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="longitude">
+
+                                    Longitude
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    id="longitude"
+                                    name="longitude"
+                                    type="number"
+                                    step="any"
+                                    placeholder="120.984222"
+                                    readonly
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field-group full">
+
+                                <label for="formattedAddress">
+
+                                    Selected address
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    id="formattedAddress"
+                                    name="formattedAddress"
+                                    type="text"
+                                    placeholder="Selected map address will appear here"
+                                    readonly
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="municipality">
+
+                                    Municipality / City
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    id="municipality"
+                                    name="municipality"
+                                    type="text"
+                                    placeholder="Makati City"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="province">
+
+                                    Province / Region
+
+                                </label>
+
+                                <input
+                                    id="province"
+                                    name="province"
+                                    type="text"
+                                    placeholder="Metro Manila"
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- LEASE PARAMETERS -->
+
+                    <section class="proposal-section">
+
+
+                        <div class="proposal-section-title">
+
+                            <span>
+                                2
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Lease Parameters
+                                </h3>
+
+                                <p>
+
+                                    Enter the financial terms of the
+                                    proposed property lease.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-grid proposal-form-grid">
+
+
+                            <div class="field-group">
+
+                                <label for="monthlyRent">
+
+                                    Monthly rent
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <div class="input-prefix">
+
+                                    <span>
+                                        ₱
+                                    </span>
+
+                                    <input
+                                        id="monthlyRent"
+                                        name="monthlyRent"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="120000"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="leaseTerm">
+
+                                    Lease term in years
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    id="leaseTerm"
+                                    name="leaseTerm"
+                                    type="number"
+                                    min="1"
+                                    max="50"
+                                    placeholder="5"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="annualEscalation">
+
+                                    Annual escalation
+
+                                </label>
+
+                                <div class="input-suffix">
+
+                                    <input
+                                        id="annualEscalation"
+                                        name="annualEscalation"
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                        placeholder="5"
+                                    >
+
+                                    <span>
+                                        %
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="advanceDeposit">
+
+                                    Advance and deposit
+
+                                </label>
+
+                                <div class="input-suffix">
+
+                                    <input
+                                        id="advanceDeposit"
+                                        name="advanceDeposit"
+                                        type="number"
+                                        min="0"
+                                        max="24"
+                                        placeholder="4"
+                                    >
+
+                                    <span>
+                                        months
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="securityDeposit">
+
+                                    Security deposit
+
+                                </label>
+
+                                <div class="input-prefix">
+
+                                    <span>
+                                        ₱
+                                    </span>
+
+                                    <input
+                                        id="securityDeposit"
+                                        name="securityDeposit"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="240000"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="leaseAvailability">
+
+                                    Target availability date
+
+                                </label>
+
+                                <input
+                                    id="leaseAvailability"
+                                    name="leaseAvailability"
+                                    type="date"
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- PROPERTY DIMENSIONS -->
+
+                    <section class="proposal-section">
+
+
+                        <div class="proposal-section-title">
+
+                            <span>
+                                3
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Property Dimensions
+                                </h3>
+
+                                <p>
+
+                                    Provide the physical dimensions and
+                                    property configuration.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-grid proposal-form-grid">
+
+
+                            <div class="field-group">
+
+                                <label for="lotArea">
+
+                                    Total lot area
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <div class="input-suffix">
+
+                                    <input
+                                        id="lotArea"
+                                        name="lotArea"
+                                        type="number"
+                                        min="1"
+                                        step="0.01"
+                                        placeholder="350"
+                                        required
+                                    >
+
+                                    <span>
+                                        sqm
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="floorArea">
+
+                                    Usable floor area
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <div class="input-suffix">
+
+                                    <input
+                                        id="floorArea"
+                                        name="floorArea"
+                                        type="number"
+                                        min="1"
+                                        step="0.01"
+                                        placeholder="180"
+                                        required
+                                    >
+
+                                    <span>
+                                        sqm
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="frontage">
+
+                                    Property frontage
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <div class="input-suffix">
+
+                                    <input
+                                        id="frontage"
+                                        name="frontage"
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="12"
+                                        required
+                                    >
+
+                                    <span>
+                                        meters
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="parkingSlots">
+
+                                    Available parking slots
+
+                                </label>
+
+                                <input
+                                    id="parkingSlots"
+                                    name="parkingSlots"
+                                    type="number"
+                                    min="0"
+                                    placeholder="8"
+                                >
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="propertyType">
+
+                                    Property type
+
+                                    <span class="required-mark">
+                                        *
+                                    </span>
+
+                                </label>
+
+                                <select
+                                    id="propertyType"
+                                    name="propertyType"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select property type
+                                    </option>
+
+                                    <option value="standalone">
+                                        Standalone Building
+                                    </option>
+
+                                    <option value="commercial-strip">
+                                        Commercial Strip
+                                    </option>
+
+                                    <option value="mall-space">
+                                        Mall Space
+                                    </option>
+
+                                    <option value="mixed-use">
+                                        Mixed-Use Development
+                                    </option>
+
+                                    <option value="transport-hub">
+                                        Transport Hub
+                                    </option>
+
+                                    <option value="office-building">
+                                        Office Building
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label for="roadAccess">
+
+                                    Road access
+
+                                </label>
+
+                                <select
+                                    id="roadAccess"
+                                    name="roadAccess"
+                                >
+
+                                    <option value="">
+                                        Select road access
+                                    </option>
+
+                                    <option value="major-road">
+                                        Major Road
+                                    </option>
+
+                                    <option value="secondary-road">
+                                        Secondary Road
+                                    </option>
+
+                                    <option value="inner-road">
+                                        Inner Road
+                                    </option>
+
+                                    <option value="highway">
+                                        Highway
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="field-group full">
+
+                                <label for="propertyNotes">
+
+                                    Property notes
+
+                                </label>
+
+                                <textarea
+                                    id="propertyNotes"
+                                    name="propertyNotes"
+                                    placeholder="Add notes about visibility, accessibility, utilities, building condition, or special lease conditions."
+                                ></textarea>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- DOCUMENT UPLOAD -->
+
+                    <section class="proposal-section">
+
+
+                        <div class="proposal-section-title">
+
+                            <span>
+                                4
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Land Title Documents
+                                </h3>
+
+                                <p>
+
+                                    Upload the primary land title and
+                                    supporting ownership documents.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <label
+                            class="upload-zone"
+                            for="landTitleFiles"
+                        >
+
+                            <i data-lucide="upload-cloud"></i>
+
+                            <strong>
+                                Upload primary land titles
+                            </strong>
+
+                            <span>
+
+                                Select PDF, JPG, JPEG, or PNG files.
+                                Maximum recommended size is 10 MB per file.
+
+                            </span>
+
+                            <input
+                                id="landTitleFiles"
+                                name="landTitleFiles"
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                multiple
+                                required
+                            >
+
+                        </label>
+
+
+                        <div
+                            class="uploaded-files"
+                            id="uploadedFiles"
+                        ></div>
+
+
+                    </section>
+
+
+                </div>
+
+
+                <!-- ======================================
+                RIGHT COLUMN
+                MAP AND ANALYSIS
+                ======================================= -->
+
+                <aside class="proposal-map-column">
+
+
+                    <!-- MAP CARD -->
+
+                    <div class="map-card">
+
+
+                        <div class="map-card-header">
+
+
+                            <div>
+
+                                <h3>
+                                    Pin Proposed Site
+                                </h3>
+
+                                <p>
+
+                                    Click the map or drag the marker to
+                                    set the exact coordinates.
+
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                class="icon-btn"
+                                id="useCurrentLocationBtn"
+                                type="button"
+                                title="Use current location"
+                                aria-label="Use current location"
+                            >
+
+                                <i data-lucide="locate-fixed"></i>
+
+                            </button>
+
+
+                        </div>
+
+
+                        <!-- LEAFLET MAP LOADS HERE -->
+
+                        <div id="proposalMap"></div>
+
+
+                        <div class="map-legend">
+
+                            <span>
+
+                                <i class="legend-dot site-dot"></i>
+
+                                Proposed site
+
+                            </span>
+
+                            <span>
+
+                                <i class="legend-dot radius-dot"></i>
+
+                                Analysis radius
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="radius-control">
+
+
+                            <div>
+
+                                <label for="analysisRadius">
+                                    Analysis radius
+                                </label>
+
+                                <strong id="analysisRadiusValue">
+                                    1.5 km
+                                </strong>
+
+                            </div>
+
+
+                            <input
+                                id="analysisRadius"
+                                name="analysisRadius"
+                                type="range"
+                                min="500"
+                                max="5000"
+                                step="500"
+                                value="1500"
+                            >
+
+
+                            <div class="radius-labels">
+
+                                <span>
+                                    500 m
+                                </span>
+
+                                <span>
+                                    5 km
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- NEARBY COMMERCIAL DRIVERS -->
+
+                    <div class="intelligence-card">
+
+
+                        <div class="intelligence-header">
+
+
+                            <div>
+
+                                <p class="eyebrow">
+                                    LOCATION INTELLIGENCE
+                                </p>
+
+                                <h3>
+                                    Nearby Commercial Drivers
+                                </h3>
+
+                            </div>
+
+
+                            <span
+                                class="analysis-state"
+                                id="analysisState"
+                            >
+
+                                Waiting for location
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div class="driver-grid">
+
+
+                            <div class="driver-card">
+
+                                <i data-lucide="coffee"></i>
+
+                                <span>
+                                    Competitors
+                                </span>
+
+                                <strong id="competitorCount">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="driver-card">
+
+                                <i data-lucide="shopping-bag"></i>
+
+                                <span>
+                                    Malls / Retail
+                                </span>
+
+                                <strong id="mallCount">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="driver-card">
+
+                                <i data-lucide="school"></i>
+
+                                <span>
+                                    Schools
+                                </span>
+
+                                <strong id="schoolCount">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="driver-card">
+
+                                <i data-lucide="bus-front"></i>
+
+                                <span>
+                                    Transport
+                                </span>
+
+                                <strong id="transportCount">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="location-metrics">
+
+
+                            <div>
+
+                                <span>
+                                    Estimated Foot Traffic
+                                </span>
+
+                                <strong id="footTrafficScore">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Accessibility Score
+                                </span>
+
+                                <strong id="accessibilityScore">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <p class="demo-data-note">
+
+                            Nearby results may be connected to Google Places,
+                            Mapbox, Foursquare, or your own mapping API.
+
+                        </p>
+
+
+                    </div>
+
+
+                    <!-- VIABILITY SCORE -->
+
+                    <div
+                        class="viability-card"
+                        id="viabilityCard"
+                    >
+
+
+                        <div
+                            class="viability-score-ring"
+                            id="scoreRing"
+                        >
+
+                            <strong id="viabilityScore">
+                                —
+                            </strong>
+
+                            <span>
+                                / 100
+                            </span>
+
+                        </div>
+
+
+                        <div class="viability-copy">
+
+                            <p class="eyebrow">
+                                WEIGHTED VIABILITY
+                            </p>
+
+                            <h3 id="viabilityStatus">
+                                Not Yet Assessed
+                            </h3>
+
+                            <p id="viabilityExplanation">
+
+                                Complete the site information and run
+                                the viability assessment.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- SCORING BREAKDOWN -->
+
+                    <div class="score-breakdown-card">
+
+
+                        <h3>
+                            Scoring Breakdown
+                        </h3>
+
+
+                        <div class="score-breakdown-row">
+
+                            <span>
+                                Foot Traffic
+                            </span>
+
+                            <strong id="footTrafficBreakdown">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-breakdown-row">
+
+                            <span>
+                                Accessibility
+                            </span>
+
+                            <strong id="accessibilityBreakdown">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-breakdown-row">
+
+                            <span>
+                                Competitor Density
+                            </span>
+
+                            <strong id="competitorBreakdown">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-breakdown-row">
+
+                            <span>
+                                Lease Affordability
+                            </span>
+
+                            <strong id="leaseBreakdown">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-breakdown-row">
+
+                            <span>
+                                Property Suitability
+                            </span>
+
+                            <strong id="propertyBreakdown">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </aside>
+
+
+            </div>
+
+
+            <!-- FORM FOOTER -->
+
+            <div class="proposal-footer">
+
+
+                <div class="proposal-progress">
+
+                    <i data-lucide="shield-check"></i>
+
+                    <span>
+
+                        A unique Site ID will be generated after the
+                        site application is successfully submitted.
+
+                    </span>
+
+                </div>
+
+
+                <div class="proposal-actions">
+
+
+                    <button
+                        class="secondary-btn"
+                        type="button"
+                        data-close-modal
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        class="outline-btn"
+                        id="assessSiteBtn"
+                        type="button"
+                    >
+
+                        <i data-lucide="scan-search"></i>
+
+                        Assess Viability
+
+                    </button>
+
+
+                    <button
+                        class="primary-btn"
+                        id="submitProposalBtn"
+                        type="submit"
+                        disabled
+                    >
+
+                        <i data-lucide="send"></i>
+
+                        Submit Proposal
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
 SITE DETAILS MODAL
-=========================================== -->
+=================================================== -->
 
 <div
     class="modal detail-modal"
     id="siteModal"
     aria-hidden="true"
     role="dialog"
-    aria-modal="true">
+    aria-modal="true"
+>
 
     <div class="modal-card">
 
+
         <div class="detail-header">
+
 
             <button
                 class="modal-close"
-                data-close-modal>
+                type="button"
+                data-close-modal
+                aria-label="Close Site Details"
+            >
 
                 <i data-lucide="x"></i>
 
             </button>
 
+
             <p
                 class="eyebrow"
-                id="siteId">
+                id="siteId"
+            >
 
                 SITE APPLICATION
 
             </p>
 
+
             <h2 id="siteTitle">
-
                 Proposed Site
-
             </h2>
+
 
             <div id="siteHeaderMeta"></div>
 
+
         </div>
+
 
         <div
             class="detail-body"
-            id="siteDetail">
+            id="siteDetail"
+        ></div>
 
-        </div>
 
     </div>
 
 </div>
 
-<!-- ==========================================
-SMART ANALYSIS MODAL
-=========================================== -->
+
+<!-- ==================================================
+SMART ANALYSIS CONFIRMATION MODAL
+=================================================== -->
 
 <div
     class="modal"
     id="analysisModal"
-    aria-hidden="true">
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+>
 
     <div class="modal-card">
 
+
         <button
             class="modal-close"
-            data-close-modal>
+            type="button"
+            data-close-modal
+            aria-label="Close Analysis"
+        >
 
             <i data-lucide="x"></i>
 
         </button>
+
 
         <div class="modal-icon">
 
@@ -269,73 +1697,179 @@ SMART ANALYSIS MODAL
 
         </div>
 
+
         <p class="eyebrow">
-
             SMART SITE ANALYSIS
-
         </p>
 
+
         <h2>
-
-            Generate AI Recommendation?
-
+            Generate Site Recommendation?
         </h2>
+
 
         <p>
 
-            Bee-to-Bee Operations will evaluate the
-            proposed location using commercial,
-            demographic, and competitor intelligence.
+            Bee-to-Bee Operations will evaluate the proposed
+            location using lease affordability, property dimensions,
+            competitor density, accessibility, commercial drivers,
+            and estimated foot traffic.
 
         </p>
 
+
         <div class="modal-actions">
+
 
             <button
                 class="secondary-btn"
-                data-close-modal>
+                type="button"
+                data-close-modal
+            >
 
                 Cancel
 
             </button>
 
+
             <button
                 class="primary-btn"
-                id="runAnalysis">
+                id="runAnalysis"
+                type="button"
+            >
 
                 Run Analysis
 
             </button>
 
+
         </div>
+
 
     </div>
 
 </div>
 
-<!-- ==========================================
-TOAST
-=========================================== -->
+
+<!-- ==================================================
+SUBMISSION SUCCESS MODAL
+=================================================== -->
+
+<div
+    class="modal"
+    id="proposalSuccessModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+>
+
+    <div class="modal-card success-modal-card">
+
+
+        <div class="success-icon">
+
+            <i data-lucide="circle-check-big"></i>
+
+        </div>
+
+
+        <p class="eyebrow">
+            APPLICATION CREATED
+        </p>
+
+
+        <h2>
+            Site Proposal Submitted
+        </h2>
+
+
+        <p>
+
+            The new site application has been recorded
+            successfully.
+
+        </p>
+
+
+        <div class="generated-site-id">
+
+            <span>
+                Generated Site ID
+            </span>
+
+            <strong id="generatedSiteId">
+                SITE-0000
+            </strong>
+
+        </div>
+
+
+        <div class="submitted-viability">
+
+            <span>
+                Viability Status
+            </span>
+
+            <strong id="submittedViabilityStatus">
+                Moderate Potential
+            </strong>
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            id="viewSubmittedSiteBtn"
+            type="button"
+        >
+
+            View Application
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+TOAST NOTIFICATION
+=================================================== -->
 
 <div
     class="toast"
-    id="toast">
+    id="toast"
+    role="status"
+    aria-live="polite"
+>
 
     <i data-lucide="circle-check"></i>
 
     <span>
-
         Action completed.
-
     </span>
 
 </div>
+
+
+<!-- ==================================================
+SCRIPTS
+=================================================== -->
+
+<!-- LEAFLET MAP JAVASCRIPT -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+<!-- EXISTING DASHBOARD FILES -->
 
 <script src="js/dashboard-utils.js"></script>
 
 <script src="js/business-development-data.js"></script>
 
 <script src="js/business-development.js"></script>
+
 
 </body>
 
