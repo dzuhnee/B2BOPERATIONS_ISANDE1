@@ -1830,3 +1830,58 @@ table td:nth-child(4)>span {
 .hidden-page {
     display:none;
 }
+
+.notification-wrapper{
+    position:relative;
+}
+
+.notification-dropdown{
+    position:absolute;
+    top:55px;
+    right:0;
+    width:360px;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    border:1px solid #ececec;
+    display:none;
+    z-index:1000;
+}
+
+.notification-dropdown.show{
+    display:block;
+}
+
+.notification-header{
+    padding:15px 18px;
+    border-bottom:1px solid #eee;
+    font-size:.95rem;
+}
+
+.notification-item{
+    display:flex;
+    gap:12px;
+    padding:16px 18px;
+}
+
+.notification-item i{
+    color:#9d0e25;
+    width:22px;
+    height:22px;
+    margin-top:3px;
+}
+
+.notification-item p{
+    margin:4px 0;
+    font-size:.87rem;
+    color:#666;
+    line-height:1.4;
+}
+
+.notification-item small{
+    color:#999;
+}
+
+.notification-item.unread{
+    background:#fff8f5;
+}

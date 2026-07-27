@@ -48,7 +48,7 @@ Pending Applications
 </span>
 
 <strong>
-48
+10
 </strong>
 
 <small>
@@ -74,7 +74,7 @@ Approved Sites
 </span>
 
 <strong>
-31
+6
 </strong>
 
 <small>
@@ -100,7 +100,7 @@ Construction Phase
 </span>
 
 <strong>
-18
+4
 </strong>
 
 <small>
@@ -127,7 +127,7 @@ Upcoming Launches
 </span>
 
 <strong>
-7
+2
 </strong>
 
 <small>
@@ -174,7 +174,7 @@ Current expansion progress
 <div class="pipeline-step active">
 
 <strong>
-48
+10
 </strong>
 
 <span>
@@ -188,7 +188,7 @@ Applications
 <div class="pipeline-step active">
 
 <strong>
-41
+9
 </strong>
 
 <span>
@@ -203,7 +203,7 @@ Approval
 <div class="pipeline-step active">
 
 <strong>
-35
+8
 </strong>
 
 <span>
@@ -218,7 +218,7 @@ Engineering
 <div class="pipeline-step">
 
 <strong>
-28
+6
 </strong>
 
 <span>
@@ -233,7 +233,7 @@ Construction
 <div class="pipeline-step">
 
 <strong>
-19
+4
 </strong>
 
 <span>
@@ -248,7 +248,7 @@ Training
 <div class="pipeline-step">
 
 <strong>
-12
+3
 </strong>
 
 <span>
@@ -263,7 +263,7 @@ Launch
 <div class="pipeline-step">
 
 <strong>
-7
+1
 </strong>
 
 <span>
@@ -381,12 +381,12 @@ Active Franchises
 
 
 <strong>
-126
+10
 </strong>
 
 
 <small>
-Across 18 regions
+Across 3 regions
 </small>
 
 
@@ -513,11 +513,11 @@ Operational performance by region
 <div class="branch-name">
 
 <strong>
-Metro Manila
+Calumpit, Bulacan
 </strong>
 
 <span>
-42 branches
+8 branches
 </span>
 
 </div>
@@ -562,11 +562,11 @@ Excellent
 <div class="branch-name">
 
 <strong>
-Central Luzon
+Mexico, Pampanga
 </strong>
 
 <span>
-31 branches
+6 branches
 </span>
 
 </div>
@@ -838,7 +838,7 @@ Resolved
 
 
 <strong>
-18
+9
 </strong>
 
 
@@ -1124,7 +1124,7 @@ Generated Reports
 
 
 <strong>
-26
+9
 </strong>
 
 
