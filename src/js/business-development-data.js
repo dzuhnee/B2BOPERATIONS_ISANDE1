@@ -229,13 +229,13 @@ window.businessDevelopmentData = {
 
             id: "SP-2026-027",
 
-            location: "Antipolo Vista Mall",
+            location: "Mexico Shell",
 
-            municipality: "Antipolo City, Rizal",
+            municipality: "Mexico, Pampanga",
 
 
             status: "Ready for Submission",
-
+            image: "images/mexico-pampanga.jpg",
 
             submittedDate: "July 10, 2026",
 
@@ -359,18 +359,20 @@ window.businessDevelopmentData = {
 
             location:
 
-            "SM City Fairview Annex",
+            "Pulilan Junction DRT Highway",
 
 
             municipality:
 
-            "Quezon City",
+            "Pulilan, City",
 
 
 
             status:
 
             "Under Analysis",
+
+            image: "images/pulilan.jpeg",
 
 
 
@@ -500,19 +502,23 @@ window.businessDevelopmentData = {
 
             location:
 
-            "Marikina Riverbanks",
+            "Calumpit Mc Arthur Highway",
 
 
 
             municipality:
 
-            "Marikina City",
+            "Calumpit, Bulacan",
 
 
 
             status:
 
             "Needs Validation",
+
+            image: "images/calumpit.jpeg",
+
+            
 
 
 
@@ -655,6 +661,8 @@ window.businessDevelopmentData = {
             status:
 
             "Submitted",
+
+            image: "images/bocaue.jpeg",
 
 
 
@@ -804,6 +812,8 @@ window.businessDevelopmentData = {
     status:
 
     "Archived",
+
+    image: "images/balagtas.jpg",
 
 
 
@@ -958,6 +968,8 @@ window.businessDevelopmentData = {
 
     "Juan Dela Cruz",
 
+    image: "images/sjdm.webp",
+
 
 
     category:
@@ -1099,6 +1111,8 @@ window.businessDevelopmentData = {
     submittedBy:
 
     "Juan Dela Cruz",
+
+    image: "images/meyc.jpeg",
 
 
 
