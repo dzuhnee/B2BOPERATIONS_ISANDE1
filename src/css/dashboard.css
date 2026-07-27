@@ -1670,13 +1670,22 @@ table td:nth-child(4)>span {
 }
 .application-card {
     border:1px solid #eee;
-    padding:20px;
     border-radius:16px;
-    transition:.2s;
+    overflow:hidden;
+    padding:0;
 }
 .application-card:hover {
     transform:translateY(-4px);
     box-shadow:    0 8px 20px rgba(0,0,0,.08);
+}
+
+.application-card h3,
+.application-card p,
+.application-card .status,
+.application-card .score,
+.application-card .location-summary {
+    margin-left:20px;
+    margin-right:20px;
 }
 .card-top {
     display:flex;
@@ -1831,7 +1840,6 @@ table td:nth-child(4)>span {
     display:none;
 }
 
-<<<<<<< HEAD
 .notification-wrapper{
     position:relative;
 }
@@ -1885,32 +1893,43 @@ table td:nth-child(4)>span {
 
 .notification-item.unread{
     background:#fff8f5;
-=======
 
-.site-photo {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 14px;
-    display: block;
+/* FIX SITE APPLICATION IMAGES */
+
+.application-card {
+    overflow:hidden;
 }
 
-.site-gallery {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 14px;
-    margin-bottom: 15px;
+/* FORCE ALL BUSINESS DEV IMAGES SAME SIZE */
+
+.application-card {
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
 }
 
-
-.site-gallery img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+.application-card .site-photo,
+.application-card .site-gallery {
+    width:100%;
+    height:260px !important;
+    flex:none;
 }
 
+.application-card .site-photo {
+    object-fit:cover;
+    display:block;
+}
+
+.application-card .site-gallery {
+    overflow:hidden;
+}
+
+.application-card .site-gallery img {
+    width:100%;
+    height:260px !important;
+    object-fit:cover;
+    display:block;
+}
 
 /*location biz dev */
 .location-search-wrapper{
@@ -1933,5 +1952,4 @@ table td:nth-child(4)>span {
 
 .location-suggestion:hover{
     background:#f5f5f5;
->>>>>>> 299ed8b35d16dd9e443e415385756b5a15cfc7b7
 }
