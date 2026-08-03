@@ -616,7 +616,8 @@ td:first-child span {
     align-items:center;
     justify-content:center;
     padding:20px;
-    z-index:50
+    /* Review dialogs must sit above the fixed desktop sidebar and topbar. */
+    z-index:10000!important
 }
 .modal.open {
     display:flex

@@ -1,7 +1,7 @@
 document.getElementById('loginForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const role = document.getElementById('role').value;
+    const role = document.getElementById('role').value.trim();
     const message = document.getElementById('loginMessage');
 
     if (role === 'Supply Chain Officer') {
@@ -20,6 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 
     const departmentRoles = {
         'Operations Head': ['Operations', 'Daniel Reyes'],
+        'Department Head': ['Operations', 'Daniel Reyes'],
         'Legal Head': ['Legal', 'Atty. Maya Santos'],
         'Finance Head': ['Finance', 'Carlo Lim'],
         'Engineering Head': ['Engineering', 'Engr. Nina Cruz']
