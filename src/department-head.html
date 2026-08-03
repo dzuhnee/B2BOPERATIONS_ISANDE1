@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Department Approval Dashboard | Bee-to-Bee Operations</title>
+<title>Operations Head Dashboard | Bee-to-Bee Operations</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -37,7 +37,7 @@
 
 <button class="nav-item" data-section="proposals">
 <i data-lucide="files"></i>
-<span>Assigned Proposals</span>
+<span id="proposalNavLabel">Assigned Proposals</span>
 <em id="proposalCount">0</em>
 </button>
 
@@ -49,7 +49,7 @@
 <button class="nav-item" data-section="attention">
 <i data-lucide="triangle-alert"></i>
 <span>Needs Attention</span>
-<em class="danger">3</em>
+<em class="danger" id="attentionCount">0</em>
 </button>
 
 </nav>

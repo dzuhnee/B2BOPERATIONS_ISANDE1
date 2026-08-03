@@ -18,10 +18,18 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         return;
     }
 
-    if (role === 'Department Head') {
+    const departmentRoles = {
+        'Operations Head': ['Operations', 'Daniel Reyes'],
+        'Legal Head': ['Legal', 'Atty. Maya Santos'],
+        'Finance Head': ['Finance', 'Carlo Lim'],
+        'Engineering Head': ['Engineering', 'Engr. Nina Cruz']
+    };
+
+    if (departmentRoles[role]) {
+        const [department, name] = departmentRoles[role];
         localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', 'Daniel Reyes');
-        localStorage.setItem('b2bDepartment', localStorage.getItem('b2bDepartment') || 'Operations');
+        localStorage.setItem('b2bUserName', name);
+        localStorage.setItem('b2bDepartment', department);
         window.location.href = 'department-head.html';
         return;
     }

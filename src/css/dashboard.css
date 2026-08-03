@@ -1211,6 +1211,46 @@ button:disabled {
 .attention-card.danger {
     border-left-color:var(--red)
 }
+.attention-card.info {
+    border-left-color:#4d8fd8
+}
+.attention-card.success {
+    border-left-color:var(--green)
+}
+.focus-panel .panel-heading {
+    align-items:flex-start
+}
+.focus-count {
+    flex:none;
+    padding:6px 9px;
+    border-radius:20px;
+    background:var(--soft-red);
+    color:var(--red);
+    font-size:10px;
+    font-weight:600
+}
+.focus-grid {
+    padding:18px
+}
+.focus-card-top {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:12px
+}
+.focus-card-top>svg {
+    width:19px;
+    color:var(--red)
+}
+.focus-grid .review-btn {
+    display:inline-flex;
+    align-items:center;
+    gap:5px
+}
+.focus-grid .review-btn svg {
+    width:13px
+}
 .attention-card h3,.batch-card h3,.readiness-card h3 {
     font-size:12px
 }

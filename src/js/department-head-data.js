@@ -1,5 +1,43 @@
 window.departmentHeadData={
   users:{Operations:{name:'Daniel Reyes',initials:'DR',email:'daniel.reyes@5joys.com'},Legal:{name:'Atty. Maya Santos',initials:'MS',email:'maya.santos@5joys.com'},Finance:{name:'Carlo Lim',initials:'CL',email:'carlo.lim@5joys.com'},Engineering:{name:'Engr. Nina Cruz',initials:'NC',email:'nina.cruz@5joys.com'}},
+  profiles:{
+    Operations:{
+      eyebrow:'OPERATIONS APPROVAL WORKSPACE',
+      title:'Operations Head Dashboard',
+      subtitle:'Coordinate site viability, service readiness, and the final operating recommendation.',
+      focusTitle:'Operational Readiness Focus',
+      focusSubtitle:'Launch risks that need an Operations decision',
+      metrics:[['Assigned Proposals','files','red','6','Active site pipeline'],['Pending Review','clock-3','yellow','2','Awaiting your review'],['Revision Requested','rotate-ccw','orange','1','Needs updated evidence'],['Approved','badge-check','green','1','Ready for next stage'],['Overdue Reviews','clock-alert','red','1','Escalate today']],
+      focus:[['SM City Fairview Annex','Back-of-house plan needs revision before operating endorsement.','Revision Requested','warning'],['Marikina Riverbanks','Validate flood mitigation and delivery access assumptions.','Under Review','info'],['Antipolo Vista Mall','Zoning clearance is holding the launch recommendation.','Overdue','danger']]
+    },
+    Legal:{
+      eyebrow:'LEGAL CONTROL CENTER',
+      title:'Legal Head Dashboard',
+      subtitle:'Protect every site decision with complete ownership, lease, zoning, and permit evidence.',
+      focusTitle:'Legal Due Diligence Focus',
+      focusSubtitle:'Documents and exceptions that can expose the business to risk',
+      metrics:[['Legal Reviews','scale','red','6','Active legal queue'],['Pending Verification','file-check-2','yellow','3','Documents to validate'],['Contract Exceptions','file-warning','orange','2','Require legal position'],['Cleared for Endorsement','shield-check','green','3','No material exceptions'],['Overdue Reviews','clock-alert','red','1','Escalate today']],
+      focus:[['Antipolo Vista Mall','Zoning clearance is missing and the legal review is overdue.','Overdue','danger'],['Ayala Malls Manila Bay','Lease information is pending final verification.','Needs Clarification','warning'],['Circuit Makati','Ownership and lease documents are cleared with no material exceptions.','Approved','success']]
+    },
+    Finance:{
+      eyebrow:'FINANCE CONTROL CENTER',
+      title:'Finance Head Dashboard',
+      subtitle:'Validate investment exposure, returns, operating costs, and budget fit before commitment.',
+      focusTitle:'Financial Review Focus',
+      focusSubtitle:'Investment decisions and assumptions that need Finance attention',
+      metrics:[['Financial Reviews','wallet-cards','red','6','Active finance queue'],['Models Pending','calculator','yellow','2','Awaiting validation'],['Budget Exceptions','badge-dollar-sign','orange','1','Needs escalation'],['Investment Cleared','badge-check','green','3','Passed hurdle rate'],['Overdue Reviews','clock-alert','red','0','No overdue finance reviews']],
+      focus:[['Evia Lifestyle Center','Fit-out contribution is not finalized; confirm total investment exposure.','Pending Review','warning'],['Ayala Malls Manila Bay','Premium lease rate requires a five-year rent-cap scenario.','Needs Clarification','warning'],['Circuit Makati','Returns exceed the investment hurdle and finance approval is complete.','Approved','success']]
+    },
+    Engineering:{
+      eyebrow:'ENGINEERING CONTROL CENTER',
+      title:'Engineering Head Dashboard',
+      subtitle:'Confirm site dimensions, utilities, safety, and facility compliance before construction handoff.',
+      focusTitle:'Technical Readiness Focus',
+      focusSubtitle:'Site evidence and buildability issues that need an Engineering decision',
+      metrics:[['Technical Reviews','ruler','red','6','Active engineering queue'],['Site Evidence Pending','file-check-2','yellow','2','Assessments to validate'],['Safety Exceptions','triangle-alert','orange','1','Needs mitigation plan'],['Build-Ready Sites','hard-hat','green','2','Cleared for handoff'],['Overdue Reviews','clock-alert','red','0','No overdue engineering reviews']],
+      focus:[['Marikina Riverbanks','Flood mitigation and drainage evidence require technical validation.','Under Review','info'],['SM City Fairview Annex','Revised back-of-house layout is incomplete.','Revision Requested','warning'],['Circuit Makati','Site, utilities, and facility requirements are compliant.','Approved','success']]
+    }
+  },
   requirements:{
     Operations:['Regional expansion alignment','Operational capacity','Staffing feasibility','Accessibility and service potential','Store operating suitability'],
     Legal:['Ownership verification','Lease agreement validity','Zoning compliance','Permit requirements','Contractual risks'],
