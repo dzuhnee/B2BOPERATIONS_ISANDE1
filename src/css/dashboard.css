@@ -622,6 +622,18 @@ td:first-child span {
 .modal.open {
     display:flex
 }
+@media(min-width:801px) {
+    /* The proposal review belongs to the desktop content viewport. Keeping
+       it below the topbar and beside the sidebar prevents either fixed
+       element from cropping the card at 100% browser zoom. */
+    .detail-modal {
+        top:78px;
+        left:260px;
+        align-items:flex-start;
+        justify-content:flex-start;
+        padding:20px 20px 20px 28px
+    }
+}
 .modal-card {
     width:min(510px,100%);
     background:white;
@@ -1013,6 +1025,11 @@ td:first-child span {
     max-height:90vh;
     overflow:auto;
     padding:0
+}
+@media(min-width:801px) {
+    .detail-modal .modal-card {
+        max-height:calc(100vh - 118px)
+    }
 }
 .detail-header {
     padding:24px 28px 19px;
