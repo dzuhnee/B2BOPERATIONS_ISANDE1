@@ -41,21 +41,7 @@
                 <label for="password">Password</label>
                 <input id="password" type="password" placeholder="••••••••" required>
 
-                <label for="role">User Role</label>
-                <select id="role" required>
-                    <option value="">Select your role</option>
-                    <option>Executive Management</option>
-                    <option>Business Development Officer</option>
-                    <option value="Operations Head">Operations Head</option>
-                    <option value="Legal Head">Legal Head</option>
-                    <option value="Finance Head">Finance Head</option>
-                    <option value="Engineering Head">Engineering Head</option>
-                    <option value="HR Specialist">HR Specialist</option>
-                    <option>Store Trainer</option>
-                    <option>Store Manager</option>
-                    <option value="Area Manager">Area Manager</option>
-                    <option>Supply Chain Officer</option>
-                </select>
+                
 
                 <p class="login-message" id="loginMessage" aria-live="polite"></p>
                 <button type="submit">LOGIN</button>
@@ -64,5 +50,10 @@
     </div>
 </div>
 <script src="js/login.js?v=20260804"></script>
-</body>
+<script>
+const USERS={
+"sophia.ramirez@5joys.com":{name:"Sophia Ramirez",role:"Business Development",page:"business-development.html"},"carlos.reyes@5joys.com":{name:"Carlos Reyes",role:"Operations Head",page:"operations-head.html"},"angela.santos@5joys.com":{name:"Angela Santos",role:"HR Specialist",page:"hr-specialist.html"},"michael.dela.cruz@5joys.com":{name:"Michael Dela Cruz",role:"Store Trainer",page:"store-trainer.html"},"ruth.reyes@5joys.com":{name:"Ruth Reyes",role:"Store Manager",page:"store-manager.html"},"joel.navarro@5joys.com":{name:"Joel Navarro",role:"Supply Chain Officer",page:"supply-chain.html"},"bea.hernandez@5joys.com":{name:"Bea Hernandez",role:"Area Manager",page:"area-manager.html"},"ruth.torres@5joys.com":{name:"Ruth Torres",role:"Store Manager",page:"store-manager.html"},"engr.nina.cruz@5joys.com":{name:"Engr. Nina Cruz",role:"Engineering Head",page:"engineering-head.html"},"maria.santos@5joys.com":{name:"Maria Santos",role:"Executive Management",page:"executive-management.html"},"carlo.lim@5joys.com":{name:"Carlo Lim",role:"Finance Head",page:"finance-head.html"},"atty.maya.santos@5joys.com":{name:"Atty. Maya Santos",role:"Legal Head",page:"legal-head.html"}
+};
+document.addEventListener('DOMContentLoaded',()=>{const f=document.querySelector('form');if(!f)return;let msg=document.createElement('p');msg.id='loginMessage';msg.style.color='#E31937';f.appendChild(msg);f.addEventListener('submit',e=>{e.preventDefault();const email=document.querySelector('input[type=email]').value.trim().toLowerCase();const u=USERS[email];if(!u){msg.textContent='Unauthorized User';return;}localStorage.setItem('loggedInUser',JSON.stringify({email:email,name:u.name,role:u.role}));location.href=u.page;});});
+</script></body>
 </html>

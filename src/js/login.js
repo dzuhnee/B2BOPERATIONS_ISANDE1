@@ -57,7 +57,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 
     if (role === 'HR Specialist') {
         localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', 'Camille Navarro');
+        localStorage.setItem('b2bUserName', 'Angela Santos');
         window.location.href = 'hr-specialist.html';
         return;
     }

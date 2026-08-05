@@ -225,7 +225,7 @@ Log Out
     <div>
     
     <strong>
-    Camille Navarro
+    Angela Santos
     </strong>
     
     <span>
@@ -460,6 +460,6 @@ Changes saved.
 
 
 
-</body>
+<script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="HR Specialist"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
 
 </html>
