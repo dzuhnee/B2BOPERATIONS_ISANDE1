@@ -3,6 +3,7 @@ const sidebar = document.getElementById('sidebar');
 const modal = document.getElementById('recordModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalEyebrow = document.getElementById('modalEyebrow');
+const modalDescription = document.getElementById('modalDescription');
 const modalBody = document.getElementById('modalBody');
 const toast = document.getElementById('toast');
 
@@ -29,12 +30,36 @@ const issues = [
   {id:3, title:'Air-conditioning test produced abnormal noise', category:'Equipment', owner:'Technical Team', priority:'Medium', reported:'Jul 19, 11:40 AM', status:'Resolved', details:'Loose panel was secured and the unit was retested.'}
 ];
 
+const dailyOperationsReport = {
+  reportId:'DOR-2026-0720-001',
+  branch:'BR-001 — Pulilan, Bulacan',
+  reportingDate:'2026-07-20',
+  submissionTime:'08:42',
+  salesStatus:'Above Target',
+  salesSummary:'₱128,450.00',
+  attendancePresent:18,
+  attendanceScheduled:19,
+  checklistComplete:'Yes',
+  managerNote:'Operations remained stable. The staffing gap was resolved before the evening peak.',
+  saved:false
+};
+
+const operationalLog = [
+  {time:'07:00',activity:'Opening checklist and food-safety controls completed.',status:'Complete',evidence:'EV-0720-001'},
+  {time:'10:30',activity:'Peak service period completed within target ticket time.',status:'Normal',evidence:'LOG-0720-003'},
+  {time:'13:15',activity:'One crew member absent; reliever assigned.',status:'Resolved',evidence:'ATT-0720-001'},
+  {time:'16:20',activity:'Cold-storage temperature verification completed.',status:'Compliant',evidence:'EV-0720-007'}
+];
+
+let operationalLogSaved = false;
+
 let branchStage = 'pre-launch';
 let clearanceStatus = 'Not Yet Submitted';
 let activeSection = 'overview';
 let activeModal = null;
 
 const icon = name => `<i data-lucide="${name}"></i>`;
+const escapeStoreHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]));
 const statusClass = status => ({Complete:'strong',Resolved:'strong',Approved:'strong','In Progress':'good',Pending:'attention',Open:'attention',Submitted:'good'}[status] || 'attention');
 const priorityClass = priority => ({Critical:'high',High:'high',Medium:'medium',Low:'low'}[priority] || 'medium');
 const readinessPercent = () => Math.round(readinessItems.filter(item => item.status === 'Complete').length / readinessItems.length * 100);
@@ -82,7 +107,29 @@ function clearanceTemplate(){ const allowed=canRequestClearance(); return `${hea
 <div class="stats-grid"><article class="stat-card"><div class="stat-icon green">${icon('wrench')}</div><div><span>Equipment & Systems</span><strong>${Math.round(readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)&&i.status==='Complete').length/readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)).length*100)}%</strong><small>Installation and testing</small></div></article><article class="stat-card"><div class="stat-icon yellow">${icon('building-2')}</div><div><span>Facility</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Facility'&&i.status==='Complete').length/readinessItems.filter(i=>i.category==='Facility').length*100)}%</strong><small>Preparation and signage</small></div></article><article class="stat-card"><div class="stat-icon orange">${icon('users')}</div><div><span>Staffing</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Staffing'&&i.status==='Complete').length/Math.max(1,readinessItems.filter(i=>i.category==='Staffing').length)*100)}%</strong><small>Certified crew assignment</small></div></article><article class="stat-card"><div class="stat-icon red">${icon('triangle-alert')}</div><div><span>Unresolved Issues</span><strong>${openIssues().length}</strong><small>${issues.filter(i=>i.priority==='Critical'&&i.status!=='Resolved').length} critical blocker</small></div></article></div>
 <div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h2>Clearance Validation</h2><p>Requirements checked automatically by the prototype</p></div></div><div class="branch-list"><article class="branch-row"><div class="branch-rank">${mandatoryComplete()===mandatoryTotal()?icon('check'):icon('x')}</div><div class="branch-name"><strong>Mandatory requirements completed</strong><span>${mandatoryComplete()} of ${mandatoryTotal()} verified</span></div><span class="status ${mandatoryComplete()===mandatoryTotal()?'strong':'attention'}">${mandatoryComplete()===mandatoryTotal()?'Passed':'Incomplete'}</span></article><article class="branch-row"><div class="branch-rank">${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?icon('check'):icon('x')}</div><div class="branch-name"><strong>No unresolved critical issue</strong><span>Critical launch blockers must be closed</span></div><span class="status ${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?'strong':'attention'}">${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?'Passed':'Blocked'}</span></article><article class="branch-row"><div class="branch-rank">${icon('file-check-2')}</div><div class="branch-name"><strong>Readiness summary generated</strong><span>Checklist, evidence, issues, and responsible teams included</span></div><span class="status strong">Ready</span></article></div></section><section class="panel"><div class="panel-heading"><div><h2>Opening Clearance Request</h2><p>Submit once all validation requirements pass</p></div></div><div class="settings-form"><label>Current Status</label><input value="${clearanceStatus}" disabled><label>Proposed Opening Date</label><input type="date" value="2026-07-25"><label>Store Manager Remarks</label><textarea id="clearanceRemarks" rows="5" placeholder="Add a short readiness summary..."></textarea><button class="primary-btn" id="requestClearance" ${!allowed||clearanceStatus!=='Not Yet Submitted'?'disabled':''}>${icon('send')} ${clearanceStatus==='Not Yet Submitted'?'Request Opening Clearance':'Request Submitted'}</button>${!allowed?'<small>Complete all mandatory requirements and resolve critical issues to enable submission.</small>':''}</div></section></div>`; }
 
-function postLaunchTemplate(){ const locked=branchStage!=='post-launch'; return `${header('AFTER OPENING','Post-Launch Reports','Submit operational information required by the Area Manager without duplicating POS or ERP functions.','')}${locked?`<div class="alert-banner"><div class="alert-icon">${icon('lock-keyhole')}</div><div><strong>Post-launch reporting is currently locked</strong><span>This section becomes available after opening clearance is approved.</span></div><button data-demo-open>Preview Mode</button></div>`:''}<div class="stats-grid"><article class="stat-card"><div class="stat-icon green">${icon('file-text')}</div><div><span>Daily Operations Report</span><strong>${locked?'Locked':'Draft'}</strong><small>Submit branch operational summary</small></div></article><article class="stat-card"><div class="stat-icon yellow">${icon('notebook-tabs')}</div><div><span>Operational Log</span><strong>${locked?'—':'3'}</strong><small>Today’s recorded updates</small></div></article><article class="stat-card"><div class="stat-icon orange">${icon('triangle-alert')}</div><div><span>Incident Reports</span><strong>${locked?'—':'1'}</strong><small>Operational issues sent upward</small></div></article><article class="stat-card"><div class="stat-icon red">${icon('clipboard-list')}</div><div><span>Corrective Actions</span><strong>${locked?'—':'2'}</strong><small>Assigned by Area Manager</small></div></article></div><section class="panel"><div class="panel-heading"><div><h2>Reporting Actions</h2><p>Lightweight workflows connected to Area Manager review</p></div></div><div class="branch-list">${[['Daily Operations Report','Summarize compliance, service concerns, and operational notes','file-up'],['Operational Log','Record meaningful daily branch updates','notebook-pen'],['Incident Report','Escalate equipment, staffing, customer, or supply issues','triangle-alert'],['Corrective Actions','View and update tasks assigned by the Area Manager','clipboard-check']].map((item,index)=>`<article class="branch-row"><div class="branch-rank">${icon(item[2])}</div><div class="branch-name"><strong>${item[0]}</strong><span>${item[1]}</span></div><button class="review-btn" data-post-action="${index}" ${locked?'disabled':''}>${index===3?'View':'Open'}</button></article>`).join('')}</div></section>`; }
+function postLaunchTemplate(){
+  const locked=branchStage!=='post-launch';
+  const reportStatus=dailyOperationsReport.saved?'Updated':'Draft';
+  const logStatus=operationalLogSaved?'Updated':String(operationalLog.length);
+  const actions=[
+    {title:'Daily Operations Report',description:'Encode Pulilan sales, attendance, operational controls, and the Store Manager note.',icon:'file-up',button:'Open'},
+    {title:'Operational Log',description:'Maintain the four timestamped Pulilan operating-day entries and evidence references.',icon:'notebook-pen',button:'Open'},
+    {title:'Incident Report',description:'No Pulilan incident was reported for July 20, 2026.',icon:'shield-check',button:'No Incident',unavailable:true},
+    {title:'Corrective Actions',description:'View and update tasks assigned by the Area Manager.',icon:'clipboard-check',button:'View'}
+  ];
+
+  return `${header('AFTER OPENING','Post-Launch Reports','Submit operational information required by the Area Manager without duplicating POS or ERP functions.','')}
+    ${locked?`<div class="alert-banner"><div class="alert-icon">${icon('lock-keyhole')}</div><div><strong>Post-launch reporting is currently locked</strong><span>This section becomes available after opening clearance is approved.</span></div><button data-demo-open>Preview Mode</button></div>`:''}
+    <div class="stats-grid">
+      <article class="stat-card"><div class="stat-icon green">${icon('file-text')}</div><div><span>Daily Operations Report</span><strong>${locked?'Locked':reportStatus}</strong><small>DOR-2026-0720-001</small></div></article>
+      <article class="stat-card"><div class="stat-icon yellow">${icon('notebook-tabs')}</div><div><span>Operational Log</span><strong>${locked?'—':logStatus}</strong><small>Four recorded updates</small></div></article>
+      <article class="stat-card"><div class="stat-icon orange">${icon('shield-check')}</div><div><span>Incident Reports</span><strong>${locked?'—':'0'}</strong><small>No Pulilan incident recorded</small></div></article>
+      <article class="stat-card"><div class="stat-icon red">${icon('clipboard-list')}</div><div><span>Corrective Actions</span><strong>${locked?'—':'2'}</strong><small>Assigned by Area Manager</small></div></article>
+    </div>
+    <section class="panel"><div class="panel-heading"><div><h2>Reporting Actions</h2><p>Lightweight workflows connected to Area Manager review</p></div></div><div class="branch-list">
+      ${actions.map((item,index)=>`<article class="branch-row"><div class="branch-rank">${icon(item.icon)}</div><div class="branch-name"><strong>${item.title}</strong><span>${item.description}</span></div><button class="review-btn" data-post-action="${index}" ${locked||item.unavailable?'disabled':''}>${item.button}</button></article>`).join('')}
+    </div></section>`;
+}
 
 function settingsTemplate(){ return `${header('ACCOUNT PREFERENCES','Settings','Manage Ruth Torres’s Store Manager dashboard preferences.','')}<div class="settings-grid"><section class="panel settings-card"><div class="panel-heading"><div><h2>Profile Information</h2><p>Displayed in readiness and clearance records</p></div></div><div class="settings-form"><label>Full Name</label><input value="Ruth Torres"><label>Role</label><input value="Store Manager" disabled><label>Assigned Branch</label><input value="Pasig Capitol" disabled><label>Email Address</label><input value="ruth.torres@5joys.com"><button class="primary-btn compact save-settings">Save Changes</button></div></section><section class="panel settings-card"><div class="panel-heading"><div><h2>Notifications</h2><p>Select the launch updates you want to receive</p></div></div><div class="settings-form toggles"><label><input type="checkbox" checked> Pending and overdue readiness tasks</label><label><input type="checkbox" checked> Critical launch issue alerts</label><label><input type="checkbox" checked> Staff certification updates</label><label><input type="checkbox" checked> Opening clearance decisions</label><label><input type="checkbox"> Daily launch summary email</label><button class="primary-btn compact save-settings">Update Preferences</button></div></section></div>`; }
 
@@ -93,15 +140,84 @@ function modalFields(type, data={}){
   if(type==='readiness') return `<label>Requirement</label><input id="modalName" value="${data.requirement||''}" ${data.id?'disabled':''}><label>Status</label><select id="modalStatus"><option ${data.status==='Pending'?'selected':''}>Pending</option><option ${data.status==='In Progress'?'selected':''}>In Progress</option><option ${data.status==='Complete'?'selected':''}>Complete</option></select><label>Evidence / Verification</label><input id="modalEvidence" value="${data.evidence||''}" placeholder="e.g., Completion photo"><label>Remarks</label><textarea id="modalRemarks" rows="4">${data.remarks||''}</textarea>`;
   if(type==='task') return `<label>Task</label><input id="modalName" value="${data.task||''}"><label>Owner</label><input id="modalOwner" value="${data.owner||''}"><label>Status</label><select id="modalStatus"><option ${data.status==='Pending'?'selected':''}>Pending</option><option ${data.status==='In Progress'?'selected':''}>In Progress</option><option ${data.status==='Complete'?'selected':''}>Complete</option></select><label>Priority</label><select id="modalPriority"><option ${data.priority==='Low'?'selected':''}>Low</option><option ${data.priority==='Medium'?'selected':''}>Medium</option><option ${data.priority==='High'?'selected':''}>High</option></select>`;
   if(type==='issue') return `<label>Issue</label><input id="modalName" value="${data.title||''}"><label>Responsible Team</label><input id="modalOwner" value="${data.owner||''}"><label>Priority</label><select id="modalPriority"><option ${data.priority==='Medium'?'selected':''}>Medium</option><option ${data.priority==='High'?'selected':''}>High</option><option ${data.priority==='Critical'?'selected':''}>Critical</option></select><label>Status</label><select id="modalStatus"><option ${data.status==='Open'?'selected':''}>Open</option><option ${data.status==='In Progress'?'selected':''}>In Progress</option><option ${data.status==='Resolved'?'selected':''}>Resolved</option></select><label>Resolution Notes</label><textarea id="modalRemarks" rows="4">${data.details||''}</textarea>`;
+  if(type==='daily-report') return `<div class="post-launch-form daily-report-form">
+    <div class="form-grid">
+      <label>Report ID<input id="dailyReportId" value="${escapeStoreHtml(dailyOperationsReport.reportId)}" required></label>
+      <label>Branch<input id="dailyBranch" value="${escapeStoreHtml(dailyOperationsReport.branch)}" required></label>
+      <label>Reporting Date<input id="dailyReportingDate" type="date" value="${escapeStoreHtml(dailyOperationsReport.reportingDate)}" required></label>
+      <label>Submission Time<input id="dailySubmissionTime" type="time" value="${escapeStoreHtml(dailyOperationsReport.submissionTime)}" required></label>
+      <label>Sales Status<select id="dailySalesStatus"><option ${dailyOperationsReport.salesStatus==='Above Target'?'selected':''}>Above Target</option><option ${dailyOperationsReport.salesStatus==='On Target'?'selected':''}>On Target</option><option ${dailyOperationsReport.salesStatus==='Below Target'?'selected':''}>Below Target</option></select></label>
+      <label>Sales Summary<input id="dailySalesSummary" value="${escapeStoreHtml(dailyOperationsReport.salesSummary)}" required></label>
+    </div>
+    <fieldset class="report-fieldset"><legend>Attendance</legend><div class="attendance-grid">
+      <label>Present<input id="dailyAttendancePresent" type="number" min="0" value="${dailyOperationsReport.attendancePresent}" required></label>
+      <label>Scheduled<input id="dailyAttendanceScheduled" type="number" min="0" value="${dailyOperationsReport.attendanceScheduled}" required></label>
+      <div class="attendance-preview"><span>Recorded Attendance</span><strong>${dailyOperationsReport.attendancePresent} present / ${dailyOperationsReport.attendanceScheduled} scheduled</strong></div>
+    </div></fieldset>
+    <label>Operations — Checklist Complete<select id="dailyChecklistComplete"><option ${dailyOperationsReport.checklistComplete==='Yes'?'selected':''}>Yes</option><option ${dailyOperationsReport.checklistComplete==='No'?'selected':''}>No</option></select></label>
+    <label>Manager Note<textarea id="dailyManagerNote" rows="5" required>${escapeStoreHtml(dailyOperationsReport.managerNote)}</textarea></label>
+  </div>`;
+  if(type==='operational-log') return `<div class="post-launch-form operational-log-form">
+    <div class="operational-log-heading"><div><strong>July 20, 2026 — Pulilan, Bulacan</strong><span>Encode the time, activity, outcome, and evidence reference for each operating-day update.</span></div><span>${operationalLog.length} entries</span></div>
+    <div class="operational-log-editor">${operationalLog.map((entry,index)=>`<article class="operational-log-entry" data-log-index="${index}">
+      <div class="log-entry-number">${String(index+1).padStart(2,'0')}</div>
+      <div class="log-entry-fields">
+        <label>Time<input data-log-field="time" type="time" value="${escapeStoreHtml(entry.time)}" required></label>
+        <label>Operational Activity<textarea data-log-field="activity" rows="2" required>${escapeStoreHtml(entry.activity)}</textarea></label>
+        <label>Status<select data-log-field="status">${['Complete','Normal','Resolved','Compliant','Action Required'].map(status=>`<option ${entry.status===status?'selected':''}>${status}</option>`).join('')}</select></label>
+        <label>Evidence Reference<input data-log-field="evidence" value="${escapeStoreHtml(entry.evidence)}" required></label>
+      </div>
+    </article>`).join('')}</div>
+  </div>`;
   return `<label>Report Type</label><input value="${data.name||'Operational Report'}" disabled><label>Operational Summary</label><textarea id="modalRemarks" rows="6" placeholder="Enter the information to be submitted to the Area Manager..."></textarea>`;
 }
-function openModal(type, id=null, title='Update Record'){ const collection={readiness:readinessItems,task:tasks,issue:issues}[type]; const data=collection&&id?collection.find(item=>item.id===id):{}; activeModal={type,id}; modalEyebrow.textContent=type==='report'?'POST-LAUNCH REPORT':'STORE UPDATE'; modalTitle.textContent=title; modalBody.innerHTML=modalFields(type,data); modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); initIcons(); }
-function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); activeModal=null; }
+function openModal(type, id=null, title='Update Record'){
+  const collection={readiness:readinessItems,task:tasks,issue:issues}[type];
+  const data=collection&&id?collection.find(item=>item.id===id):{};
+  const isPostLaunch=['report','daily-report','operational-log'].includes(type);
+  activeModal={type,id};
+  modalEyebrow.textContent=isPostLaunch?'POST-LAUNCH REPORT':'STORE UPDATE';
+  modalTitle.textContent=title;
+  modalDescription.textContent=type==='daily-report'?'Encode the Daily Operations Report submitted to Area Management.':type==='operational-log'?'Encode Pulilan’s timestamped operational activities and supporting evidence.':'Update the selected store readiness record and save your changes.';
+  modalBody.innerHTML=modalFields(type,data);
+  modal.classList.toggle('post-launch-report-modal',['daily-report','operational-log'].includes(type));
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  setTimeout(()=>modalBody.querySelector('input,select,textarea')?.focus(),0);
+  initIcons();
+}
+function closeModal(){ modal.classList.remove('open','post-launch-report-modal'); modal.setAttribute('aria-hidden','true'); activeModal=null; }
 function saveModal(){ if(!activeModal)return; const {type,id}=activeModal; const name=document.getElementById('modalName')?.value.trim(); const status=document.getElementById('modalStatus')?.value; const owner=document.getElementById('modalOwner')?.value.trim(); const priority=document.getElementById('modalPriority')?.value; const remarks=document.getElementById('modalRemarks')?.value.trim();
   if(type==='readiness'){ if(id){const item=readinessItems.find(i=>i.id===id); item.status=status; item.evidence=document.getElementById('modalEvidence').value.trim(); item.remarks=remarks;} else readinessItems.push({id:Date.now(),requirement:name||'New requirement',category:'Other',owner:'Store Manager',mandatory:false,evidence:document.getElementById('modalEvidence').value.trim()||'Pending evidence',status,remarks}); }
   if(type==='task'){ if(id){const item=tasks.find(i=>i.id===id); item.task=name; item.owner=owner; item.status=status; item.priority=priority;} else tasks.push({id:Date.now(),task:name||'New readiness task',category:'Operations',owner:owner||'Store Manager',due:'TBD',priority,status}); }
   if(type==='issue'){ if(id){const item=issues.find(i=>i.id===id); item.title=name; item.owner=owner; item.status=status; item.priority=priority; item.details=remarks;} else issues.push({id:Date.now(),title:name||'New launch issue',category:'Other',owner:owner||'Store Manager',priority,status,reported:'Just now',details:remarks}); }
-  closeModal(); renderSection(); showToast(type==='report'?'Report saved successfully.':'Store update saved successfully.'); }
+  if(type==='daily-report'){
+    Object.assign(dailyOperationsReport,{
+      reportId:document.getElementById('dailyReportId').value.trim(),
+      branch:document.getElementById('dailyBranch').value.trim(),
+      reportingDate:document.getElementById('dailyReportingDate').value,
+      submissionTime:document.getElementById('dailySubmissionTime').value,
+      salesStatus:document.getElementById('dailySalesStatus').value,
+      salesSummary:document.getElementById('dailySalesSummary').value.trim(),
+      attendancePresent:Number(document.getElementById('dailyAttendancePresent').value),
+      attendanceScheduled:Number(document.getElementById('dailyAttendanceScheduled').value),
+      checklistComplete:document.getElementById('dailyChecklistComplete').value,
+      managerNote:document.getElementById('dailyManagerNote').value.trim(),
+      saved:true
+    });
+  }
+  if(type==='operational-log'){
+    document.querySelectorAll('.operational-log-entry').forEach(entry=>{
+      const record=operationalLog[Number(entry.dataset.logIndex)];
+      entry.querySelectorAll('[data-log-field]').forEach(field=>record[field.dataset.logField]=field.value.trim());
+    });
+    operationalLogSaved=true;
+  }
+  closeModal();
+  renderSection();
+  const message=type==='daily-report'?'Daily Operations Report updated successfully.':type==='operational-log'?'Operational Log updated successfully.':type==='report'?'Report saved successfully.':'Store update saved successfully.';
+  showToast(message);
+}
 
 function applySearch(value){ const query=value.trim().toLowerCase(); document.querySelectorAll('[data-search]').forEach(item=>item.classList.toggle('hidden-by-search',query&&!item.dataset.search.toLowerCase().includes(query))); }
 
@@ -115,7 +231,14 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-add-readiness]')){openModal('readiness',null,'Add Readiness Requirement');return;}
   if(event.target.closest('[data-add-task]')){openModal('task',null,'Add Readiness Task');return;}
   if(event.target.closest('[data-add-issue]')){openModal('issue',null,'Report Launch Issue');return;}
-  const postAction=event.target.closest('[data-post-action]'); if(postAction){const names=['Daily Operations Report','Operational Log','Incident Report','Corrective Actions'];openModal('report',null,names[Number(postAction.dataset.postAction)]);return;}
+  const postAction=event.target.closest('[data-post-action]');
+  if(postAction){
+    const action=Number(postAction.dataset.postAction);
+    if(action===0)openModal('daily-report',null,'Daily Operations Report');
+    if(action===1)openModal('operational-log',null,'Operational Log');
+    if(action===3)openModal('report',null,'Corrective Actions');
+    return;
+  }
   if(event.target.closest('#requestClearance')){clearanceStatus='Submitted';renderSection('clearance');showToast('Opening clearance request submitted for review.');return;}
   if(event.target.closest('[data-demo-open]')){branchStage='post-launch';renderSection('postlaunch');showToast('Post-launch preview mode enabled.');return;}
   if(event.target.closest('.save-settings'))showToast('Settings updated successfully.');

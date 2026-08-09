@@ -827,6 +827,162 @@ td:first-child span {
     border-radius:9px;
     font-size:12px
 }
+.post-launch-report-modal .modal-card {
+    width:min(980px,100%);
+    max-height:92vh;
+    overflow-y:auto;
+}
+.post-launch-report-modal .modal-icon {
+    width:42px;
+    height:42px;
+}
+.post-launch-form {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.post-launch-form label {
+    display:flex;
+    flex-direction:column;
+}
+.post-launch-form .form-grid {
+    gap:14px 16px;
+}
+.report-fieldset {
+    margin:0;
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:12px;
+}
+.report-fieldset legend {
+    padding:0 7px;
+    color:#555;
+    font-size:11px;
+    font-weight:600;
+}
+.attendance-grid {
+    display:grid;
+    grid-template-columns:140px 140px 1fr;
+    gap:14px;
+    align-items:end;
+}
+.attendance-preview {
+    display:flex;
+    min-height:62px;
+    justify-content:center;
+    flex-direction:column;
+    padding:10px 14px;
+    border-radius:10px;
+    background:#f8f5f2;
+}
+.attendance-preview span {
+    color:#999;
+    font-size:9px;
+    text-transform:uppercase;
+}
+.attendance-preview strong {
+    margin-top:3px;
+    font-size:12px;
+}
+.operational-log-heading {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:14px 16px;
+    border-radius:12px;
+    background:#f8f5f2;
+}
+.operational-log-heading>div {
+    display:flex;
+    flex-direction:column;
+}
+.operational-log-heading strong {
+    font-size:12px;
+}
+.operational-log-heading span {
+    color:var(--muted);
+    font-size:9.5px;
+}
+.operational-log-heading>span {
+    flex:none;
+    padding:6px 9px;
+    border-radius:999px;
+    background:#fff;
+    color:var(--red);
+    font-weight:700;
+}
+.operational-log-editor {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+.operational-log-entry {
+    display:grid;
+    grid-template-columns:42px 1fr;
+    gap:13px;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:#fff;
+}
+.log-entry-number {
+    display:grid;
+    place-items:center;
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    background:var(--soft-red);
+    color:var(--red);
+    font-size:11px;
+    font-weight:700;
+}
+.log-entry-fields {
+    display:grid;
+    grid-template-columns:120px minmax(260px,1fr) 145px 150px;
+    gap:12px;
+    align-items:start;
+}
+.log-entry-fields input,
+.log-entry-fields select,
+.log-entry-fields textarea {
+    min-height:42px;
+    margin-bottom:0;
+}
+.log-entry-fields textarea {
+    min-height:42px;
+    resize:vertical;
+}
+@media(max-width:900px) {
+    .log-entry-fields {
+        grid-template-columns:1fr 1fr;
+    }
+    .log-entry-fields label:nth-child(2) {
+        grid-column:1/-1;
+        grid-row:2;
+    }
+}
+@media(max-width:620px) {
+    .post-launch-report-modal {
+        padding:8px;
+    }
+    .post-launch-report-modal .modal-card {
+        max-height:98vh;
+        padding:20px;
+    }
+    .post-launch-form .form-grid,
+    .attendance-grid,
+    .log-entry-fields {
+        grid-template-columns:1fr;
+    }
+    .log-entry-fields label:nth-child(2) {
+        grid-column:auto;
+        grid-row:auto;
+    }
+    .operational-log-entry {
+        grid-template-columns:1fr;
+    }
+}
 .secondary-btn {
     background:#f1eeeb;
     color:#555
