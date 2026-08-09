@@ -84,7 +84,7 @@
                 </section>
 
                 <section class="panel activity-panel">
-                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest branch updates</p></div><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></div>
+                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest branch updates</p></div><button class="icon-btn" type="button" data-area-action="activity-history" aria-label="View activity history"><i data-lucide="more-horizontal"></i></button></div>
                     <div class="timeline">
                         <div class="timeline-item"><span class="dot green"><i data-lucide="check"></i></span><div><strong>Daily report submitted</strong><p>Pulilan, Bulacan completed its operations report.</p><small>12 minutes ago</small></div></div>
                         <div class="timeline-item"><span class="dot red"><i data-lucide="alert-triangle"></i></span><div><strong>New incident reported</strong><p>Equipment issue logged by Paombong, Bulacan.</p><small>38 minutes ago</small></div></div>
@@ -111,16 +111,15 @@
     </main>
 </div>
 
-<div class="modal" id="reviewModal" aria-hidden="true">
+<div class="modal area-workflow-modal" id="reviewModal" aria-hidden="true">
     <div class="modal-card">
-        <button class="modal-close" id="closeModal"><i data-lucide="x"></i></button>
+        <button class="modal-close" id="closeModal" type="button" aria-label="Close dialog"><i data-lucide="x"></i></button>
         <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
-        <p class="eyebrow">INCIDENT REVIEW</p>
+        <p class="eyebrow" id="modalEyebrow">AREA MANAGEMENT</p>
         <h2 id="modalTitle">Incident details</h2>
-        <p>Review the branch report, confirm the corrective action owner, and record your management note.</p>
-        <label for="managerNote">Area Manager Note</label>
-        <textarea id="managerNote" placeholder="Enter your review or instruction..."></textarea>
-        <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveReview">Save Review</button></div>
+        <p id="modalDescription">Review the record and save your management update.</p>
+        <div id="modalFields"></div>
+        <div class="modal-actions"><button class="secondary-btn" id="cancelModal" type="button">Cancel</button><button class="primary-btn" id="saveReview" type="button">Save Update</button></div>
     </div>
 </div>
 
