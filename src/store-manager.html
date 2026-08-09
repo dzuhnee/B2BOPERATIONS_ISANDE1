@@ -54,5 +54,6 @@
 <script src="js/store-manager.js"></script>
 <script src="js/report-export.js"></script>
 <script src="js/notifications.js"></script>
+<script src="js/account-menu.js"></script>
 <script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="Store Manager"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
 </html>

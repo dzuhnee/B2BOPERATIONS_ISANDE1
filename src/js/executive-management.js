@@ -1775,9 +1775,14 @@ document.addEventListener("click",e=>{
         e.target.closest(".save-settings")
     ){
 
-        alert(
-        "Executive settings updated successfully."
-        );
+        const toast = document.getElementById("toast");
+        if(toast){
+            const message = toast.querySelector("span");
+            if(message) message.textContent = "Executive settings updated successfully.";
+            toast.classList.add("show");
+            clearTimeout(toast._settingsTimer);
+            toast._settingsTimer = setTimeout(()=>toast.classList.remove("show"),2800);
+        }
 
 
     }

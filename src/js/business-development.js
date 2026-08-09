@@ -526,6 +526,13 @@ function handleNavigation(section){
     renderArchives();
     
     break;
+
+
+    case "settings":
+
+    renderBusinessSettings();
+
+    break;
     
     
     
@@ -1698,6 +1705,57 @@ function calculateViability(lat,lng){
     B2B.icon();
     
     
+    }
+
+
+    /* ==========================================================
+       ACCOUNT SETTINGS
+    ========================================================== */
+
+
+    function renderBusinessSettings(){
+    const content = document.getElementById("pageContent");
+    let signedInUser = null;
+
+    try{
+        signedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+    }catch(_){
+        signedInUser = null;
+    }
+
+    const user = signedInUser || businessDevelopmentData.user;
+
+    content.innerHTML = `
+        <div class="page-header">
+            <div>
+                <p class="eyebrow">ACCOUNT PREFERENCES</p>
+                <h1>Settings</h1>
+                <p class="subtitle">Manage your Business Development profile and operational alerts.</p>
+            </div>
+        </div>
+        <div class="settings-grid">
+            <section class="panel settings-card">
+                <div class="panel-heading"><div><h2>Profile Information</h2><p>Displayed in site proposals, assessments, and export reports</p></div></div>
+                <div class="settings-form">
+                    <label>Full Name<input value="${escapeProposalHtml(user.name || businessDevelopmentData.user.name)}"></label>
+                    <label>Role<input value="Business Development" disabled></label>
+                    <label>Email Address<input type="email" value="${escapeProposalHtml(user.email || "business.development@5joys.com")}"></label>
+                    <button class="primary-btn compact save-settings" type="button">Save Changes</button>
+                </div>
+            </section>
+            <section class="panel settings-card">
+                <div class="panel-heading"><div><h2>Notifications</h2><p>Select the site and approval updates you want to receive</p></div></div>
+                <div class="settings-form toggles">
+                    <label><input type="checkbox" checked> Site viability analysis results</label>
+                    <label><input type="checkbox" checked> Department approval decisions</label>
+                    <label><input type="checkbox" checked> Proposal revision requests</label>
+                    <label><input type="checkbox"> Weekly expansion pipeline summary</label>
+                    <button class="primary-btn compact save-settings" type="button">Update Preferences</button>
+                </div>
+            </section>
+        </div>`;
+
+    B2B.icon();
     }
     
     /* ==========================================
