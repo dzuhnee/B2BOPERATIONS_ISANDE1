@@ -1894,11 +1894,34 @@ table td:nth-child(4)>span {
 .notification-wrapper {
     position:relative;
 }
+.notification-btn .notification-count {
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    display:grid;
+    place-items:center;
+    width:auto;
+    min-width:18px;
+    height:18px;
+    padding:0 5px;
+    border:2px solid #fff;
+    border-radius:999px;
+    background:var(--red);
+    color:#fff;
+    font-size:9px;
+    font-weight:700;
+    line-height:1;
+}
+.notification-btn .notification-count[hidden] {
+    display:none;
+}
 .notification-dropdown {
     position:absolute;
     top:55px;
     right:0;
     width:360px;
+    max-height:min(520px,calc(100vh - 90px));
+    overflow:hidden;
     background:#fff;
     border-radius:14px;
     box-shadow:0 15px 35px rgba(0,0,0,.12);
@@ -1910,32 +1933,107 @@ table td:nth-child(4)>span {
     display:block;
 }
 .notification-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
     padding:15px 18px;
     border-bottom:1px solid #eee;
     font-size:.95rem;
 }
+.notification-header>div {
+    display:flex;
+    flex-direction:column;
+}
+.notification-header .notification-summary {
+    color:#999;
+    font-size:11px;
+}
+.notification-mark-all {
+    width:auto;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--red);
+    font-size:11px;
+    font-weight:600;
+}
+.notification-mark-all:hover {
+    background:transparent;
+    color:var(--darkRed);
+    transform:none;
+}
+.notification-list {
+    max-height:430px;
+    overflow-y:auto;
+}
 .notification-item {
     display:flex;
+    align-items:flex-start;
     gap:12px;
+    width:100%;
     padding:16px 18px;
+    border:0;
+    border-bottom:1px solid #f1f1f1;
+    border-radius:0;
+    background:#fff;
+    color:inherit;
+    text-align:left;
 }
-.notification-item i {
+.notification-item:hover,
+.notification-item:focus-visible {
+    background:#fafafa;
+    transform:none;
+}
+.notification-item svg {
+    flex:0 0 auto;
     color:var(--red);
     width:22px;
     height:22px;
     margin-top:3px;
 }
-.notification-item p {
+.notification-copy {
+    display:flex;
+    flex:1;
+    min-width:0;
+    flex-direction:column;
+}
+.notification-copy>span {
     margin:4px 0;
     font-size:.87rem;
     color:#666;
     line-height:1.4;
 }
-.notification-item small {
+.notification-copy small {
     color:#999;
 }
 .notification-item.unread {
     background:#fff8f5;
+}
+.notification-item.unread:hover,
+.notification-item.unread:focus-visible {
+    background:#fff1ed;
+}
+.notification-unread {
+    flex:0 0 auto;
+    width:7px;
+    height:7px;
+    margin-top:7px;
+    border-radius:50%;
+    background:var(--red);
+}
+@media(max-width:520px) {
+    .notification-wrapper .notification-btn {
+        display:grid;
+    }
+    .notification-dropdown {
+        position:fixed;
+        top:68px;
+        right:12px;
+        left:12px;
+        width:auto;
+        max-height:calc(100vh - 82px);
+    }
 }
 
 /* LOCATION SEARCH (site proposal form) */

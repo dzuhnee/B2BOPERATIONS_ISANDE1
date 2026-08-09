@@ -85,22 +85,10 @@ document.addEventListener('click', e => {
   if(e.target.closest('.save-settings')) showToast('Settings updated successfully.');
 });
 
-const notificationBtn = document.getElementById("notificationBtn");
-const notificationDropdown = document.getElementById("notificationDropdown");
-
-notificationBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    notificationDropdown.classList.toggle("show");
-});
-
-document.addEventListener("click", () => {
-    notificationDropdown.classList.remove("show");
-});
-
 document.getElementById('closeModal').addEventListener('click', closeReview);
 document.getElementById('cancelModal').addEventListener('click', closeReview);
 modal.addEventListener('click', event => { if (event.target === modal) closeReview(); });
 document.getElementById('saveReview').addEventListener('click', () => { closeReview(); showToast('Review saved successfully.'); });
 document.getElementById('globalSearch').addEventListener('input', event => { const query=event.target.value.trim().toLowerCase(); document.querySelectorAll('[data-search]').forEach(item=>item.classList.toggle('hidden-by-search',query && !item.dataset.search.toLowerCase().includes(query))); });
 document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('b2bUserRole'); localStorage.removeItem('b2bUserName'); window.location.href='index.html'; });
-initIcons();  
+initIcons();

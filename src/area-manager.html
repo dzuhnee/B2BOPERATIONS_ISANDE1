@@ -37,30 +37,9 @@
             <button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
             <div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search branches, reports, or incidents..."></div>
 <div class="topbar-actions">
-    <div class="notification-wrapper">
-        <button class="icon-btn notification-btn" id="notificationBtn">
-            <i data-lucide="bell"></i>
-            <span></span>
-        </button>
-
-        <div class="notification-dropdown" id="notificationDropdown">
-            <div class="notification-header">
-                <strong>Notifications</strong>
-            </div>
-
-            <div class="notification-item unread">
-                <i data-lucide="store"></i>
-                <div>
-                    <strong>New Branch Assigned</strong>
-                    <p>
-                        <b>Calumpit, Bulacan</b> has been added to your assigned area.
-                        Please review the branch profile and monitor its operations.
-                    </p>
-                    <small>Just now</small>
-                </div>
-            </div>
-        </div>
-    </div>
+    <button class="icon-btn notification-btn" type="button" aria-label="Notifications">
+        <i data-lucide="bell"></i><span></span>
+    </button>
 
     <div class="user-profile">
                     <div class="avatar">BH</div>
@@ -148,5 +127,6 @@
 <div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Review saved successfully.</span></div>
 <script src="js/area-manager.js"></script>
 <script src="js/report-export.js"></script>
+<script src="js/notifications.js"></script>
 <script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="Area Manager"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
 </html>
