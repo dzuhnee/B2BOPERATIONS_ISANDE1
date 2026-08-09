@@ -235,7 +235,7 @@ window.businessDevelopmentData = {
 
 
             status: "Ready for Submission",
-            image: "images/mexico-pampanga.jpg",
+            image: "images/mexico-pampanga.webp",
 
             submittedDate: "July 10, 2026",
 
@@ -372,7 +372,7 @@ window.businessDevelopmentData = {
 
             "Under Analysis",
 
-            image: "images/pulilan.jpeg",
+            image: "images/pulilan.jpg",
 
 
 
@@ -516,7 +516,7 @@ window.businessDevelopmentData = {
 
             "Needs Validation",
 
-            image: "images/calumpit.jpeg",
+            image: "images/calumpit.webp",
 
             
 
@@ -662,7 +662,7 @@ window.businessDevelopmentData = {
 
             "Submitted",
 
-            image: "images/bocaue.jpeg",
+            image: "images/bocaue.webp",
 
 
 
@@ -813,7 +813,7 @@ window.businessDevelopmentData = {
 
     "Archived",
 
-    image: "images/balagtas.jpg",
+    image: "images/balagtas.webp",
 
 
 
@@ -968,7 +968,7 @@ window.businessDevelopmentData = {
 
     "Juan Dela Cruz",
 
-    image: "images/sjdm.webp",
+    image: "images/sanjose.webp",
 
 
 
@@ -1112,7 +1112,7 @@ window.businessDevelopmentData = {
 
     "Juan Dela Cruz",
 
-    image: "images/meyc.jpeg",
+    image: "images/meyc.webp",
 
 
 
