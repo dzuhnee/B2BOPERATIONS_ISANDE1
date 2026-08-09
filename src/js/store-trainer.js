@@ -206,6 +206,15 @@ function openReview(title, description, saveLabel) {
   note.value = '';
   const saveBtn = document.getElementById('saveReview');
   if (saveBtn) saveBtn.textContent = saveLabel || 'Save Assessment';
+
+  // Reset optional fields; the specific opener function re-shows what it needs right after calling this.
+  const batchField = document.getElementById('modalBatchField');
+  const nameField = document.getElementById('modalNameField');
+  const listField = document.getElementById('modalListField');
+  if (batchField) batchField.style.display = 'none';
+  if (nameField) nameField.style.display = 'none';
+  if (listField) listField.style.display = 'none';
+
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   note.focus();
@@ -218,8 +227,10 @@ function closeReview() {
   modalContext = {};
 
   const batchField = document.getElementById('modalBatchField');
+  const nameField = document.getElementById('modalNameField');
   const listField = document.getElementById('modalListField');
   if (batchField) batchField.style.display = 'none';
+  if (nameField) nameField.style.display = 'none';
   if (listField) listField.style.display = 'none';
   note.placeholder = 'Enter assessment remarks or coaching instructions...';
 
@@ -257,19 +268,34 @@ function renderRosterList(names, mode, absentees = []) {
 }
 
 function openBatchNoteModal() {
-  const batchField = document.getElementById('modalBatchField');
   const select = document.getElementById('modalBatchSelect');
   const names = getBatchNames();
 
   if (select) {
     select.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
   }
-  if (batchField) batchField.style.display = 'block';
 
   note.placeholder = 'Enter the note to add to this batch...';
   modalMode = 'batchnote';
   modalContext = {};
   openReview('Add Batch Note', 'Select a batch and add a note visible to trainers and store managers.', 'Save Note');
+
+  const batchField = document.getElementById('modalBatchField');
+  if (batchField) batchField.style.display = 'block';
+}
+
+function openNewAssessmentModal() {
+  const nameInput = document.getElementById('modalNameInput');
+  if (nameInput) nameInput.value = '';
+
+  note.placeholder = 'Add any notes for this new assessment (optional)...';
+  modalMode = 'newassessment';
+  modalContext = {};
+  openReview('New Assessment', 'Enter the trainee\u2019s name to create a new competency assessment.', 'Create Assessment');
+
+  const nameField = document.getElementById('modalNameField');
+  if (nameField) nameField.style.display = 'block';
+  if (nameInput) setTimeout(() => nameInput.focus(), 0);
 }
 
 function openSessionModal(sessionName, sessionRow) {
@@ -322,11 +348,12 @@ function openSessionModal(sessionName, sessionRow) {
       });
     });
   }
-  if (listField) listField.style.display = 'block';
 
   modalMode = 'session';
   modalContext = { sessionName, sessionType: roster.mode, sessionRow };
   openReview(title, desc, saveLabel);
+
+  if (listField) listField.style.display = 'block';
 }
 
 function showToast(message = 'Changes saved successfully.') {
@@ -365,108 +392,152 @@ function bumpAssessmentBadge(delta) {
 }
 
 // ---- Certificate generation (jsPDF) ----
-function generateCertificatePDF({ name, batch, score, role }) {
-  if (!window.jspdf) {
+
+// Loads images/b2blogo.png once and caches it as a data URL so it can be embedded in the PDF.
+let cachedLogoDataUrl;
+function loadLogoDataUrl() {
+  if (cachedLogoDataUrl !== undefined) return Promise.resolve(cachedLogoDataUrl);
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        cachedLogoDataUrl = { url: canvas.toDataURL('image/png'), ratio: img.naturalHeight / img.naturalWidth };
+      } catch (err) {
+        cachedLogoDataUrl = null;
+      }
+      resolve(cachedLogoDataUrl);
+    };
+    img.onerror = () => {
+      cachedLogoDataUrl = null;
+      resolve(null);
+    };
+    img.src = 'images/b2blogo.png';
+  });
+}
+
+async function generateCertificatePDF({ name, batch, score, role }) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
     showToast('Certificate library failed to load. Check your connection and try again.');
     return false;
   }
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-  const w = doc.internal.pageSize.getWidth();
-  const h = doc.internal.pageSize.getHeight();
+  try {
+    const logo = await loadLogoDataUrl();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    const w = doc.internal.pageSize.getWidth();
+    const h = doc.internal.pageSize.getHeight();
 
-  // Background
-  doc.setFillColor(255, 250, 240);
-  doc.rect(0, 0, w, h, 'F');
+    // Background
+    doc.setFillColor(255, 250, 240);
+    doc.rect(0, 0, w, h, 'F');
 
-  // Border
-  doc.setDrawColor(196, 155, 33);
-  doc.setLineWidth(4);
-  doc.rect(24, 24, w - 48, h - 48);
-  doc.setLineWidth(1);
-  doc.setDrawColor(150, 110, 20);
-  doc.rect(34, 34, w - 68, h - 68);
+    // Border
+    doc.setDrawColor(196, 155, 33);
+    doc.setLineWidth(4);
+    doc.rect(24, 24, w - 48, h - 48);
+    doc.setLineWidth(1);
+    doc.setDrawColor(150, 110, 20);
+    doc.rect(34, 34, w - 68, h - 68);
 
-  // Header
-  doc.setFont('times', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(178, 34, 34);
-  doc.text('BEE-TO-BEE OPERATIONS', w / 2, 75, { align: 'center' });
+    let cursorY = 68;
 
-  doc.setFont('times', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(90, 90, 90);
-  doc.text('Employee Training & Certification Program', w / 2, 93, { align: 'center' });
+    // Logo (falls back gracefully to text-only header if it couldn't be loaded)
+    if (logo && logo.url) {
+      const logoW = 62;
+      const logoH = logoW * logo.ratio;
+      doc.addImage(logo.url, 'PNG', w / 2 - logoW / 2, cursorY - logoH + 10, logoW, logoH);
+      cursorY += 16;
+    }
 
-  doc.setFont('times', 'bold');
-  doc.setFontSize(30);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Certificate of Completion', w / 2, 140, { align: 'center' });
+    // Header
+    doc.setFont('times', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(178, 34, 34);
+    doc.text('BEE-TO-BEE OPERATIONS', w / 2, cursorY + 22, { align: 'center' });
 
-  doc.setFont('times', 'italic');
-  doc.setFontSize(14);
-  doc.setTextColor(60, 60, 60);
-  doc.text('This certifies that', w / 2, 175, { align: 'center' });
+    doc.setFont('times', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(90, 90, 90);
+    doc.text('Employee Training & Certification Program', w / 2, cursorY + 40, { align: 'center' });
 
-  doc.setFont('times', 'bolditalic');
-  doc.setFontSize(34);
-  doc.setTextColor(178, 34, 34);
-  doc.text(name, w / 2, 215, { align: 'center' });
+    doc.setFont('times', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(30, 30, 30);
+    doc.text('Certificate of Completion', w / 2, cursorY + 82, { align: 'center' });
 
-  doc.setDrawColor(196, 155, 33);
-  doc.setLineWidth(0.75);
-  doc.line(w / 2 - 130, 224, w / 2 + 130, 224);
+    doc.setFont('times', 'italic');
+    doc.setFontSize(14);
+    doc.setTextColor(60, 60, 60);
+    doc.text('This certifies that', w / 2, cursorY + 112, { align: 'center' });
 
-  doc.setFont('times', 'normal');
-  doc.setFontSize(13.5);
-  doc.setTextColor(40, 40, 40);
-  doc.text(`has successfully completed the ${batch} training program`, w / 2, 250, { align: 'center' });
-  doc.text(`with an assessment score of ${score}, meeting all competency`, w / 2, 270, { align: 'center' });
-  doc.text(`requirements for deployment as ${role || 'Crew'}.`, w / 2, 290, { align: 'center' });
+    doc.setFont('times', 'bolditalic');
+    doc.setFontSize(32);
+    doc.setTextColor(178, 34, 34);
+    doc.text(String(name || 'Employee'), w / 2, cursorY + 150, { align: 'center' });
 
-  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  doc.setFontSize(10.5);
-  doc.setTextColor(90, 90, 90);
-  doc.text(`Issued on ${dateStr}`, w / 2, 315, { align: 'center' });
+    doc.setDrawColor(196, 155, 33);
+    doc.setLineWidth(0.75);
+    doc.line(w / 2 - 140, cursorY + 159, w / 2 + 140, cursorY + 159);
 
-  // Signatures
-  doc.setDrawColor(60, 60, 60);
-  doc.setLineWidth(0.6);
+    doc.setFont('times', 'normal');
+    doc.setFontSize(13);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`has successfully completed the ${batch || 'assigned'} training program`, w / 2, cursorY + 184, { align: 'center' });
+    doc.text(`with an assessment score of ${score || 'Passing'}, meeting all competency`, w / 2, cursorY + 202, { align: 'center' });
+    doc.text(`requirements for deployment as ${role || 'Crew'}.`, w / 2, cursorY + 220, { align: 'center' });
 
-  const leftX = w * 0.22;
-  doc.line(leftX - 75, h - 88, leftX + 75, h - 88);
-  doc.setFont('times', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Michael Dela Cruz', leftX, h - 74, { align: 'center' });
-  doc.setFont('times', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(90, 90, 90);
-  doc.text('Store Trainer', leftX, h - 61, { align: 'center' });
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.setFontSize(10.5);
+    doc.setTextColor(90, 90, 90);
+    doc.text(`Issued on ${dateStr}`, w / 2, cursorY + 244, { align: 'center' });
 
-  const rightX = w * 0.78;
-  doc.line(rightX - 75, h - 88, rightX + 75, h - 88);
-  doc.setFont('times', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Operations Manager', rightX, h - 74, { align: 'center' });
-  doc.setFont('times', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(90, 90, 90);
-  doc.text('Bee-to-Bee Operations', rightX, h - 61, { align: 'center' });
+    // Signatures
+    doc.setDrawColor(60, 60, 60);
+    doc.setLineWidth(0.6);
 
-  doc.save(`Certificate_${name.replace(/\s+/g, '_')}.pdf`);
-  return true;
+    const leftX = w * 0.22;
+    doc.line(leftX - 75, h - 88, leftX + 75, h - 88);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 30, 30);
+    doc.text('Michael Dela Cruz', leftX, h - 74, { align: 'center' });
+    doc.setFont('times', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(90, 90, 90);
+    doc.text('Store Trainer', leftX, h - 61, { align: 'center' });
+
+    const rightX = w * 0.78;
+    doc.line(rightX - 75, h - 88, rightX + 75, h - 88);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 30, 30);
+    doc.text('Operations Manager', rightX, h - 74, { align: 'center' });
+    doc.setFont('times', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(90, 90, 90);
+    doc.text('Bee-to-Bee Operations', rightX, h - 61, { align: 'center' });
+
+    doc.save(`Certificate_${String(name || 'Employee').replace(/\s+/g, '_')}.pdf`);
+    return true;
+  } catch (err) {
+    console.error('Certificate generation failed:', err);
+    showToast('Could not generate the certificate — see console for details.');
+    return false;
+  }
 }
 
-function certifyEmployee(row, btn) {
+async function certifyEmployee(row, btn) {
   const name = btn.dataset.name;
   const batch = btn.dataset.batch;
   const score = btn.dataset.score;
   const role = btn.dataset.role;
 
-  const ok = generateCertificatePDF({ name, batch, score, role });
+  const ok = await generateCertificatePDF({ name, batch, score, role });
   if (!ok) return;
 
   // Flip the row to a certified state
@@ -546,8 +617,9 @@ document.addEventListener('click', e => {
   const downloadBtn = e.target.closest('.cert-download-btn');
   if (downloadBtn) {
     const { name, batch, score, role } = downloadBtn.dataset;
-    const ok = generateCertificatePDF({ name, batch, score, role });
-    if (ok) showToast(`Certificate for ${name} downloaded.`);
+    generateCertificatePDF({ name, batch, score, role }).then(ok => {
+      if (ok) showToast(`Certificate for ${name} downloaded.`);
+    });
     return;
   }
 
@@ -573,11 +645,7 @@ document.addEventListener('click', e => {
   // --- Assessments: create a new assessment entry ---
   const newAssessmentBtn = e.target.closest('.new-assessment-btn');
   if (newAssessmentBtn) {
-    const name = window.prompt('Trainee full name for the new assessment:');
-    if (!name || !name.trim()) return;
-    modalMode = 'newassessment';
-    modalContext = { name: name.trim() };
-    openReview(`New Assessment — ${name.trim()}`, `Set up a new competency assessment for ${name.trim()}.`);
+    openNewAssessmentModal();
     return;
   }
 
@@ -715,23 +783,32 @@ document
         break;
 
       case 'newassessment': {
+        const nameInput = document.getElementById('modalNameInput');
+        const traineeName = nameInput ? nameInput.value.trim() : '';
+
+        if (!traineeName) {
+          showToast('Enter a trainee name before creating the assessment.');
+          if (nameInput) nameInput.focus();
+          return;
+        }
+
         const tbody = document.getElementById('assessmentsTableBody');
         if (tbody) {
           const tr = document.createElement('tr');
-          tr.dataset.search = `${context.name} new assessment pending`.toLowerCase();
+          tr.dataset.search = `${traineeName} new assessment pending`.toLowerCase();
           tr.innerHTML = `
-            <td><strong>${context.name}</strong><span>New Trainee</span></td>
+            <td><strong>${traineeName}</strong><span>New Trainee</span></td>
             <td>—</td>
             <td>—</td>
             <td>Pending</td>
             <td><span class="table-status action">Not Assessed</span></td>
-            <td><button class="review-btn" data-trainee="${context.name}">Assess</button></td>
+            <td><button class="review-btn" data-trainee="${traineeName}">Assess</button></td>
           `;
           tbody.appendChild(tr);
           bumpAssessmentBadge(1);
         }
         closeReview();
-        showToast(`Assessment created for ${context.name}.`);
+        showToast(`Assessment created for ${traineeName}.`);
         break;
       }
 
