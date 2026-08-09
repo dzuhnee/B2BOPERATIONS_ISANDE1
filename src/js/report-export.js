@@ -244,7 +244,6 @@
           <div><span class="label">Responsible User</span><span class="value">${escapeHtml(currentUser.name)} · ${escapeHtml(currentUser.role)}</span></div>
           <div><span class="label">Responsible Department</span><span class="value">${escapeHtml(report.owner)}</span></div>
           <div><span class="label">Branch / Project / Scope</span><span class="value">${escapeHtml(scope)}</span></div>
-          <div><span class="label">Layout</span><span class="value">A4 ${escapeHtml(report.orientation)}</span></div>
         </section>
         <h2>Report Summary</h2><section class="summary">${summary}</section>
         <h2>Detail Area</h2><table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>
@@ -309,9 +308,9 @@
       <button class="report-export-close" type="button" aria-label="Close report export">×</button>
       <p class="eyebrow">AUTHORIZED REPORTING</p>
       <h2 id="reportExportTitle">Export Report</h2>
-      <p>Select a report and reporting scope. The generated A4 view can be printed or saved as PDF.</p>
+      <p>Select a report and reporting scope. The generated report can be printed or saved as PDF.</p>
       <form class="report-export-form">
-        <label>Report Type<select name="report" required>${allowed.map((key) => `<option value="${key}">${escapeHtml(REPORTS[key].title)} · A4 ${REPORTS[key].orientation}</option>`).join('')}</select></label>
+        <label>Report Type<select name="report" required>${allowed.map((key) => `<option value="${key}">${escapeHtml(REPORTS[key].title)}</option>`).join('')}</select></label>
         <div class="report-date-grid"><label>Period From<input name="from" type="date" value="${toInput(monthStart)}"></label><label>Period To<input name="to" type="date" value="${toInput(today)}"></label></div>
         <label>Branch / Project / Regional Scope<input name="scope" value="All authorized branches and projects" maxlength="120"></label>
         <div class="report-access-note"><strong>${escapeHtml(currentUser.name)}</strong><span>${allowed.length} report type${allowed.length === 1 ? '' : 's'} authorized for ${escapeHtml(currentUser.role)}</span></div>
