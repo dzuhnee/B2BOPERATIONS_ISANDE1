@@ -1960,3 +1960,86 @@ table td:nth-child(4)>span {
 .location-suggestion:hover {
     background:#f5f5f5;
 }
+
+/* Shared Section 5.3 report export workflow */
+.report-export-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:40px;
+    padding:9px 14px;
+    border:1px solid #e31937;
+    border-radius:9px;
+    background:#e31937;
+    color:#fff;
+    font:600 .82rem/1 Poppins, sans-serif;
+    white-space:nowrap;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(227,25,55,.18);
+}
+.report-export-btn:hover { background:#c9132d; }
+.report-export-btn span:first-child { font-size:1.15rem; line-height:.7; }
+.report-export-dialog {
+    position:fixed;
+    inset:0;
+    z-index:12000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:rgba(21,22,24,.58);
+    backdrop-filter:blur(2px);
+}
+.report-export-dialog.open { display:flex; }
+.report-export-card {
+    position:relative;
+    width:min(610px, 100%);
+    max-height:calc(100vh - 44px);
+    overflow:auto;
+    padding:28px;
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 22px 55px rgba(0,0,0,.25);
+}
+.report-export-card h2 { margin:4px 0 6px; font-size:1.45rem; }
+.report-export-card>p:not(.eyebrow) { margin:0 35px 20px 0; color:#687078; line-height:1.55; }
+.report-export-close {
+    position:absolute;
+    top:15px;
+    right:17px;
+    width:34px;
+    height:34px;
+    border:0;
+    border-radius:50%;
+    background:#f2f3f4;
+    color:#333;
+    font-size:1.4rem;
+    cursor:pointer;
+}
+.report-export-form { display:grid; gap:15px; }
+.report-export-form label { display:grid; gap:7px; color:#34383d; font-size:.8rem; font-weight:600; }
+.report-export-form input,.report-export-form select {
+    width:100%;
+    min-height:44px;
+    padding:10px 12px;
+    border:1px solid #d8dce0;
+    border-radius:8px;
+    background:#fff;
+    color:#24272a;
+    font:400 .85rem Poppins, sans-serif;
+}
+.report-export-form input:focus,.report-export-form select:focus { outline:2px solid rgba(227,25,55,.18); border-color:#e31937; }
+.report-date-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+.report-access-note { display:flex; justify-content:space-between; gap:15px; padding:12px 14px; border-radius:8px; background:#fff5f6; color:#6b323b; font-size:.78rem; }
+.report-access-note span { text-align:right; }
+.report-export-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:4px; }
+
+@media (max-width: 720px) {
+    .report-export-btn { width:40px; padding:9px; }
+    .report-export-btn span:last-child { display:none; }
+    .report-export-card { padding:22px 18px; }
+    .report-date-grid { grid-template-columns:1fr; }
+    .report-access-note { display:grid; }
+    .report-access-note span { text-align:left; }
+}
