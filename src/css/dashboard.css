@@ -827,6 +827,209 @@ td:first-child span {
     border-radius:9px;
     font-size:12px
 }
+
+/* Store Trainer session attendance dialog */
+#reviewModal.session-modal-active .modal-card {
+    width:min(680px,100%);
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
+    border:1px solid rgba(139,22,38,.08);
+    box-shadow:0 28px 80px rgba(40,10,16,.3)
+}
+#reviewModal.session-modal-active .modal-icon {
+    width:52px;
+    height:52px;
+    border-radius:16px;
+    background:linear-gradient(145deg,#fff0f2,#f8dce1)
+}
+#reviewModal.session-modal-active .modal-icon svg {
+    width:23px;
+    height:23px
+}
+#reviewModal.session-modal-active .eyebrow {
+    margin-bottom:5px
+}
+#reviewModal.session-modal-active h2 {
+    max-width:calc(100% - 42px);
+    font-size:22px;
+    line-height:1.3
+}
+#reviewModal.session-modal-active .modal-card>p:not(.eyebrow) {
+    display:inline-flex;
+    width:fit-content;
+    margin:9px 0 20px;
+    padding:7px 10px;
+    border-radius:8px;
+    background:#f8f5f2;
+    color:#6f6662;
+    line-height:1.4
+}
+#reviewModal.session-modal-active #modalListField {
+    margin-bottom:18px
+}
+.session-list-heading {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:10px
+}
+#reviewModal .session-list-heading label {
+    color:#3f3835;
+    font-size:12px;
+    font-weight:700
+}
+#modalAttendanceSummary {
+    padding:5px 9px;
+    border-radius:999px;
+    background:#eaf6ef;
+    color:#277344;
+    font-size:10px;
+    font-weight:700;
+    white-space:nowrap
+}
+#modalListContent {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+    max-height:290px;
+    overflow-y:auto;
+    padding:3px 5px 3px 2px
+}
+#reviewModal .session-roster-row {
+    display:grid;
+    grid-template-columns:18px minmax(0,1fr) auto;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+    min-height:54px;
+    margin:0;
+    padding:9px 10px;
+    border:1px solid #ece6e2;
+    border-radius:11px;
+    background:#fff;
+    color:#403936;
+    cursor:pointer;
+    transition:border-color .18s ease,box-shadow .18s ease,background .18s ease
+}
+#reviewModal .session-roster-row:hover {
+    border-color:#e5bdc4;
+    background:#fffafb;
+    box-shadow:0 4px 12px rgba(91,31,40,.06)
+}
+#reviewModal .session-roster-row.read-only {
+    cursor:default
+}
+#reviewModal .session-roster-row.expected {
+    grid-template-columns:34px minmax(0,1fr) auto;
+    cursor:default
+}
+#reviewModal .session-roster-row.expected:hover {
+    border-color:#ece6e2;
+    background:#fff;
+    box-shadow:none
+}
+#reviewModal .session-roster-row .attendance-check {
+    width:18px;
+    height:18px;
+    min-height:0;
+    margin:0;
+    padding:0;
+    border:0;
+    border-radius:4px;
+    accent-color:var(--red);
+    cursor:pointer
+}
+#reviewModal .session-roster-row .attendance-check:disabled {
+    cursor:default
+}
+.session-trainee-copy {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0
+}
+.session-trainee-avatar {
+    display:grid;
+    width:32px;
+    height:32px;
+    flex:0 0 32px;
+    place-items:center;
+    border-radius:9px;
+    background:#f3efec;
+    color:#756a65;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.2px
+}
+.session-trainee-name {
+    min-width:0;
+    overflow:hidden;
+    color:#403936;
+    font-size:11px;
+    font-weight:600;
+    line-height:1.35;
+    text-overflow:ellipsis;
+    white-space:nowrap
+}
+.att-tag {
+    justify-self:end;
+    padding:4px 7px;
+    border-radius:999px;
+    font-size:9px;
+    font-weight:700;
+    line-height:1.2;
+    white-space:nowrap
+}
+.att-tag.present {
+    background:#e9f6ef;
+    color:#277344
+}
+.att-tag.absent {
+    background:#fff0f1;
+    color:#b43142
+}
+.att-tag.expected {
+    background:#fff6df;
+    color:#9a6910
+}
+#reviewModal.session-modal-active .trainer-note-field {
+    padding-top:2px
+}
+#reviewModal.session-modal-active .trainer-note-field>label {
+    display:block;
+    color:#3f3835;
+    font-size:12px;
+    font-weight:700
+}
+#reviewModal.session-modal-active #trainerNote {
+    min-height:82px;
+    margin-top:8px;
+    background:#fcfbfa
+}
+#reviewModal.session-modal-active .modal-actions {
+    padding-top:16px;
+    border-top:1px solid #eee8e4
+}
+@media(max-width:620px) {
+    #reviewModal.session-modal-active {
+        padding:10px
+    }
+    #reviewModal.session-modal-active .modal-card {
+        max-height:calc(100vh - 20px);
+        padding:22px 18px
+    }
+    #reviewModal.session-modal-active h2 {
+        font-size:18px
+    }
+    #modalListContent {
+        grid-template-columns:1fr;
+        max-height:300px
+    }
+    #reviewModal.session-modal-active .modal-actions button {
+        flex:1
+    }
+}
 .post-launch-report-modal .modal-card {
     width:min(980px,100%);
     max-height:92vh;

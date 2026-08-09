@@ -200,6 +200,9 @@ function initIcons() {
 
 function openReview(title, description, saveLabel) {
   modalTitle.textContent = title;
+  modal.classList.remove('session-modal-active');
+  const modalEyebrow = document.getElementById('modalEyebrow');
+  if (modalEyebrow) modalEyebrow.textContent = 'TRAINEE ASSESSMENT';
   if (modalDescription) {
     modalDescription.textContent = description || 'Review the trainee\u2019s competency results and record any coaching or certification remarks.';
   }
@@ -222,6 +225,7 @@ function openReview(title, description, saveLabel) {
 
 function closeReview() {
   modal.classList.remove('open');
+  modal.classList.remove('session-modal-active');
   modal.setAttribute('aria-hidden', 'true');
   modalMode = null;
   modalContext = {};
@@ -236,6 +240,9 @@ function closeReview() {
 
   const saveBtn = document.getElementById('saveReview');
   if (saveBtn) saveBtn.textContent = 'Save Assessment';
+
+  const attendanceSummary = document.getElementById('modalAttendanceSummary');
+  if (attendanceSummary) attendanceSummary.textContent = '';
 }
 
 // Names of every batch currently listed in the Assigned Training Batches table.
@@ -246,12 +253,17 @@ function getBatchNames() {
 
 // Renders a roster of trainees inside the modal's list area.
 // mode: 'record' (read-only present/absent), 'mark' (interactive checkboxes), 'expected' (read-only, hasn't happened yet)
+function traineeInitials(name) {
+  return name.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
+}
+
 function renderRosterList(names, mode, absentees = []) {
   if (mode === 'expected') {
     return names.map(n => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #eee;font-size:14px;">
-        <span>${n}</span>
-        <span style="font-size:12px;color:#b8860b;font-weight:600;">Expected</span>
+      <div class="session-roster-row expected">
+        <span class="session-trainee-avatar">${traineeInitials(n)}</span>
+        <span class="session-trainee-name">${n}</span>
+        <span class="att-tag expected">Expected</span>
       </div>`).join('');
   }
 
@@ -259,12 +271,23 @@ function renderRosterList(names, mode, absentees = []) {
   return names.map(n => {
     const isAbsent = absentees.includes(n);
     return `
-      <label style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #eee;font-size:14px;cursor:${readOnly ? 'default' : 'pointer'};">
+      <label class="session-roster-row${readOnly ? ' read-only' : ''}">
         <input type="checkbox" class="attendance-check" data-name="${n}" ${isAbsent ? '' : 'checked'} ${readOnly ? 'disabled' : ''}>
-        <span style="flex:1;">${n}</span>
-        <span class="att-tag" style="font-size:12px;font-weight:600;color:${isAbsent ? '#c0392b' : '#2e7d32'};">${isAbsent ? 'Absent' : 'Present'}</span>
+        <span class="session-trainee-copy"><span class="session-trainee-avatar">${traineeInitials(n)}</span><span class="session-trainee-name">${n}</span></span>
+        <span class="att-tag ${isAbsent ? 'absent' : 'present'}">${isAbsent ? 'Absent' : 'Present'}</span>
       </label>`;
   }).join('');
+}
+
+function updateAttendanceSummary(mode, total) {
+  const summary = document.getElementById('modalAttendanceSummary');
+  if (!summary) return;
+  if (mode === 'expected') {
+    summary.textContent = `${total} expected`;
+    return;
+  }
+  const present = document.querySelectorAll('#modalListContent .attendance-check:checked').length;
+  summary.textContent = mode === 'record' ? `${present} of ${total} present` : `${present} of ${total} marked present`;
 }
 
 function openBatchNoteModal() {
@@ -312,21 +335,21 @@ function openSessionModal(sessionName, sessionRow) {
   let title, desc, listLabelText, listMode, saveLabel;
 
   if (roster.mode === 'completed') {
-    title = `Attendance \u2014 ${sessionName}`;
+    title = sessionName;
     desc = `${roster.batch} \u2022 ${roster.trainees.length} trainees`;
     listLabelText = 'Attendance Record';
     listMode = 'record';
     saveLabel = 'Close Record';
     note.placeholder = 'Add a follow-up remark about this session (optional)...';
   } else if (roster.mode === 'scheduled') {
-    title = `Open Session \u2014 ${sessionName}`;
+    title = sessionName;
     desc = `${roster.batch} \u2022 mark today's attendance`;
     listLabelText = 'Mark Attendance';
     listMode = 'mark';
     saveLabel = 'Save Attendance';
     note.placeholder = 'Add session notes (optional)...';
   } else {
-    title = `Upcoming Session \u2014 ${sessionName}`;
+    title = sessionName;
     desc = `${roster.batch} \u2022 ${roster.trainees.length} trainees expected`;
     listLabelText = 'Expected Trainees';
     listMode = 'expected';
@@ -337,6 +360,7 @@ function openSessionModal(sessionName, sessionRow) {
   if (listLabel) listLabel.textContent = listLabelText;
   if (listContent) {
     listContent.innerHTML = renderRosterList(roster.trainees, listMode, roster.absentees);
+    updateAttendanceSummary(listMode, roster.trainees.length);
 
     // Live-update the Present/Absent tag as the trainer checks/unchecks someone.
     listContent.querySelectorAll('.attendance-check').forEach(cb => {
@@ -344,7 +368,9 @@ function openSessionModal(sessionName, sessionRow) {
         const tag = cb.closest('label').querySelector('.att-tag');
         if (!tag) return;
         tag.textContent = cb.checked ? 'Present' : 'Absent';
-        tag.style.color = cb.checked ? '#2e7d32' : '#c0392b';
+        tag.classList.toggle('present', cb.checked);
+        tag.classList.toggle('absent', !cb.checked);
+        updateAttendanceSummary(listMode, roster.trainees.length);
       });
     });
   }
@@ -353,6 +379,9 @@ function openSessionModal(sessionName, sessionRow) {
   modalContext = { sessionName, sessionType: roster.mode, sessionRow };
   openReview(title, desc, saveLabel);
 
+  modal.classList.add('session-modal-active');
+  const modalEyebrow = document.getElementById('modalEyebrow');
+  if (modalEyebrow) modalEyebrow.textContent = roster.mode === 'scheduled' ? 'OPEN TRAINING SESSION' : roster.mode === 'completed' ? 'SESSION ATTENDANCE' : 'UPCOMING TRAINING SESSION';
   if (listField) listField.style.display = 'block';
 }
 
