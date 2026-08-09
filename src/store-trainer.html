@@ -37,7 +37,7 @@
             <button class="icon-btn mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
             <div class="search-box"><i data-lucide="search"></i><input id="globalSearch" type="search" placeholder="Search trainees, batches, or assessments..."></div>
             <div class="topbar-actions">
-                <button class="icon-btn notification-btn"><i data-lucide="bell"></i><span></span></button>
+                <button class="icon-btn notification-btn" id="notifBtn"><i data-lucide="bell"></i><span></span></button>
                 <div class="user-profile">
                     <div class="avatar">MD</div>
                     <div><strong>Michael Dela Cruz</strong><span>Store Trainer</span></div>
@@ -81,7 +81,7 @@
                 </section>
 
                 <section class="panel activity-panel">
-                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest training and certification updates</p></div><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></div>
+                    <div class="panel-heading"><div><h2>Recent Activity</h2><p>Latest training and certification updates</p></div><button class="icon-btn activity-more-btn"><i data-lucide="more-horizontal"></i></button></div>
                     <div class="timeline">
                         <div class="timeline-item"><span class="dot green"><i data-lucide="check"></i></span><div><strong>Attendance recorded</strong><p>Attendance for Calumpit Crew Batch A was completed.</p><small>15 minutes ago</small></div></div>
                         <div class="timeline-item"><span class="dot yellow"><i data-lucide="clipboard-check"></i></span><div><strong>Assessment submitted</strong><p>Andrea Reyes completed her service competency assessment.</p><small>42 minutes ago</small></div></div>
@@ -114,7 +114,18 @@
         <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
         <p class="eyebrow">TRAINEE ASSESSMENT</p>
         <h2 id="modalTitle">Trainee assessment</h2>
-        <p>Review the trainee’s competency results and record any coaching or certification remarks.</p>
+        <p id="modalDescription">Review the trainee’s competency results and record any coaching or certification remarks.</p>
+
+        <div class="modal-field" id="modalBatchField" style="display:none; margin-bottom:16px;">
+            <label for="modalBatchSelect">Select Batch</label>
+            <select id="modalBatchSelect" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d8dde3; font-family:inherit; font-size:14px;"></select>
+        </div>
+
+        <div class="modal-field" id="modalListField" style="display:none; margin-bottom:16px;">
+            <label id="modalListLabel">Attendance</label>
+            <div id="modalListContent" style="max-height:220px; overflow-y:auto; border:1px solid #eaecef; border-radius:8px; padding:4px 12px;"></div>
+        </div>
+
         <label for="trainerNote">Store Trainer Remarks</label>
         <textarea id="trainerNote" placeholder="Enter assessment remarks or coaching instructions..."></textarea>
         <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveReview">Save Assessment</button></div>
@@ -122,6 +133,9 @@
 </div>
 
 <div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Assessment saved successfully.</span></div>
+
+<!-- jsPDF: used to generate downloadable Certificate of Completion PDFs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/store-trainer.js"></script>
 <script src="js/report-export.js"></script>
 <script src="js/notifications.js"></script>
