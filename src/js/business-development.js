@@ -62,6 +62,8 @@ function initializeDashboard(){
 
 bindNewSiteProposalButton();
 
+bindSiteCardInteractions();
+
 }
 
 
@@ -106,6 +108,204 @@ function loadUserProfile(){
         initials.textContent = user.initials;
 
 
+}
+
+
+
+/* ==========================================================
+   SHARED SITE CARDS + COMPLETE SITE DETAILS
+========================================================== */
+
+
+function siteScore(value){
+    return value === null || value === undefined ? "Pending" : `${value}%`;
+}
+
+
+function getRecommendationContext(siteId){
+    const groups = businessDevelopmentData.recommendations || {};
+    const labels = {
+        highPotential: "High Potential",
+        needsValidation: "Needs Validation",
+        rejected: "Not Recommended"
+    };
+
+    for(const [group,items] of Object.entries(groups)){
+        const match = items.find(item=>item.id === siteId);
+        if(match) return {...match,label:labels[group] || "Recommendation"};
+    }
+
+    return null;
+}
+
+
+function getSiteRecord(siteId){
+    const application = businessDevelopmentData.applications.find(site=>site.id === siteId);
+    const archive = businessDevelopmentData.archives.find(site=>site.id === siteId);
+    const recommendation = getRecommendationContext(siteId);
+
+    if(!application && !archive) return null;
+
+    return {
+        ...(archive || {}),
+        ...(application || {}),
+        archiveReason:archive?.reason || "",
+        archivedDate:archive?.archivedDate || "",
+        recommendationReason:recommendation?.reason || "",
+        recommendationLabel:recommendation?.label || ""
+    };
+}
+
+
+function siteImageMarkup(site){
+    if(site.image){
+        return `<img class="site-photo" src="${escapeProposalHtml(site.image)}" alt="${escapeProposalHtml(site.location)} site">`;
+    }
+
+    return `<div class="site-photo-placeholder"><i data-lucide="image"></i><span>Site image not available</span></div>`;
+}
+
+
+function siteCardTemplate(site,options={}){
+    const context = options.context || "application";
+    const status = options.status || site.status || "Pending Review";
+    const insight = options.insight || site.recommendation || "Site information is ready for review.";
+    const dateLabel = context === "archive" ? "Archived" : "Submitted";
+    const dateValue = context === "archive" ? (site.archivedDate || "Not recorded") : (site.submittedDate || "Not recorded");
+    const establishments = site.businessProfile?.nearbyEstablishments || [];
+
+    return `
+        <article class="application-card site-card-action ${escapeProposalHtml(context)}-site-card"
+            data-site-id="${escapeProposalHtml(site.id)}" tabindex="0" role="button"
+            aria-label="View complete details for ${escapeProposalHtml(site.location)}">
+            ${siteImageMarkup(site)}
+            <div class="card-top">
+                <span class="site-id">${escapeProposalHtml(site.id)}</span>
+                ${B2B.badge(status)}
+            </div>
+            <h3>${escapeProposalHtml(site.location)}</h3>
+            <p>${escapeProposalHtml(site.municipality || "Location details not recorded")}</p>
+            <div class="site-card-facts">
+                <div><span>Site Type</span><strong>${escapeProposalHtml(site.category || "Expansion Proposal")}</strong></div>
+                <div><span>${dateLabel}</span><strong>${escapeProposalHtml(dateValue)}</strong></div>
+                <div><span>Target Market</span><strong>${escapeProposalHtml(site.businessProfile?.marketSegment || "Under evaluation")}</strong></div>
+                <div><span>Nearby Drivers</span><strong>${establishments.length ? `${establishments.length} identified` : "Under evaluation"}</strong></div>
+            </div>
+            <div class="site-card-insight">
+                <span>${context === "archive" ? "Archive Reason" : context === "recommendation" ? "Recommendation Basis" : "Site Recommendation"}</span>
+                <p>${escapeProposalHtml(insight)}</p>
+            </div>
+            <div class="score">
+                <strong>${siteScore(site.aiAnalysis?.score ?? site.score)}</strong>
+                <span>AI Viability Score</span>
+            </div>
+            <div class="card-click-hint"><span>View complete site profile</span><i data-lucide="arrow-up-right"></i></div>
+        </article>`;
+}
+
+
+function scoreMetric(label,value){
+    return `<div class="site-score-metric"><span>${escapeProposalHtml(label)}</span><strong>${siteScore(value)}</strong><div><span style="width:${Number.isFinite(Number(value)) ? Math.max(0,Math.min(100,Number(value))) : 0}%"></span></div></div>`;
+}
+
+
+function openSiteDetails(siteId){
+    const site = getSiteRecord(siteId);
+    if(!site) return;
+
+    const analysis = site.aiAnalysis || {};
+    const profile = site.businessProfile || {};
+    const establishments = profile.nearbyEstablishments || [];
+    const workflow = site.workflowStatus || {};
+    const status = site.archivedDate ? "Archived" : (site.status || site.recommendationLabel || "Pending Review");
+    const mainRecommendation = site.recommendationReason || site.archiveReason || site.recommendation || "No recommendation has been recorded.";
+
+    document.getElementById("siteId").textContent = site.id;
+    document.getElementById("siteTitle").textContent = site.location;
+    document.getElementById("siteHeaderMeta").innerHTML = `${B2B.badge(status)} <span class="site-modal-location">${escapeProposalHtml(site.municipality || "Location not recorded")} • ${escapeProposalHtml(site.category || "Expansion Proposal")}</span>`;
+    document.getElementById("siteDetail").innerHTML = `
+        <div class="site-detail-hero">
+            ${siteImageMarkup(site)}
+            <div class="site-detail-score">
+                <span>AI Viability Score</span>
+                <strong>${siteScore(analysis.score ?? site.score)}</strong>
+                <p>${analysis.evaluated === false ? "Evaluation is still pending." : "Calculated from market, access, competition, and lease indicators."}</p>
+            </div>
+        </div>
+        ${site.archivedDate ? `<div class="site-detail-alert"><i data-lucide="archive"></i><div><strong>Archived ${escapeProposalHtml(site.archivedDate)}</strong><p>${escapeProposalHtml(site.archiveReason)}</p></div></div>` : ""}
+        <div class="detail-grid site-detail-grid">
+            <div>
+                <section class="detail-section">
+                    <h3>Site Profile</h3>
+                    <div class="detail-section-body info-grid">
+                        <div class="info-item"><span>Application ID</span><strong>${escapeProposalHtml(site.id)}</strong></div>
+                        <div class="info-item"><span>Current Status</span><strong>${escapeProposalHtml(status)}</strong></div>
+                        <div class="info-item full"><span>Proposed Location</span><strong>${escapeProposalHtml(site.location)}</strong></div>
+                        <div class="info-item"><span>Municipality</span><strong>${escapeProposalHtml(site.municipality || "Not recorded")}</strong></div>
+                        <div class="info-item"><span>Site Type</span><strong>${escapeProposalHtml(site.category || "Expansion Proposal")}</strong></div>
+                        <div class="info-item"><span>Submitted Date</span><strong>${escapeProposalHtml(site.submittedDate || "Not recorded")}</strong></div>
+                        <div class="info-item"><span>Submitted By</span><strong>${escapeProposalHtml(site.submittedBy || "Business Development")}</strong></div>
+                    </div>
+                </section>
+                <section class="detail-section">
+                    <h3>AI Viability Breakdown</h3>
+                    <div class="detail-section-body site-score-grid">
+                        ${scoreMetric("Demographics",analysis.demographics)}
+                        ${scoreMetric("Customer Traffic",analysis.traffic)}
+                        ${scoreMetric("Competitor Position",analysis.competitors)}
+                        ${scoreMetric("Accessibility",analysis.accessibility)}
+                        ${scoreMetric("Lease Affordability",analysis.lease)}
+                    </div>
+                </section>
+                <section class="detail-section">
+                    <h3>Assessment Recommendation</h3>
+                    <div class="detail-section-body site-recommendation-detail">
+                        <i data-lucide="sparkles"></i>
+                        <div><strong>${escapeProposalHtml(site.recommendationLabel || (status === "Archived" ? "Archive Decision" : "Site Assessment"))}</strong><p>${escapeProposalHtml(mainRecommendation)}</p>${site.recommendation && mainRecommendation !== site.recommendation ? `<small>Full assessment: ${escapeProposalHtml(site.recommendation)}</small>` : ""}</div>
+                    </div>
+                </section>
+            </div>
+            <div>
+                <section class="detail-section">
+                    <h3>Business & Market Profile</h3>
+                    <div class="detail-section-body info-grid">
+                        <div class="info-item full"><span>Estimated Customers</span><strong>${escapeProposalHtml(profile.estimatedCustomers || "Under evaluation")}</strong></div>
+                        <div class="info-item full"><span>Target Market</span><strong>${escapeProposalHtml(profile.marketSegment || "Under evaluation")}</strong></div>
+                    </div>
+                    <div class="detail-section-body site-driver-list">
+                        <span>Nearby Commercial Drivers</span>
+                        ${establishments.length ? establishments.map(item=>`<div><i data-lucide="map-pin"></i><strong>${escapeProposalHtml(item)}</strong></div>`).join("") : `<p>No nearby-establishment details have been recorded.</p>`}
+                    </div>
+                </section>
+                <section class="detail-section">
+                    <h3>Department Workflow</h3>
+                    <div class="detail-section-body progress-list">
+                        ${Object.entries({"Business Development Review":workflow.departmentReview,"Legal Review":workflow.legal,"Engineering Review":workflow.engineering,"Finance Review":workflow.finance}).map(([label,value])=>`<div class="progress-row"><span class="progress-icon"><i data-lucide="circle"></i></span><div><strong>${label}</strong><small>${escapeProposalHtml(value || "Not Started")}</small></div>${B2B.badge(value || "Not Started")}</div>`).join("")}
+                    </div>
+                </section>
+            </div>
+        </div>`;
+
+    B2B.openModal("siteModal");
+    B2B.icon();
+}
+
+
+function bindSiteCardInteractions(){
+    if(document.body.dataset.siteCardsBound === "true") return;
+    document.body.dataset.siteCardsBound = "true";
+
+    document.addEventListener("click",event=>{
+        const card = event.target.closest(".site-card-action");
+        if(card) openSiteDetails(card.dataset.siteId);
+    });
+
+    document.addEventListener("keydown",event=>{
+        const card = event.target.closest(".site-card-action");
+        if(!card || !["Enter"," "].includes(event.key)) return;
+        event.preventDefault();
+        openSiteDetails(card.dataset.siteId);
+    });
 }
 
 
@@ -250,56 +450,7 @@ Recent Site Applications
 
 ${
 
-applications.slice(0,4).map(site=>`
-
-
-<div class="application-card">
-
-
-<img
-class="site-photo"
-src="${site.image || 'images/default-site.jpg'}">
-
-
-<h3>
-${site.location}
-</h3>
-
-
-<p>
-${site.municipality}
-</p>
-
-
-<span class="status">
-${site.status}
-</span>
-
-
-
-<div class="score">
-
-
-<strong>
-
-${site.aiAnalysis?.score || "N/A"}%
-
-</strong>
-
-
-<span>
-AI Viability Score
-</span>
-
-
-</div>
-
-
-
-</div>
-
-
-`).join("")
+applications.slice(0,4).map(site=>siteCardTemplate(site,{context:"overview"})).join("")
 
 
 }
@@ -447,107 +598,7 @@ function handleNavigation(section){
     
     ${
     
-    businessDevelopmentData.applications.map(site=>`
-    
-    
-    <div class="application-card">
-    
-    
-    
-    <div class="site-gallery">
-    
-    
-    <img 
-    src="${site.image || 'images/default-site.jpg'}"
-    alt="Site location image">
-    
-    
-    ${site.images ? site.images.map(img=>`
-    
-    <img src="${img}">
-    
-    `).join("") : ""}
-    
-    
-    </div>
-    
-    
-    
-    
-    <h3>
-    ${site.location}
-    </h3>
-    
-    
-    <p>
-    ${site.municipality}
-    </p>
-    
-    
-    
-    <span class="status">
-    
-    ${site.status}
-    
-    </span>
-    
-    
-    
-    
-    
-    <div class="score">
-    
-    
-    <strong>
-    
-    ${site.aiAnalysis?.score || "Pending"}%
-    
-    </strong>
-    
-    
-    <span>
-    AI Viability Score
-    </span>
-    
-    
-    </div>
-    
-    
-    
-    
-    <div class="location-summary">
-    
-    
-    <p>
-    🏫 Nearby Schools:
-    ${site.schools || "Analyzing"}
-    
-    </p>
-    
-    
-    <p>
-    🚶 Foot Traffic:
-    ${site.footTraffic || "Analyzing"}
-    
-    </p>
-    
-    
-    <p>
-    🏬 Commercial Activity:
-    ${site.commercial || "Analyzing"}
-    
-    </p>
-    
-    
-    </div>
-    
-    
-    
-    
-    </div>
-    
-    
-    `).join("")
+    businessDevelopmentData.applications.map(site=>siteCardTemplate(site,{context:"application"})).join("")
     
     
     }
@@ -1562,66 +1613,38 @@ function calculateViability(lat,lng){
     
     
     
+    const groups = [
+        {key:"highPotential",title:"High Potential Sites",description:"Strong candidates ready to advance toward department review.",icon:"sparkles",status:"High Potential"},
+        {key:"needsValidation",title:"Sites Needing Validation",description:"Promising locations that require additional evidence or analysis.",icon:"search-check",status:"Needs Validation"},
+        {key:"rejected",title:"Not Recommended",description:"Locations that currently fall below expansion requirements.",icon:"circle-x",status:"Not Recommended"}
+    ];
+
     content.innerHTML = `
-    
-    
-    <div class="page-header">
-    
-    
-    <p class="eyebrow">
-    RECOMMENDATIONS
-    </p>
-    
-    
-    <h1>
-    Expansion Recommendations
-    </h1>
-    
-    
-    </div>
-    
-    
-    
-    
-    <div class="dashboard-section">
-    
-    
-    <h2>
-    High Potential Sites
-    </h2>
-    
-    
-    
-    ${
-    businessDevelopmentData.recommendations.highPotential
-    .map(item=>`
-    
-    
-    <div class="application-card">
-    
-    
-    <h3>
-    ${item.id}
-    </h3>
-    
-    
-    <p>
-    ${item.reason}
-    </p>
-    
-    
-    </div>
-    
-    
-    `).join("")
-    }
-    
-    
-    
-    </div>
-    
-    
-    `;
+        <div class="page-header">
+            <div>
+                <p class="eyebrow">RECOMMENDATIONS</p>
+                <h1>Expansion Recommendations</h1>
+                <p class="subtitle">Open a recommendation card to review the full site profile, viability breakdown, market drivers, and workflow.</p>
+            </div>
+        </div>
+        <div class="recommendation-sections">
+            ${groups.map(group=>{
+                const items = businessDevelopmentData.recommendations[group.key] || [];
+                return `<section class="dashboard-section recommendation-section">
+                    <div class="section-header recommendation-heading">
+                        <div class="recommendation-heading-icon"><i data-lucide="${group.icon}"></i></div>
+                        <div><h2>${group.title}</h2><p>${group.description}</p></div>
+                        <span class="recommendation-total">${items.length}</span>
+                    </div>
+                    <div class="application-grid">
+                        ${items.map(item=>{
+                            const site = getSiteRecord(item.id);
+                            return site ? siteCardTemplate(site,{context:"recommendation",status:group.status,insight:item.reason}) : "";
+                        }).join("")}
+                    </div>
+                </section>`;
+            }).join("")}
+        </div>`;
     
     
     
@@ -1651,66 +1674,24 @@ function calculateViability(lat,lng){
     
     
     
+    const archivedSites = businessDevelopmentData.archives.map(archive=>getSiteRecord(archive.id));
+
     content.innerHTML = `
-    
-    
-    <div class="page-header">
-    
-    
-    <p class="eyebrow">
-    ARCHIVED SITES
-    </p>
-    
-    
-    <h1>
-    Archived Expansion Proposals
-    </h1>
-    
-    
-    </div>
-    
-    
-    
-    <div class="dashboard-section">
-    
-    
-    ${
-    businessDevelopmentData.archives
-    .map(site=>`
-    
-    
-    <div class="application-card">
-    
-    
-    <h3>
-    ${site.location}
-    </h3>
-    
-    
-    <p>
-    Reason:
-    ${site.reason}
-    </p>
-    
-    
-    <span class="status">
-    
-    Score ${site.score}%
-    
-    </span>
-    
-    
-    </div>
-    
-    
-    `).join("")
-    }
-    
-    
-    </div>
-    
-    
-    `;
+        <div class="page-header">
+            <div>
+                <p class="eyebrow">ARCHIVED SITES</p>
+                <h1>Archived Expansion Proposals</h1>
+                <p class="subtitle">Review the original site profile, recorded viability indicators, and the reason each proposal was archived.</p>
+            </div>
+        </div>
+        <section class="dashboard-section archive-card-section">
+            <div class="section-header">
+                <div><h2>Archive Records</h2><p>${archivedSites.length} site proposals retained for reference and audit history.</p></div>
+            </div>
+            <div class="application-grid">
+                ${archivedSites.map(site=>siteCardTemplate(site,{context:"archive",status:"Archived",insight:site.archiveReason})).join("")}
+            </div>
+        </section>`;
     
     
     
@@ -2193,7 +2174,7 @@ function submitNewSiteProposal(event){
         id:generatedId,
         location,
         municipality,
-        image:"images/default-site.jpg",
+        image:"",
         status,
         aiAnalysis:{score:currentProposalAssessment.score},
         schools:document.getElementById("schoolCount")?.textContent||"Analyzing",

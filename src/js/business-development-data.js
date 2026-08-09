@@ -1250,6 +1250,26 @@ archives: [
 
         "Malolos Heritage District",
 
+        municipality:
+
+        "Malolos, Bulacan",
+
+        status:
+
+        "Archived",
+
+        submittedDate:
+
+        "June 18, 2026",
+
+        submittedBy:
+
+        "Juan Dela Cruz",
+
+        category:
+
+        "Heritage District Expansion",
+
         reason:
 
         "High competitor density",
@@ -1260,7 +1280,51 @@ archives: [
 
         score:
 
-        69
+        69,
+
+        aiAnalysis: {
+
+            evaluated: true,
+
+            score: 69,
+
+            demographics: 76,
+
+            traffic: 73,
+
+            competitors: 52,
+
+            accessibility: 72,
+
+            lease: 70
+
+        },
+
+        businessProfile: {
+
+            estimatedCustomers: "4,000 - 6,000 daily visitors",
+
+            marketSegment: "Local residents, heritage visitors, and nearby offices",
+
+            nearbyEstablishments: ["Heritage District", "Government Offices", "Local Restaurants"]
+
+        },
+
+        recommendation:
+
+        "Do not advance without a differentiated market plan and a new competitor study.",
+
+        workflowStatus: {
+
+            departmentReview: "Archived",
+
+            legal: "Cancelled",
+
+            engineering: "Cancelled",
+
+            finance: "Cancelled"
+
+        }
 
     },
 
@@ -1275,6 +1339,30 @@ archives: [
 
         "Pulilan Town Center",
 
+        municipality:
+
+        "Pulilan, Bulacan",
+
+        status:
+
+        "Archived",
+
+        image:
+
+        "images/pulilan.jpeg",
+
+        submittedDate:
+
+        "June 8, 2026",
+
+        submittedBy:
+
+        "Juan Dela Cruz",
+
+        category:
+
+        "Town Center Commercial Site",
+
         reason:
 
         "Lease negotiation unsuccessful",
@@ -1285,7 +1373,51 @@ archives: [
 
         score:
 
-        71
+        71,
+
+        aiAnalysis: {
+
+            evaluated: true,
+
+            score: 71,
+
+            demographics: 78,
+
+            traffic: 75,
+
+            competitors: 74,
+
+            accessibility: 80,
+
+            lease: 48
+
+        },
+
+        businessProfile: {
+
+            estimatedCustomers: "6,000 - 8,000 daily visitors",
+
+            marketSegment: "Town-center shoppers, commuters, and local families",
+
+            nearbyEstablishments: ["Pulilan Public Market", "Municipal Hall", "Transport Stops"]
+
+        },
+
+        recommendation:
+
+        "Reconsider only if acceptable lease terms become available.",
+
+        workflowStatus: {
+
+            departmentReview: "Archived",
+
+            legal: "Lease Negotiation Closed",
+
+            engineering: "Cancelled",
+
+            finance: "Not Approved"
+
+        }
 
     }
 
