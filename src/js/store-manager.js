@@ -51,6 +51,17 @@ const operationalLog = [
   {time:'16:20',activity:'Cold-storage temperature verification completed.',status:'Compliant',evidence:'EV-0720-007'}
 ];
 
+const correctiveAction = {
+  issue:'',
+  action:'',
+  responsible:'',
+  targetDate:'',
+  priority:'High',
+  status:'Open',
+  remarks:'',
+  saved:false
+};
+
 let operationalLogSaved = false;
 
 let branchStage = 'pre-launch';
@@ -164,7 +175,7 @@ function postLaunchTemplate(){
     {title:'Daily Operations Report',description:'Encode Pulilan sales, attendance, operational controls, and the Store Manager note.',icon:'file-up',button:'Open'},
     {title:'Operational Log',description:'Maintain the four timestamped Pulilan operating-day entries and evidence references.',icon:'notebook-pen',button:'Open'},
     {title:'Incident Report',description:'No Pulilan incident was reported for July 20, 2026.',icon:'shield-check',button:'No Incident',unavailable:true},
-    {title:'Corrective Actions',description:'View and update tasks assigned by the Area Manager.',icon:'clipboard-check',button:'View'}
+    {title:'Corrective Actions',description:correctiveAction.saved?`${correctiveAction.issue} • ${correctiveAction.responsible} • ${correctiveAction.status}`:'Record the issue, corrective response, owner, target date, priority, and progress evidence.',icon:'clipboard-check',button:correctiveAction.saved?'Edit':'Open'}
   ];
 
   return `${header('AFTER OPENING','Post-Launch Reports','Submit operational information required by the Area Manager without duplicating POS or ERP functions.','')}
@@ -173,7 +184,7 @@ function postLaunchTemplate(){
       <article class="stat-card"><div class="stat-icon green">${icon('file-text')}</div><div><span>Daily Operations Report</span><strong>${locked?'Locked':reportStatus}</strong><small>DOR-2026-0720-001</small></div></article>
       <article class="stat-card"><div class="stat-icon yellow">${icon('notebook-tabs')}</div><div><span>Operational Log</span><strong>${locked?'—':logStatus}</strong><small>Four recorded updates</small></div></article>
       <article class="stat-card"><div class="stat-icon orange">${icon('shield-check')}</div><div><span>Incident Reports</span><strong>${locked?'—':'0'}</strong><small>No Pulilan incident recorded</small></div></article>
-      <article class="stat-card"><div class="stat-icon red">${icon('clipboard-list')}</div><div><span>Corrective Actions</span><strong>${locked?'—':'2'}</strong><small>Assigned by Area Manager</small></div></article>
+      <article class="stat-card"><div class="stat-icon red">${icon('clipboard-list')}</div><div><span>Corrective Actions</span><strong>${locked?'—':correctiveAction.saved?'1 Saved':'0'}</strong><small>${correctiveAction.saved?`${correctiveAction.priority} priority • ${correctiveAction.status}`:'No action encoded yet'}</small></div></article>
     </div>
     <section class="panel"><div class="panel-heading"><div><h2>Reporting Actions</h2><p>Lightweight workflows connected to Area Manager review</p></div></div><div class="branch-list">
       ${actions.map((item,index)=>`<article class="branch-row"><div class="branch-rank">${icon(item.icon)}</div><div class="branch-name"><strong>${item.title}</strong><span>${item.description}</span></div><button class="review-btn" data-post-action="${index}" ${locked||item.unavailable?'disabled':''}>${item.button}</button></article>`).join('')}
@@ -218,18 +229,31 @@ function modalFields(type, data={}){
       </div>
     </article>`).join('')}</div>
   </div>`;
+  if(type==='corrective-action') return `<div class="post-launch-form corrective-action-form">
+    <div class="corrective-form-intro"><span>${icon('clipboard-check')}</span><div><strong>Pulilan Corrective Action Record</strong><p>Document the identified finding, accountable owner, target resolution, and supporting progress details.</p></div></div>
+    <label class="corrective-field full"><span>Issue / Finding <em>Required</em></span><textarea id="correctiveIssue" rows="3" placeholder="Describe the identified issue..." required>${escapeStoreHtml(correctiveAction.issue)}</textarea></label>
+    <label class="corrective-field full"><span>Corrective Action <em>Required</em></span><textarea id="correctiveAction" rows="3" placeholder="Describe the action that will be taken..." required>${escapeStoreHtml(correctiveAction.action)}</textarea></label>
+    <div class="form-grid corrective-grid">
+      <label class="corrective-field"><span>Person Responsible <em>Required</em></span><input id="correctiveResponsible" list="correctiveResponsibleOptions" value="${escapeStoreHtml(correctiveAction.responsible)}" placeholder="Select or enter a person" required><datalist id="correctiveResponsibleOptions"><option value="Ruth Torres — Store Manager"><option value="IT Team"><option value="Technical Team"><option value="Supply Chain Officer"><option value="Contractor"></datalist></label>
+      <label class="corrective-field"><span>Target Completion Date <em>Required</em></span><input id="correctiveTargetDate" type="date" value="${escapeStoreHtml(correctiveAction.targetDate)}" required></label>
+      <label class="corrective-field"><span>Priority <em>Required</em></span><select id="correctivePriority"><option ${correctiveAction.priority==='Low'?'selected':''}>Low</option><option ${correctiveAction.priority==='Medium'?'selected':''}>Medium</option><option ${correctiveAction.priority==='High'?'selected':''}>High</option><option ${correctiveAction.priority==='Critical'?'selected':''}>Critical</option></select></label>
+      <label class="corrective-field"><span>Status <em>Required</em></span><select id="correctiveStatus"><option ${correctiveAction.status==='Open'?'selected':''}>Open</option><option ${correctiveAction.status==='In Progress'?'selected':''}>In Progress</option><option ${correctiveAction.status==='Monitoring'?'selected':''}>Monitoring</option><option ${correctiveAction.status==='Completed'?'selected':''}>Completed</option></select></label>
+    </div>
+    <label class="corrective-field full"><span>Remarks / Evidence <small>Optional</small></span><textarea id="correctiveRemarks" rows="3" placeholder="Add progress updates or supporting details...">${escapeStoreHtml(correctiveAction.remarks)}</textarea></label>
+  </div>`;
   return `<label>Report Type</label><input value="${data.name||'Operational Report'}" disabled><label>Operational Summary</label><textarea id="modalRemarks" rows="6" placeholder="Enter the information to be submitted to the Area Manager..."></textarea>`;
 }
 function openModal(type, id=null, title='Update Record'){
   const collection={readiness:readinessItems,task:tasks,issue:issues}[type];
   const data=collection&&id?collection.find(item=>item.id===id):{};
-  const isPostLaunch=['report','daily-report','operational-log'].includes(type);
+  const isPostLaunch=['report','daily-report','operational-log','corrective-action'].includes(type);
   activeModal={type,id};
   modalEyebrow.textContent=isPostLaunch?'POST-LAUNCH REPORT':'STORE UPDATE';
   modalTitle.textContent=title;
-  modalDescription.textContent=type==='daily-report'?'Encode the Daily Operations Report submitted to Area Management.':type==='operational-log'?'Encode Pulilan’s timestamped operational activities and supporting evidence.':'Update the selected store readiness record and save your changes.';
+  modalDescription.textContent=type==='daily-report'?'Encode the Daily Operations Report submitted to Area Management.':type==='operational-log'?'Encode Pulilan’s timestamped operational activities and supporting evidence.':type==='corrective-action'?'Create an accountable and time-bound response to an operational finding.':'Update the selected store readiness record and save your changes.';
   modalBody.innerHTML=modalFields(type,data);
-  modal.classList.toggle('post-launch-report-modal',['daily-report','operational-log'].includes(type));
+  modal.classList.toggle('post-launch-report-modal',['daily-report','operational-log','corrective-action'].includes(type));
+  document.getElementById('saveModal').textContent=type==='corrective-action'?'Save Corrective Action':type==='daily-report'?'Save Report':type==='operational-log'?'Save Operational Log':'Save Update';
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
   setTimeout(()=>modalBody.querySelector('input,select,textarea')?.focus(),0);
@@ -262,9 +286,24 @@ function saveModal(){ if(!activeModal)return; const {type,id}=activeModal; const
     });
     operationalLogSaved=true;
   }
+  if(type==='corrective-action'){
+    const fields={
+      issue:document.getElementById('correctiveIssue').value.trim(),
+      action:document.getElementById('correctiveAction').value.trim(),
+      responsible:document.getElementById('correctiveResponsible').value.trim(),
+      targetDate:document.getElementById('correctiveTargetDate').value,
+      priority:document.getElementById('correctivePriority').value,
+      status:document.getElementById('correctiveStatus').value,
+      remarks:document.getElementById('correctiveRemarks').value.trim()
+    };
+    const required=[['issue','correctiveIssue'],['action','correctiveAction'],['responsible','correctiveResponsible'],['targetDate','correctiveTargetDate']];
+    const missing=required.find(([key])=>!fields[key]);
+    if(missing){showToast('Complete all required corrective action fields before saving.');document.getElementById(missing[1]).focus();return;}
+    Object.assign(correctiveAction,fields,{saved:true});
+  }
   closeModal();
   renderSection();
-  const message=type==='daily-report'?'Daily Operations Report updated successfully.':type==='operational-log'?'Operational Log updated successfully.':type==='report'?'Report saved successfully.':'Store update saved successfully.';
+  const message=type==='daily-report'?'Daily Operations Report updated successfully.':type==='operational-log'?'Operational Log updated successfully.':type==='corrective-action'?'Corrective Action saved successfully.':type==='report'?'Report saved successfully.':'Store update saved successfully.';
   showToast(message);
 }
 
@@ -290,7 +329,7 @@ document.addEventListener('click',event=>{
     const action=Number(postAction.dataset.postAction);
     if(action===0)openModal('daily-report',null,'Daily Operations Report');
     if(action===1)openModal('operational-log',null,'Operational Log');
-    if(action===3)openModal('report',null,'Corrective Actions');
+    if(action===3)openModal('corrective-action',null,correctiveAction.saved?'Edit Corrective Action':'New Corrective Action');
     return;
   }
   if(event.target.closest('#requestClearance')){

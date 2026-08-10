@@ -1137,6 +1137,16 @@ td:first-child span {
     max-height:92vh;
     overflow-y:auto;
 }
+.post-launch-report-modal .modal-actions {
+    position:sticky;
+    bottom:-28px;
+    z-index:3;
+    margin:20px -28px -28px;
+    padding:15px 28px 22px;
+    border-top:1px solid #e9e1dd;
+    background:rgba(255,255,255,.97);
+    box-shadow:0 -8px 24px rgba(53,33,36,.06)
+}
 .post-launch-report-modal .modal-icon {
     width:42px;
     height:42px;
@@ -1152,6 +1162,106 @@ td:first-child span {
 }
 .post-launch-form .form-grid {
     gap:14px 16px;
+}
+.corrective-action-form {
+    gap:15px
+}
+.corrective-form-intro {
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 16px;
+    border:1px solid #eadfda;
+    border-radius:12px;
+    background:linear-gradient(135deg,#fbf9f7,#f7f2ef)
+}
+.corrective-form-intro>span {
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:var(--soft-red);
+    color:var(--red)
+}
+.corrective-form-intro svg {
+    width:18px
+}
+.corrective-form-intro strong {
+    display:block;
+    color:#403937;
+    font-size:12px
+}
+.corrective-form-intro p {
+    margin-top:3px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.55
+}
+.corrective-field {
+    min-width:0
+}
+.corrective-field>span {
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    gap:6px;
+    margin-bottom:6px;
+    color:#4e4744;
+    font-size:10px;
+    font-weight:700
+}
+.corrective-field>span em {
+    padding:3px 5px;
+    border-radius:5px;
+    background:#fff0f2;
+    color:var(--red);
+    font-size:7px;
+    font-style:normal;
+    letter-spacing:.04em;
+    text-transform:uppercase
+}
+.corrective-field>span small {
+    color:var(--muted);
+    font-size:8px;
+    font-weight:500
+}
+.corrective-action-form textarea,
+.corrective-action-form input,
+.corrective-action-form select {
+    width:100%;
+    margin:0;
+    border:1px solid #ded5d0;
+    border-radius:10px;
+    background:#fcfbfa;
+    font:inherit;
+    font-size:11px;
+    outline:none
+}
+.corrective-action-form textarea {
+    min-height:82px;
+    padding:12px 13px;
+    resize:vertical;
+    line-height:1.65
+}
+.corrective-action-form input,
+.corrective-action-form select {
+    min-height:43px;
+    padding:10px 12px
+}
+.corrective-action-form textarea:focus,
+.corrective-action-form input:focus,
+.corrective-action-form select:focus {
+    border-color:#df8795;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(227,25,55,.07)
+}
+.corrective-grid {
+    padding:15px;
+    border:1px solid #ede5e1;
+    border-radius:12px;
+    background:#faf8f7
 }
 .report-fieldset {
     margin:0;
@@ -1286,6 +1396,14 @@ td:first-child span {
     }
     .operational-log-entry {
         grid-template-columns:1fr;
+    }
+    .corrective-grid {
+        grid-template-columns:1fr
+    }
+    .post-launch-report-modal .modal-actions {
+        bottom:-20px;
+        margin:18px -20px -20px;
+        padding:13px 20px 17px
     }
 }
 .secondary-btn {
