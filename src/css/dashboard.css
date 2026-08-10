@@ -815,6 +815,62 @@ td:first-child span {
 .modal-card textarea:focus {
     border-color:#df8795
 }
+
+/* Supply Chain record dialogs share one viewport-safe card. The fields scroll,
+   while Cancel and Save remain visible at normal browser zoom. */
+#deliveryModal {
+    padding:24px
+}
+#deliveryModal .supply-record-modal-card {
+    display:flex;
+    flex-direction:column;
+    width:min(570px,100%);
+    max-height:min(88vh,780px);
+    padding:0;
+    overflow:hidden
+}
+#deliveryModal .modal-close {
+    z-index:4
+}
+.supply-modal-scroll {
+    min-height:0;
+    padding:28px 30px 18px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable
+}
+.supply-modal-scroll::-webkit-scrollbar {
+    width:8px
+}
+.supply-modal-scroll::-webkit-scrollbar-track {
+    background:#f7f3f1
+}
+.supply-modal-scroll::-webkit-scrollbar-thumb {
+    border:2px solid #f7f3f1;
+    border-radius:10px;
+    background:#cfc3bd
+}
+.supply-modal-scroll>p:not(.eyebrow) {
+    margin:9px 0 20px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.7
+}
+.supply-modal-scroll textarea {
+    min-height:110px
+}
+#deliveryModal .supply-modal-actions {
+    flex:0 0 auto;
+    justify-content:flex-end;
+    margin:0;
+    padding:14px 30px 18px;
+    border-top:1px solid #e9e1dd;
+    background:rgba(255,255,255,.97);
+    box-shadow:0 -8px 24px rgba(53,33,36,.06)
+}
+#deliveryModal .supply-modal-actions button {
+    min-width:118px
+}
 .modal-actions {
     display:flex;
     justify-content:flex-end;
@@ -1570,6 +1626,192 @@ td:first-child span {
     margin-top:20px
 }
 
+/* Supply launch-confirmation dependency and notification presentation */
+.launch-confirmation-grid {
+    align-items:start
+}
+.launch-checklist {
+    padding-top:14px
+}
+.launch-checklist>label {
+    min-height:58px
+}
+.launch-checklist>label>span {
+    display:grid;
+    min-width:0;
+    gap:3px
+}
+.launch-checklist>label>span strong {
+    color:#332f2d;
+    font-size:11px;
+    font-weight:600
+}
+.launch-checklist>label>span small {
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.45
+}
+.launch-checklist .supply-check-blocked {
+    margin:7px -9px;
+    padding:13px 10px;
+    border:1px solid #f0c2c9;
+    border-radius:12px;
+    background:#fff7f8
+}
+.supply-check-blocked em {
+    margin-left:auto;
+    padding:5px 7px;
+    border-radius:7px;
+    background:#fde4e8;
+    color:var(--red);
+    font-size:8px;
+    font-style:normal;
+    font-weight:700;
+    letter-spacing:.05em
+}
+.launch-dependency-card {
+    display:flex;
+    gap:13px;
+    margin-top:18px;
+    padding:17px;
+    border:1px solid #efbdc5;
+    border-radius:14px;
+    background:linear-gradient(145deg,#fff9f9 0%,#fff1f3 100%);
+    box-shadow:0 9px 24px rgba(161,36,54,.07)
+}
+.launch-dependency-icon {
+    width:42px;
+    height:42px;
+    flex:0 0 42px;
+    display:grid;
+    place-items:center;
+    border:1px solid #f3cfd4;
+    border-radius:12px;
+    background:#fff;
+    color:var(--red)
+}
+.launch-dependency-icon svg {
+    width:20px
+}
+.launch-dependency-content {
+    min-width:0;
+    flex:1
+}
+.launch-dependency-content>span {
+    display:block;
+    margin-bottom:3px;
+    color:var(--red);
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.09em
+}
+.launch-dependency-content>strong {
+    display:block;
+    color:#382f30;
+    font-size:13px
+}
+.launch-dependency-content>p {
+    margin:6px 0 13px;
+    color:#75696a;
+    font-size:9px;
+    line-height:1.65
+}
+.launch-pos-progress {
+    padding:11px 12px;
+    border:1px solid rgba(232,188,195,.75);
+    border-radius:10px;
+    background:rgba(255,255,255,.75)
+}
+.launch-pos-progress>div:first-child {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:7px;
+    font-size:9px
+}
+.launch-pos-progress>div:first-child span {
+    color:var(--muted)
+}
+.launch-pos-progress>div:first-child strong {
+    color:#443b3c
+}
+.launch-pos-progress .capacity-bar {
+    height:7px;
+    background:#f0dcdf
+}
+.launch-pos-progress small {
+    display:block;
+    margin-top:7px;
+    color:#887778;
+    font-size:8px
+}
+.launch-checklist>.launch-confirm {
+    width:100%;
+    min-height:44px;
+    justify-content:center;
+    margin-top:16px
+}
+.launch-message-form label {
+    display:block;
+    margin-bottom:6px;
+    color:#514b49;
+    font-size:10px;
+    font-weight:600
+}
+.launch-message-form input {
+    width:100%;
+    margin:0 0 17px;
+    padding:12px;
+    border:1px solid #ddd4cf;
+    border-radius:10px;
+    font:inherit;
+    font-size:11px
+}
+.launch-message-preview {
+    width:100%;
+    min-height:175px;
+    padding:13px;
+    border:1px solid #ddd4cf;
+    border-radius:11px;
+    outline:none;
+    resize:vertical;
+    font:inherit;
+    font-size:11px;
+    line-height:1.7
+}
+.launch-message-preview:focus {
+    border-color:#df8795;
+    box-shadow:0 0 0 3px rgba(227,25,55,.08)
+}
+.launch-message-impact {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:14px;
+    padding:12px;
+    border-radius:11px;
+    background:#f8f5f3;
+    color:#706662
+}
+.launch-message-impact>svg {
+    width:17px;
+    flex:0 0 17px;
+    color:var(--red)
+}
+.launch-message-impact span {
+    display:grid;
+    gap:2px
+}
+.launch-message-impact strong {
+    color:#443d39;
+    font-size:9px
+}
+.launch-message-impact small {
+    color:var(--muted);
+    font-size:8px;
+    line-height:1.5
+}
+
 /* Store Manager opening-clearance workflow */
 .clearance-layout {
     display:grid;
@@ -1797,6 +2039,27 @@ td:first-child span {
     }
     .clearance-layout {
         grid-template-columns:1fr
+    }
+}
+@media(max-width:600px) {
+    #deliveryModal {
+        padding:10px
+    }
+    #deliveryModal .supply-record-modal-card {
+        max-height:94vh
+    }
+    .supply-modal-scroll {
+        padding:23px 20px 14px
+    }
+    #deliveryModal .supply-modal-actions {
+        padding:12px 20px 16px
+    }
+    #deliveryModal .supply-modal-actions button {
+        min-width:0;
+        flex:1
+    }
+    .launch-dependency-card {
+        padding:14px
     }
 }
 .brand img {

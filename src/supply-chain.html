@@ -60,7 +60,25 @@
   </tbody></table></div></section>
 </section>
 </main></div>
-<div class="modal" id="deliveryModal" aria-hidden="true"><div class="modal-card"><button class="modal-close" id="closeModal"><i data-lucide="x"></i></button><div class="modal-icon"><i data-lucide="truck"></i></div><p class="eyebrow">DELIVERY UPDATE</p><h2 id="modalTitle">Update delivery</h2><p>Record the expected shipment against what was actually received.</p><label>Delivery / Item</label><input id="deliveryItem" placeholder="e.g., POS Terminals"><label>Branch</label><input id="deliveryBranch" value="Pulilan, Bulacan"><label>Supplier</label><input id="deliverySupplier" placeholder="Supplier name"><div class="form-grid"><label>Expected Quantity<input id="expectedQty" type="number" min="1" value="4"></label><label>Received Quantity<input id="receivedQty" type="number" min="0" value="0"></label></div><label>Delivery Status</label><select id="deliveryStatus"><option>Scheduled</option><option>In Transit</option><option>Received</option><option>Incomplete</option><option>Delayed</option><option>Damaged</option></select><label>Revised Delivery Date</label><input id="revisedDate" type="date"><label>Condition / Corrective Action</label><textarea id="deliveryNote" placeholder="Describe missing or damaged items, supplier contact, and corrective action..."></textarea><div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveDelivery">Save Update</button></div></div></div>
+<div class="modal" id="deliveryModal" aria-hidden="true">
+  <div class="modal-card supply-record-modal-card">
+    <button class="modal-close" id="closeModal" type="button" aria-label="Close supply record"><i data-lucide="x"></i></button>
+    <div class="supply-modal-scroll">
+      <div class="modal-icon"><i data-lucide="truck"></i></div>
+      <p class="eyebrow">SUPPLY RECORD</p>
+      <h2 id="modalTitle">Update delivery</h2>
+      <p>Record the expected shipment against what was actually received.</p>
+      <label>Delivery / Item</label><input id="deliveryItem" placeholder="e.g., POS Terminals">
+      <label>Branch</label><input id="deliveryBranch" value="Pulilan, Bulacan">
+      <label>Supplier</label><input id="deliverySupplier" placeholder="Supplier name">
+      <div class="form-grid"><label>Expected Quantity<input id="expectedQty" type="number" min="1" value="4"></label><label>Received Quantity<input id="receivedQty" type="number" min="0" value="0"></label></div>
+      <label>Delivery Status</label><select id="deliveryStatus"><option>Scheduled</option><option>In Transit</option><option>Received</option><option>Incomplete</option><option>Delayed</option><option>Damaged</option></select>
+      <label>Revised Delivery Date</label><input id="revisedDate" type="date">
+      <label>Condition / Corrective Action</label><textarea id="deliveryNote" placeholder="Describe missing or damaged items, supplier contact, and corrective action..."></textarea>
+    </div>
+    <div class="modal-actions supply-modal-actions"><button class="secondary-btn" id="cancelModal" type="button">Cancel</button><button class="primary-btn" id="saveDelivery" type="button">Save Update</button></div>
+  </div>
+</div>
 <div class="toast" id="toast"><i data-lucide="circle-check"></i><span>Delivery updated successfully.</span></div>
 <script src="js/supply-chain.js"></script>
 <script src="js/report-export.js"></script>
