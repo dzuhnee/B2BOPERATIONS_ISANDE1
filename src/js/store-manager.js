@@ -55,12 +55,15 @@ let operationalLogSaved = false;
 
 let branchStage = 'pre-launch';
 let clearanceStatus = 'Conditional Clearance';
+let clearanceRemarks = 'Pulilan is 92% complete. Full opening clearance remains conditional until the remaining two POS terminals are received and activation is verified. Exterior signage is non-mandatory and continues to be monitored.';
+let proposedOpeningDate = '2026-08-01';
+let clearanceReviewUpdated = '';
 let activeSection = 'overview';
 let activeModal = null;
 
 const icon = name => `<i data-lucide="${name}"></i>`;
 const escapeStoreHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]));
-const statusClass = status => ({Complete:'strong',Resolved:'strong',Approved:'strong','In Progress':'good',Pending:'attention',Open:'attention',Submitted:'good'}[status] || 'attention');
+const statusClass = status => ({Complete:'strong',Resolved:'strong',Approved:'strong','Full Clearance Requested':'good','Conditional Clearance':'attention','In Progress':'good',Pending:'attention',Open:'attention',Submitted:'good'}[status] || 'attention');
 const priorityClass = priority => ({Critical:'high',High:'high',Medium:'medium',Low:'low'}[priority] || 'medium');
 const readinessPercent = () => {
   const posComplete = readinessItems.find(item => item.id === 2)?.status === 'Complete';
@@ -73,6 +76,9 @@ const mandatoryComplete = () => readinessItems.filter(item => item.mandatory && 
 const mandatoryTotal = () => readinessItems.filter(item => item.mandatory).length;
 const openIssues = () => issues.filter(issue => issue.status !== 'Resolved');
 const canRequestClearance = () => mandatoryComplete() === mandatoryTotal() && !issues.some(issue => issue.priority === 'Critical' && issue.status !== 'Resolved');
+const buildClearanceSummary = () => canRequestClearance()
+  ? 'Pulilan has completed all mandatory readiness requirements and has no unresolved critical launch issues. I recommend submitting the branch for full opening clearance while the non-mandatory exterior signage item continues to be monitored.'
+  : 'Pulilan is 92% complete. Full opening clearance remains conditional until the remaining two POS terminals are received and activation is verified. Exterior signage is non-mandatory and continues to be monitored.';
 
 function initIcons(){ if(window.lucide) lucide.createIcons(); }
 function showToast(message){ toast.querySelector('span').textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
@@ -109,9 +115,46 @@ function tasksTemplate(){ return `${header('LAUNCH COORDINATION','Readiness Task
 function issueTable(list){ return `<div class="table-wrap"><table><thead><tr><th>Issue</th><th>Category</th><th>Responsible Team</th><th>Priority</th><th>Status</th><th></th></tr></thead><tbody>${list.map(issue=>`<tr data-search="${issue.title} ${issue.category} ${issue.owner} ${issue.status}"><td><strong>${issue.title}</strong><span>${issue.reported}</span></td><td>${issue.category}</td><td>${issue.owner}</td><td><span class="priority ${priorityClass(issue.priority)}">${issue.priority}</span></td><td><span class="table-status ${statusClass(issue.status)}">${issue.status}</span></td><td><button class="review-btn" data-edit-issue="${issue.id}">Update</button></td></tr>`).join('')}</tbody></table></div>`; }
 function issuesTemplate(){ return `${header('ISSUE RESOLUTION','Launch Issues','Report launch blockers, assign follow-ups, and monitor resolution before opening.','<button class="primary-btn" data-add-issue>'+icon('plus')+' Report Issue</button>')}<div class="alert-banner"><div class="alert-icon">${icon('shield-alert')}</div><div><strong>${openIssues().length} unresolved launch issues</strong><span>Critical issues prevent the opening clearance request from being submitted.</span></div></div><section class="panel"><div class="panel-heading"><div><h2>Launch Issue Register</h2><p>Open, monitored, and resolved pre-opening concerns</p></div></div>${issueTable(issues)}</section>`; }
 
-function clearanceTemplate(){ const allowed=canRequestClearance(); const canSubmit=allowed&&['Not Yet Submitted','Conditional Clearance'].includes(clearanceStatus); return `${header('FINAL APPROVAL','Opening Clearance','Review the readiness summary and submit the branch for opening approval.','')}
-<div class="stats-grid"><article class="stat-card"><div class="stat-icon green">${icon('wrench')}</div><div><span>Equipment & Systems</span><strong>${Math.round(readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)&&i.status==='Complete').length/readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)).length*100)}%</strong><small>Installation and testing</small></div></article><article class="stat-card"><div class="stat-icon yellow">${icon('building-2')}</div><div><span>Facility</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Facility'&&i.status==='Complete').length/readinessItems.filter(i=>i.category==='Facility').length*100)}%</strong><small>Preparation and signage</small></div></article><article class="stat-card"><div class="stat-icon orange">${icon('users')}</div><div><span>Staffing</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Staffing'&&i.status==='Complete').length/Math.max(1,readinessItems.filter(i=>i.category==='Staffing').length)*100)}%</strong><small>Certified crew assignment</small></div></article><article class="stat-card"><div class="stat-icon red">${icon('triangle-alert')}</div><div><span>Unresolved Issues</span><strong>${openIssues().length}</strong><small>${issues.filter(i=>i.priority==='Critical'&&i.status!=='Resolved').length} critical blocker</small></div></article></div>
-<div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h2>Clearance Validation</h2><p>Requirements checked automatically by the prototype</p></div></div><div class="branch-list"><article class="branch-row"><div class="branch-rank">${mandatoryComplete()===mandatoryTotal()?icon('check'):icon('x')}</div><div class="branch-name"><strong>Mandatory requirements completed</strong><span>${mandatoryComplete()} of ${mandatoryTotal()} verified</span></div><span class="status ${mandatoryComplete()===mandatoryTotal()?'strong':'attention'}">${mandatoryComplete()===mandatoryTotal()?'Passed':'Incomplete'}</span></article><article class="branch-row"><div class="branch-rank">${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?icon('check'):icon('x')}</div><div class="branch-name"><strong>No unresolved critical issue</strong><span>Critical launch blockers must be closed</span></div><span class="status ${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?'strong':'attention'}">${!issues.some(i=>i.priority==='Critical'&&i.status!=='Resolved')?'Passed':'Blocked'}</span></article><article class="branch-row"><div class="branch-rank">${icon('file-check-2')}</div><div class="branch-name"><strong>Readiness summary generated</strong><span>Checklist, evidence, issues, and responsible teams included</span></div><span class="status strong">Ready</span></article></div></section><section class="panel"><div class="panel-heading"><div><h2>Opening Clearance Request</h2><p>Submit once all validation requirements pass</p></div></div><div class="settings-form"><label>Current Status</label><input value="${clearanceStatus}" disabled><label>Proposed Opening Date</label><input type="date" value="2026-07-25"><label>Store Manager Remarks</label><textarea id="clearanceRemarks" rows="5" placeholder="Add a short readiness summary..."></textarea><button class="primary-btn" id="requestClearance" ${!canSubmit?'disabled':''}>${icon('send')} ${clearanceStatus==='Conditional Clearance'?'Request Full Opening Clearance':clearanceStatus==='Not Yet Submitted'?'Request Opening Clearance':'Request Submitted'}</button>${!allowed?'<small>Complete all mandatory requirements and resolve critical issues to enable submission.</small>':''}</div></section></div>`; }
+function clearanceTemplate(){
+  const allowed=canRequestClearance();
+  const mandatoryPassed=mandatoryComplete()===mandatoryTotal();
+  const criticalPassed=!issues.some(issue=>issue.priority==='Critical'&&issue.status!=='Resolved');
+  const actionLabel=allowed
+    ? (clearanceStatus==='Full Clearance Requested'?'Update Clearance Request':'Request Full Opening Clearance')
+    : (clearanceReviewUpdated?'Update Conditional Review':'Save Conditional Clearance Review');
+  return `${header('FINAL APPROVAL','Opening Clearance','Review the Pulilan readiness summary, record the Store Manager assessment, and submit the appropriate clearance state.','')}
+  <div class="stats-grid">
+    <article class="stat-card"><div class="stat-icon green">${icon('wrench')}</div><div><span>Equipment & Systems</span><strong>${Math.round(readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)&&i.status==='Complete').length/readinessItems.filter(i=>['Equipment','Systems'].includes(i.category)).length*100)}%</strong><small>Installation and testing</small></div></article>
+    <article class="stat-card"><div class="stat-icon yellow">${icon('building-2')}</div><div><span>Facility</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Facility'&&i.status==='Complete').length/readinessItems.filter(i=>i.category==='Facility').length*100)}%</strong><small>Signage is non-mandatory</small></div></article>
+    <article class="stat-card"><div class="stat-icon orange">${icon('users')}</div><div><span>Staffing</span><strong>${Math.round(readinessItems.filter(i=>i.category==='Staffing'&&i.status==='Complete').length/Math.max(1,readinessItems.filter(i=>i.category==='Staffing').length)*100)}%</strong><small>Certified crew assigned</small></div></article>
+    <article class="stat-card"><div class="stat-icon red">${icon('triangle-alert')}</div><div><span>Unresolved Issues</span><strong>${openIssues().length}</strong><small>${issues.filter(i=>i.priority==='Critical'&&i.status!=='Resolved').length} critical blocker</small></div></article>
+  </div>
+  <div class="clearance-layout">
+    <section class="panel clearance-validation-card">
+      <div class="panel-heading"><div><h2>Clearance Validation</h2><p>System checks applied before full opening clearance</p></div><span class="status ${allowed?'strong':'attention'}">${allowed?'Ready':'Conditional'}</span></div>
+      <div class="branch-list">
+        <article class="branch-row"><div class="branch-rank ${mandatoryPassed?'validation-pass':'validation-block'}">${icon(mandatoryPassed?'check':'x')}</div><div class="branch-name"><strong>Mandatory requirements completed</strong><span>${mandatoryComplete()} of ${mandatoryTotal()} verified</span></div><span class="status ${mandatoryPassed?'strong':'attention'}">${mandatoryPassed?'Passed':'Incomplete'}</span></article>
+        <article class="branch-row"><div class="branch-rank ${criticalPassed?'validation-pass':'validation-block'}">${icon(criticalPassed?'check':'x')}</div><div class="branch-name"><strong>No unresolved critical issue</strong><span>Critical launch blockers must be closed</span></div><span class="status ${criticalPassed?'strong':'attention'}">${criticalPassed?'Passed':'Blocked'}</span></article>
+        <article class="branch-row"><div class="branch-rank validation-pass">${icon('file-check-2')}</div><div class="branch-name"><strong>Readiness summary generated</strong><span>Checklist, evidence, issues, and responsible teams included</span></div><span class="status strong">Ready</span></article>
+      </div>
+      ${!allowed?`<div class="clearance-blocker-note"><span>${icon('shield-alert')}</span><div><strong>Full clearance remains blocked</strong><p>Complete POS installation and resolve the critical POS activation issue. You can still save this review as Conditional Clearance.</p></div></div>`:''}
+    </section>
+    <section class="panel clearance-request-card">
+      <div class="clearance-status-strip ${allowed?'ready':'conditional'}"><span>${icon(allowed?'badge-check':'shield-alert')}</span><div><small>CURRENT DECISION</small><strong>${escapeStoreHtml(clearanceStatus)}</strong><p>${allowed?'All mandatory controls have passed.':'Pulilan may not receive full opening clearance yet.'}</p></div></div>
+      <div class="clearance-form">
+        <label class="clearance-date-field"><span>Proposed Opening Date</span><input id="proposedOpeningDate" type="date" value="${proposedOpeningDate}"></label>
+        <div class="clearance-remarks-field">
+          <div class="remarks-heading"><label for="clearanceRemarks">Store Manager Remarks</label><button type="button" id="useClearanceSummary">Use readiness summary</button></div>
+          <textarea id="clearanceRemarks" maxlength="500" rows="7" placeholder="Summarize readiness, remaining blockers, and the recommended clearance decision...">${escapeStoreHtml(clearanceRemarks)}</textarea>
+          <div class="remarks-footer"><span>${icon('info')} Include the decision rationale and any remaining dependency.</span><strong id="clearanceRemarksCount">${clearanceRemarks.length}/500</strong></div>
+        </div>
+        ${clearanceReviewUpdated?`<div class="clearance-saved-note">${icon('check-circle-2')} Conditional review saved ${clearanceReviewUpdated}</div>`:''}
+        <button class="primary-btn clearance-submit-btn" id="requestClearance">${icon(allowed?'send':'save')} ${actionLabel}</button>
+        <small class="clearance-submit-help">${allowed?'This sends the branch for full opening-clearance approval.':'This records the Store Manager review while retaining Conditional Clearance.'}</small>
+      </div>
+    </section>
+  </div>`;
+}
 
 function postLaunchTemplate(){
   const locked=branchStage!=='post-launch';
@@ -237,6 +280,11 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-add-readiness]')){openModal('readiness',null,'Add Readiness Requirement');return;}
   if(event.target.closest('[data-add-task]')){openModal('task',null,'Add Readiness Task');return;}
   if(event.target.closest('[data-add-issue]')){openModal('issue',null,'Report Launch Issue');return;}
+  if(event.target.closest('#useClearanceSummary')){
+    const remarksField=document.getElementById('clearanceRemarks');
+    if(remarksField){remarksField.value=buildClearanceSummary();remarksField.dispatchEvent(new Event('input',{bubbles:true}));remarksField.focus();}
+    return;
+  }
   const postAction=event.target.closest('[data-post-action]');
   if(postAction){
     const action=Number(postAction.dataset.postAction);
@@ -245,7 +293,27 @@ document.addEventListener('click',event=>{
     if(action===3)openModal('report',null,'Corrective Actions');
     return;
   }
-  if(event.target.closest('#requestClearance')){clearanceStatus='Submitted';renderSection('clearance');showToast('Opening clearance request submitted for review.');return;}
+  if(event.target.closest('#requestClearance')){
+    const remarksField=document.getElementById('clearanceRemarks');
+    const dateField=document.getElementById('proposedOpeningDate');
+    const remarks=remarksField?.value.trim()||'';
+    if(remarks.length<20){showToast('Add a clear Store Manager rationale before saving the review.');remarksField?.focus();return;}
+    if(!dateField?.value){showToast('Select the proposed opening date before saving.');dateField?.focus();return;}
+    clearanceRemarks=remarks;
+    proposedOpeningDate=dateField.value;
+    if(canRequestClearance()){
+      clearanceStatus='Full Clearance Requested';
+      clearanceReviewUpdated='';
+      renderSection('clearance');
+      showToast('Full opening clearance request submitted for Pulilan.');
+    }else{
+      clearanceStatus='Conditional Clearance';
+      clearanceReviewUpdated='just now';
+      renderSection('clearance');
+      showToast('Conditional Clearance review saved with Store Manager remarks.');
+    }
+    return;
+  }
   if(event.target.closest('[data-demo-open]')){branchStage='post-launch';renderSection('postlaunch');showToast('Post-launch preview mode enabled.');return;}
   if(event.target.closest('.save-settings'))showToast('Settings updated successfully.');
 });
@@ -254,5 +322,11 @@ document.getElementById('cancelModal').addEventListener('click',closeModal);
 document.getElementById('saveModal').addEventListener('click',saveModal);
 modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
 document.getElementById('globalSearch').addEventListener('input',event=>applySearch(event.target.value));
+document.addEventListener('input',event=>{
+  if(event.target.id==='clearanceRemarks'){
+    const counter=document.getElementById('clearanceRemarksCount');
+    if(counter)counter.textContent=`${event.target.value.length}/500`;
+  }
+});
 document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('b2bUserRole');localStorage.removeItem('b2bUserName');window.location.href='index.html';});
 renderSection('overview');
