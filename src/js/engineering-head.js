@@ -20,7 +20,7 @@ const engineeringHeadConfig = {
             ['Overdue Reviews', 'clock-alert', 'red', '0', 'No overdue engineering reviews']
         ],
         focus: [
-            ['Marikina Riverbanks', 'Flood mitigation and drainage evidence require technical validation.', 'Under Review', 'info'],
+            ['Pulilan Junction', 'Validate site dimensions, drainage, utilities, and facility compliance for Pulilan.', 'Pending Review', 'warning'],
             ['SM City Fairview Annex', 'Revised back-of-house layout is incomplete.', 'Revision Requested', 'warning'],
             ['Circuit Makati', 'Site, utilities, and facility requirements are compliant.', 'Approved', 'success']
         ]

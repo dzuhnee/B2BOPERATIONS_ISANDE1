@@ -20,7 +20,7 @@ const operationsHeadConfig = {
             ['Overdue Reviews', 'clock-alert', 'red', '1', 'Escalate today']
         ],
         focus: [
-            ['SM City Fairview Annex', 'Back-of-house plan needs revision before operating endorsement.', 'Revision Requested', 'warning'],
+            ['Pulilan Junction', 'Legal, Engineering, and Finance are cleared; record the final Operations endorsement.', 'Pending Review', 'warning'],
             ['Marikina Riverbanks', 'Validate flood mitigation and delivery access assumptions.', 'Under Review', 'info'],
             ['Antipolo Vista Mall', 'Zoning clearance is holding the launch recommendation.', 'Overdue', 'danger']
         ]

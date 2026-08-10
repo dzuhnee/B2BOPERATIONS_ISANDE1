@@ -20,7 +20,7 @@ const legalHeadConfig = {
             ['Overdue Reviews', 'clock-alert', 'red', '1', 'Escalate today']
         ],
         focus: [
-            ['Antipolo Vista Mall', 'Zoning clearance is missing and the legal review is overdue.', 'Overdue', 'danger'],
+            ['Pulilan Junction', 'Verify ownership, lease, zoning, and permit evidence for the Pulilan proposal.', 'Pending Review', 'warning'],
             ['Ayala Malls Manila Bay', 'Lease information is pending final verification.', 'Needs Clarification', 'warning'],
             ['Circuit Makati', 'Ownership and lease documents are cleared with no material exceptions.', 'Approved', 'success']
         ]

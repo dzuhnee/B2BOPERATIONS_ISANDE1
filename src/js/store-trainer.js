@@ -17,19 +17,19 @@ let modalContext = {};
 // 'upcoming' (hasn't happened yet, show expected list only). Mutated in place once attendance is taken.
 const sessionRosters = {
   'Kitchen Operations': {
-    batch: 'Pulilan Crew Batch A',
+    batch: 'Pulilan New Hire Batch A',
     mode: 'completed',
     trainees: ['Nicole Garcia', 'Joshua Lim', 'Paolo Cruz', 'Miguel Santos', 'Bea Fernandez', 'Ramon Torres', 'Ella Bautista', 'Kevin Aquino', 'Grace Villanueva', 'Mark Ramos', 'Jasmine Cruz', 'Louie Domingo'],
     absentees: ['Paolo Cruz']
   },
   'Customer Service Simulation': {
-    batch: 'Calumpit Crew Batch B',
+    batch: 'Pulilan New Hire Batch B',
     mode: 'scheduled',
     trainees: ['Andrea Reyes', 'Carlo Mendoza', 'Patricia Gomez', 'Julian Reyes', 'Samantha Lopez', 'Enzo Marquez', 'Faith Navarro', 'Rico Salazar', 'Dianne Castillo', 'Aldrin Pascual', 'Kristine Ocampo', 'Noel Rivera'],
     absentees: []
   },
   'Food Safety and Cleanliness': {
-    batch: 'Malolos Crew Batch D',
+    batch: 'Pulilan New Hire Batch C',
     mode: 'upcoming',
     trainees: ['Trisha Manalo', 'Kyle Espino', 'Angela Ferrer', 'Vince Alonzo', 'Camille Sarmiento', 'Renz Buenaventura', 'Joy Delos Santos', 'Arnel Tolentino', 'Michelle Uy', 'Paul Beltran', 'Ivy Cabrera'],
     absentees: []
@@ -46,10 +46,10 @@ const sectionTemplates = {
       <article class="stat-card"><div class="stat-icon orange"><i data-lucide="triangle-alert"></i></div><div><span>Needs Attention</span><strong>1</strong><small>Below expected progress</small></div></article>
     </div>
     <section class="panel"><div class="panel-heading"><div><h2>Assigned Training Batches</h2><p>Training schedule, trainee count, and completion progress</p></div></div><div class="table-wrap"><table><thead><tr><th>Training Batch</th><th>Branch</th><th>Trainees</th><th>Training Period</th><th>Progress</th><th>Status</th><th>Notes</th></tr></thead><tbody id="batchesTableBody">
-      <tr data-search="Pulilan Crew Batch A Manila 12 trainees ongoing" data-batch-name="Pulilan Crew Batch A"><td><strong>Pulilan Crew Batch A</strong><span>TRN-2607-A</span></td><td>Pulilan, Manila</td><td>12</td><td>July 15–29</td><td>75%</td><td><span class="status good">Ongoing</span></td><td class="batch-notes" data-empty="true">—</td></tr>
-      <tr data-search="Calumpit Crew Batch B 12 trainees in progress" data-batch-name="Calumpit Crew Batch B"><td><strong>Calumpit Crew Batch B</strong><span>TRN-2607-B</span></td><td>Calumpit Central</td><td>12</td><td>July 18–August 1</td><td>60%</td><td><span class="status good">In Progress</span></td><td class="batch-notes" data-empty="true">—</td></tr>
-      <tr data-search="Malolos Crew Batch D 11 trainees needs attention" data-batch-name="Malolos Crew Batch D"><td><strong>Malolos Crew Batch D</strong><span>TRN-2607-D</span></td><td>Malolos Avenue</td><td>11</td><td>July 16–30</td><td>45%</td><td><span class="status attention">Needs Attention</span></td><td class="batch-notes" data-empty="true">—</td></tr>
-      <tr data-search="Mexico, Pampanga Crew Batch C completed certified" data-batch-name="Mexico, Pampanga Crew Batch C"><td><strong>Mexico, Pampanga Crew Batch C</strong><span>TRN-2606-C</span></td><td>Mexico, Pampanga Central</td><td>10</td><td>June 25–July 10</td><td>100%</td><td><span class="status strong">Completed</span></td><td class="batch-notes" data-empty="true">—</td></tr>
+      <tr data-search="Pulilan New Hire Batch A Bulacan 12 trainees ongoing" data-batch-name="Pulilan New Hire Batch A"><td><strong>Pulilan New Hire Batch A</strong><span>TRN-2607-A</span></td><td>Pulilan, Bulacan</td><td>12</td><td>July 15–29</td><td>75%</td><td><span class="status good">Ongoing</span></td><td class="batch-notes" data-empty="true">—</td></tr>
+      <tr data-search="Pulilan New Hire Batch B Bulacan 12 trainees in progress" data-batch-name="Pulilan New Hire Batch B"><td><strong>Pulilan New Hire Batch B</strong><span>TRN-2607-B</span></td><td>Pulilan, Bulacan</td><td>12</td><td>July 18–August 1</td><td>60%</td><td><span class="status good">In Progress</span></td><td class="batch-notes" data-empty="true">—</td></tr>
+      <tr data-search="Pulilan New Hire Batch C Bulacan 11 trainees needs attention" data-batch-name="Pulilan New Hire Batch C"><td><strong>Pulilan New Hire Batch C</strong><span>TRN-2607-C</span></td><td>Pulilan, Bulacan</td><td>11</td><td>July 16–30</td><td>45%</td><td><span class="status attention">Needs Attention</span></td><td class="batch-notes" data-empty="true">—</td></tr>
+      <tr data-search="Pulilan Certified Batch Bulacan completed certified" data-batch-name="Pulilan Certified Batch"><td><strong>Pulilan Certified Batch</strong><span>TRN-2606-P</span></td><td>Pulilan, Bulacan</td><td>10</td><td>June 25–July 10</td><td>100%</td><td><span class="status strong">Completed</span></td><td class="batch-notes" data-empty="true">—</td></tr>
     </tbody></table></div></section>`,
 
   sessions: `
@@ -61,9 +61,9 @@ const sectionTemplates = {
       <article class="stat-card"><div class="stat-icon orange"><i data-lucide="user-x"></i></div><div><span>Absences</span><strong>2</strong><small>Require follow-up</small></div></article>
     </div>
     <section class="panel"><div class="panel-heading"><div><h2>Scheduled Training Sessions</h2><p>Open a session to record attendance and completion</p></div></div><div class="table-wrap"><table><thead><tr><th>Session</th><th>Batch</th><th>Schedule</th><th>Attendance</th><th>Status</th><th></th></tr></thead><tbody>
-      <tr data-search="Kitchen Operations Pulilan Crew Batch A today"><td><strong>Kitchen Operations</strong><span>SES-2607-018</span></td><td>Pulilan Crew Batch A</td><td>Today, 9:00 AM</td><td>11/12 Present</td><td><span class="table-status monitoring">Completed</span></td><td><button class="review-btn session-btn" data-session="Kitchen Operations">View Attendance</button></td></tr>
-      <tr data-search="Customer Service Calumpit Crew Batch B today ongoing"><td><strong>Customer Service Simulation</strong><span>SES-2607-019</span></td><td>Calumpit Crew Batch B</td><td>Today, 2:00 PM</td><td>12 Expected</td><td><span class="table-status investigating">Scheduled</span></td><td><button class="review-btn session-btn" data-session="Customer Service Simulation">Open Session</button></td></tr>
-      <tr data-search="Food Safety Malolos Crew Batch D tomorrow"><td><strong>Food Safety and Cleanliness</strong><span>SES-2607-020</span></td><td>Malolos Crew Batch D</td><td>July 22, 10:00 AM</td><td>11 Expected</td><td><span class="table-status action">Upcoming</span></td><td><button class="review-btn session-btn" data-session="Food Safety and Cleanliness">View</button></td></tr>
+      <tr data-search="Kitchen Operations Pulilan New Hire Batch A today"><td><strong>Kitchen Operations</strong><span>SES-2607-018</span></td><td>Pulilan New Hire Batch A</td><td>Today, 9:00 AM</td><td>11/12 Present</td><td><span class="table-status monitoring">Completed</span></td><td><button class="review-btn session-btn" data-session="Kitchen Operations">View Attendance</button></td></tr>
+      <tr data-search="Customer Service Pulilan New Hire Batch B today ongoing"><td><strong>Customer Service Simulation</strong><span>SES-2607-019</span></td><td>Pulilan New Hire Batch B</td><td>Today, 2:00 PM</td><td>12 Expected</td><td><span class="table-status investigating">Scheduled</span></td><td><button class="review-btn session-btn" data-session="Customer Service Simulation">Open Session</button></td></tr>
+      <tr data-search="Food Safety Pulilan New Hire Batch C tomorrow"><td><strong>Food Safety and Cleanliness</strong><span>SES-2607-020</span></td><td>Pulilan New Hire Batch C</td><td>July 22, 10:00 AM</td><td>11 Expected</td><td><span class="table-status action">Upcoming</span></td><td><button class="review-btn session-btn" data-session="Food Safety and Cleanliness">View</button></td></tr>
     </tbody></table></div></section>`,
 
  assessments: `
@@ -92,36 +92,36 @@ const sectionTemplates = {
         </thead>
 
         <tbody id="assessmentsTableBody">
-          <tr data-search="Nicole Garcia Pulilan cooking pending assessment">
-            <td><strong>Nicole Garcia</strong><span>EMP-26124 • Service Crew</span></td>
-            <td>Pulilan Crew Batch A</td>
-            <td>Cooking</td>
+          <tr data-search="Ella Santos Pulilan customer service pending assessment">
+            <td><strong>Ella Santos</strong><span>EMP-26124 • Service Crew</span></td>
+            <td>Pulilan New Hire Batch B</td>
+            <td>Customer Service</td>
             <td>Pending</td>
             <td><span class="table-status action">Not Assessed</span></td>
-            <td><button class="review-btn" data-trainee="Nicole Garcia">Assess</button></td>
+            <td><button class="review-btn" data-trainee="Ella Santos">Assess</button></td>
           </tr>
 
-          <tr data-search="Andrea Reyes Calumpit register passed assessment">
+          <tr data-search="Andrea Reyes Pulilan register passed assessment">
             <td><strong>Andrea Reyes</strong><span>EMP-26121 • Service Crew</span></td>
-            <td>Calumpit Crew Batch B</td>
+            <td>Pulilan New Hire Batch B</td>
             <td>Register</td>
             <td>88%</td>
             <td><span class="table-status monitoring">Passed</span></td>
             <td><button class="review-btn" data-trainee="Andrea Reyes">Review</button></td>
           </tr>
 
-          <tr data-search="Joshua Lim Pulilan food preparation requires coaching">
+          <tr data-search="Joshua Lim Pulilan food preparation passed assessment">
             <td><strong>Joshua Lim</strong><span>EMP-26127 • Kitchen Crew</span></td>
-            <td>Pulilan Crew Batch A</td>
+            <td>Pulilan New Hire Batch A</td>
             <td>Food Preparation</td>
-            <td>68%</td>
-            <td><span class="table-status investigating">Requires Coaching</span></td>
+            <td>86%</td>
+            <td><span class="table-status monitoring">Passed</span></td>
             <td><button class="review-btn" data-trainee="Joshua Lim">Review</button></td>
           </tr>
 
-          <tr data-search="Carlo Mendoza Calumpit dining passed">
+          <tr data-search="Carlo Mendoza Pulilan dining passed">
             <td><strong>Carlo Mendoza</strong><span>EMP-26118 • Kitchen Crew</span></td>
-            <td>Calumpit Crew Batch B</td>
+            <td>Pulilan New Hire Batch B</td>
             <td>Dining</td>
             <td>91%</td>
             <td><span class="table-status monitoring">Passed</span></td>
@@ -141,29 +141,29 @@ const sectionTemplates = {
       <article class="stat-card"><div class="stat-icon red"><i data-lucide="shield-alert"></i></div><div><span>Not Eligible</span><strong>5</strong><small>Certification incomplete</small></div></article>
     </div>
     <section class="panel"><div class="panel-heading"><div><h2>Employee Certification Status</h2><p>Only certified employees may be deployed to active stores</p></div></div><div class="table-wrap"><table><thead><tr><th>Employee</th><th>Batch</th><th>Assessment Score</th><th>Certification Status</th><th>Deployment</th><th></th></tr></thead><tbody>
-      <tr data-search="Andrea Reyes awaiting certification eligible">
-        <td><strong>Andrea Reyes</strong><span>EMP-26121 • Service Crew</span></td>
-        <td>Calumpit Crew Batch B</td>
-        <td>90%</td>
+      <tr data-search="Joshua Lim Pulilan awaiting certification eligible">
+        <td><strong>Joshua Lim</strong><span>EMP-26127 • Kitchen Crew</span></td>
+        <td>Pulilan New Hire Batch A</td>
+        <td>86%</td>
         <td><span class="table-status investigating cert-status">For Certification</span></td>
         <td class="deployment-cell">Not Yet Eligible</td>
-        <td><button class="review-btn certify-btn" data-name="Andrea Reyes" data-batch="Calumpit Crew Batch B" data-score="90%" data-role="Service Crew">Certify</button></td>
+        <td><button class="review-btn certify-btn" data-name="Joshua Lim" data-batch="Pulilan New Hire Batch A" data-score="86%" data-role="Kitchen Crew">Certify</button></td>
       </tr>
       <tr data-search="Carlo Mendoza certified deployment ready">
         <td><strong>Carlo Mendoza</strong><span>EMP-26118 • Kitchen Crew</span></td>
-        <td>Calumpit Crew Batch B</td>
+        <td>Pulilan New Hire Batch B</td>
         <td>89%</td>
         <td><span class="table-status monitoring cert-status">Certified</span></td>
         <td class="deployment-cell">Ready for Deployment</td>
-        <td><button class="review-btn cert-download-btn" data-name="Carlo Mendoza" data-batch="Calumpit Crew Batch B" data-score="89%" data-role="Kitchen Crew">Download Certificate</button></td>
+        <td><button class="review-btn cert-download-btn" data-name="Carlo Mendoza" data-batch="Pulilan New Hire Batch B" data-score="89%" data-role="Kitchen Crew">Download Certificate</button></td>
       </tr>
-      <tr data-search="Joshua Lim requires retraining not eligible">
-        <td><strong>Joshua Lim</strong><span>EMP-26127 • Kitchen Crew</span></td>
-        <td>Pulilan Crew Batch A</td>
-        <td>74%</td>
-        <td><span class="table-status action cert-status">Requires Retraining</span></td>
+      <tr data-search="Ella Santos Pulilan reassessment required not eligible">
+        <td><strong>Ella Santos</strong><span>EMP-26124 • Service Crew</span></td>
+        <td>Pulilan New Hire Batch B</td>
+        <td>79%</td>
+        <td><span class="table-status action cert-status">Reassessment Required</span></td>
         <td class="deployment-cell">Not Eligible</td>
-        <td><button class="review-btn coach-btn" data-name="Joshua Lim" data-batch="Pulilan Crew Batch A">Assign Coaching</button></td>
+        <td><button class="review-btn coach-btn" data-name="Ella Santos" data-batch="Pulilan New Hire Batch B">Assign Coaching</button></td>
       </tr>
     </tbody></table></div></section>`,
 
@@ -176,17 +176,14 @@ const sectionTemplates = {
       <article class="stat-card"><div class="stat-icon orange"><i data-lucide="file-check-2"></i></div><div><span>Reports Submitted</span><strong>3/4</strong><small>One report still pending</small></div></article>
     </div>
     <div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h2>Batch Completion Ranking</h2><p>Current completion percentage by training batch</p></div></div><div class="branch-list">
-      <article class="branch-row"><div class="branch-rank">1</div><div class="branch-name"><strong>Mexico, Pampanga Crew Batch C</strong><span>Training and certification completed</span></div><div class="score"><strong>100%</strong><div><span style="width:100%"></span></div></div><span class="status strong">Completed</span></article>
-      <article class="branch-row"><div class="branch-rank">2</div><div class="branch-name"><strong>Pulilan
-       Crew Batch A</strong><span>Assessment stage in progress</span></div><div class="score"><strong>75%</strong><div><span style="width:75%"></span></div></div><span class="status good">Ongoing</span></article>
-      <article class="branch-row"><div class="branch-rank">3</div><div class="branch-name"><strong>Calumpit
-       Crew Batch B</strong><span>Service simulations ongoing</span></div><div class="score"><strong>60%</strong><div><span style="width:60%"></span></div></div><span class="status good">In Progress</span></article>
-      <article class="branch-row"><div class="branch-rank">4</div><div class="branch-name"><strong>Malolos
-       Crew Batch D</strong><span>Attendance and coaching concerns</span></div><div class="score"><strong>45%</strong><div><span style="width:45%"></span></div></div><span class="status attention">Needs Attention</span></article>
+      <article class="branch-row"><div class="branch-rank">1</div><div class="branch-name"><strong>Pulilan Certified Batch</strong><span>Training and certification completed</span></div><div class="score"><strong>100%</strong><div><span style="width:100%"></span></div></div><span class="status strong">Completed</span></article>
+      <article class="branch-row"><div class="branch-rank">2</div><div class="branch-name"><strong>Pulilan New Hire Batch A</strong><span>Assessment stage in progress</span></div><div class="score"><strong>75%</strong><div><span style="width:75%"></span></div></div><span class="status good">Ongoing</span></article>
+      <article class="branch-row"><div class="branch-rank">3</div><div class="branch-name"><strong>Pulilan New Hire Batch B</strong><span>Service simulations ongoing</span></div><div class="score"><strong>60%</strong><div><span style="width:60%"></span></div></div><span class="status good">In Progress</span></article>
+      <article class="branch-row"><div class="branch-rank">4</div><div class="branch-name"><strong>Pulilan New Hire Batch C</strong><span>Attendance and coaching concerns</span></div><div class="score"><strong>45%</strong><div><span style="width:45%"></span></div></div><span class="status attention">Needs Attention</span></article>
     </div></section><section class="panel"><div class="panel-heading"><div><h2>Trainer Focus</h2><p>Recommended training priorities</p></div></div><div class="timeline">
       <div class="timeline-item"><span class="dot red"><i data-lucide="clipboard-alert"></i></span><div><strong>Complete pending assessments</strong><p>Three trainees still need competency evaluation.</p><small>High priority</small></div></div>
       <div class="timeline-item"><span class="dot yellow"><i data-lucide="rotate-ccw"></i></span><div><strong>Coach trainees below standard</strong><p>Review kitchen simulation results and schedule coaching.</p><small>Due this week</small></div></div>
-      <div class="timeline-item"><span class="dot green"><i data-lucide="file-check-2"></i></span><div><strong>Submit completion report</strong><p>Finalize the Mexico, Pampanga Crew Batch C training report.</p><small>Ready for submission</small></div></div>
+      <div class="timeline-item"><span class="dot green"><i data-lucide="file-check-2"></i></span><div><strong>Submit completion report</strong><p>Finalize the Pulilan Certified Batch training report.</p><small>Ready for submission</small></div></div>
     </div></section></div>`,
 
   settings: `
@@ -214,9 +211,11 @@ function openReview(title, description, saveLabel) {
   const batchField = document.getElementById('modalBatchField');
   const nameField = document.getElementById('modalNameField');
   const listField = document.getElementById('modalListField');
+  const assessmentField = document.getElementById('modalAssessmentField');
   if (batchField) batchField.style.display = 'none';
   if (nameField) nameField.style.display = 'none';
   if (listField) listField.style.display = 'none';
+  if (assessmentField) assessmentField.style.display = 'none';
 
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
@@ -233,9 +232,11 @@ function closeReview() {
   const batchField = document.getElementById('modalBatchField');
   const nameField = document.getElementById('modalNameField');
   const listField = document.getElementById('modalListField');
+  const assessmentField = document.getElementById('modalAssessmentField');
   if (batchField) batchField.style.display = 'none';
   if (nameField) nameField.style.display = 'none';
   if (listField) listField.style.display = 'none';
+  if (assessmentField) assessmentField.style.display = 'none';
   note.placeholder = 'Enter assessment remarks or coaching instructions...';
 
   const saveBtn = document.getElementById('saveReview');
@@ -418,6 +419,17 @@ function bumpAssessmentBadge(delta) {
     const next = Math.max(0, n + delta);
     alertCount.textContent = `${next} assessment${next === 1 ? '' : 's'} remain incomplete`;
   }
+}
+
+function updateAssessmentPreview() {
+  const scoreInput = document.getElementById('modalScoreInput');
+  const preview = document.getElementById('modalScorePreview');
+  if (!scoreInput || !preview) return;
+  const score = Math.max(0, Math.min(100, Number(scoreInput.value) || 0));
+  const passed = score >= 80;
+  preview.classList.toggle('passed', passed);
+  preview.innerHTML = `<i data-lucide="${passed ? 'circle-check' : 'rotate-ccw'}"></i><span><strong>${score}% — ${passed ? 'Passed' : 'Reassessment Required'}</strong><small>${passed ? 'Eligible to proceed to certification review.' : 'Scores below 80% cannot proceed to certification.'}</small></span>`;
+  initIcons();
 }
 
 // ---- Certificate generation (jsPDF) ----
@@ -681,9 +693,24 @@ document.addEventListener('click', e => {
   // --- Assessments/incident table: assess or review a specific trainee ---
   const trainee = e.target.closest('[data-trainee]');
   if (trainee) {
+    const row = trainee.closest('tr');
+    const currentScore = row ? parseInt(row.children[3]?.textContent, 10) : NaN;
     modalMode = 'assessment';
-    modalContext = { name: trainee.dataset.trainee };
-    openReview(`${trainee.dataset.trainee} Assessment`);
+    modalContext = {
+      name: trainee.dataset.trainee,
+      row,
+      wasPending: Boolean(row && /Pending|Not Assessed/i.test(row.textContent))
+    };
+    openReview(
+      `${trainee.dataset.trainee} Assessment`,
+      'Record the demonstrated competency score. The passing requirement is 80%.',
+      'Save Assessment'
+    );
+    const scoreInput = document.getElementById('modalScoreInput');
+    const assessmentField = document.getElementById('modalAssessmentField');
+    if (scoreInput) scoreInput.value = Number.isFinite(currentScore) ? currentScore : 79;
+    if (assessmentField) assessmentField.style.display = 'block';
+    updateAssessmentPreview();
     return;
   }
 
@@ -720,6 +747,10 @@ document
 document
   .getElementById('cancelModal')
   .addEventListener('click', closeReview);
+
+document
+  .getElementById('modalScoreInput')
+  .addEventListener('input', updateAssessmentPreview);
 
 modal.addEventListener('click', event => {
   if (event.target === modal) closeReview();
@@ -841,10 +872,27 @@ document
         break;
       }
 
-      case 'assessment':
+      case 'assessment': {
+        const scoreInput = document.getElementById('modalScoreInput');
+        const score = Math.max(0, Math.min(100, Number(scoreInput?.value) || 0));
+        const result = score >= 80 ? 'Passed' : 'Reassessment Required';
+        const row = context.row;
+        if (row && row.children.length >= 6) {
+          row.children[3].textContent = `${score}%`;
+          row.children[4].innerHTML = `<span class="table-status ${score >= 80 ? 'monitoring' : 'investigating'}">${result}</span>`;
+          const button = row.querySelector('[data-trainee]');
+          if (button) button.textContent = 'Review';
+          row.dataset.search = `${row.dataset.search || ''} ${score} ${result}`.toLowerCase();
+        }
+        if (context.wasPending) bumpAssessmentBadge(-1);
+        closeReview();
+        showToast(`${context.name} recorded at ${score}% — ${result}.`);
+        break;
+      }
+
       default:
         closeReview();
-        showToast('Assessment saved successfully.');
+        showToast('Changes saved successfully.');
         break;
     }
   });

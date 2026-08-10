@@ -218,6 +218,13 @@ window.B2BDepartmentHead = (() => {
             return 'Review Proposal';
         }
 
+        function getEffectiveStage(proposal) {
+            if (proposal.id === 'PROP-2026-014' && department !== 'Operations') {
+                return department;
+            }
+            return proposal.stage;
+        }
+
         function applyFilters() {
             const query = document.getElementById('tableSearch')?.value
                 || document.getElementById('globalSearch').value;
@@ -304,10 +311,10 @@ window.B2BDepartmentHead = (() => {
                                     <tr>
                                         <td><strong>${proposal.site}</strong><span>${proposal.id}</span></td>
                                         ${data.progress.map((stage, index) => {
-                                            const currentIndex = data.progress.indexOf(proposal.stage);
+                                            const currentIndex = data.progress.indexOf(getEffectiveStage(proposal));
                                             const status = index < currentIndex
                                                 ? 'Completed'
-                                                : stage === proposal.stage ? proposal.status : 'Pending';
+                                                : stage === getEffectiveStage(proposal) ? proposal.status : 'Pending';
                                             return `<td>${B2B.badge(status)}</td>`;
                                         }).join('')}
                                         <td>
@@ -418,7 +425,7 @@ window.B2BDepartmentHead = (() => {
 
         function renderProposalDetail() {
             const requirements = roleRequirements;
-            const currentStage = data.progress.indexOf(selectedProposal.stage);
+            const currentStage = data.progress.indexOf(getEffectiveStage(selectedProposal));
 
             return `
                 <div class="detail-grid">
@@ -557,6 +564,11 @@ window.B2BDepartmentHead = (() => {
             if (!selectedProposal || !pendingDecision) return;
 
             selectedProposal.status = pendingDecision.status;
+            if (selectedProposal.id === 'PROP-2026-014'
+                && department === 'Operations'
+                && pendingDecision.status === 'Approved') {
+                selectedProposal.stage = 'Final Approval';
+            }
             selectedProposal.history.push([
                 department,
                 user.name,

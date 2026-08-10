@@ -90,10 +90,10 @@ window.businessDevelopmentData = {
 
             type: "success",
 
-            title: "Site SP-2026-027 Ready",
+            title: "Pulilan Site Ready",
 
             message:
-            "Antipolo Vista Mall passed initial viability assessment.",
+            "Pulilan Junction passed the viability assessment at 88%.",
 
             date: "Today"
 
@@ -109,7 +109,7 @@ window.businessDevelopmentData = {
             title: "Department Review Pending",
 
             message:
-            "SP-2026-041 is waiting for cross-department approval.",
+            "PROP-2026-014 is moving through cross-department approval.",
 
             date: "Yesterday"
 
@@ -354,17 +354,17 @@ window.businessDevelopmentData = {
 
         {
 
-            id: "SP-2026-035",
+            id: "PROP-2026-014",
 
 
             location:
 
-            "Pulilan Junction DRT Highway",
+            "Pulilan Junction",
 
 
             municipality:
 
-            "Pulilan, City",
+            "Pulilan, Bulacan",
 
 
 

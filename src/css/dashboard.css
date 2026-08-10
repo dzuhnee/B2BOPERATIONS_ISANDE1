@@ -1011,6 +1011,52 @@ td:first-child span {
     padding-top:16px;
     border-top:1px solid #eee8e4
 }
+.assessment-score-field {
+    margin-bottom:16px;
+    padding:14px;
+    border:1px solid #e9e2de;
+    border-radius:12px;
+    background:#fbf9f7
+}
+.assessment-score-field .form-grid {
+    gap:12px
+}
+.assessment-score-field input {
+    margin-bottom:0
+}
+.assessment-score-preview {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:9px;
+    background:#fff0f1;
+    color:#a52c3d
+}
+.assessment-score-preview.passed {
+    background:#eaf6ef;
+    color:#277344
+}
+.assessment-score-preview>svg {
+    width:18px;
+    height:18px;
+    flex:none
+}
+.assessment-score-preview span,
+.assessment-score-preview strong,
+.assessment-score-preview small {
+    display:block
+}
+.assessment-score-preview strong {
+    font-size:11px
+}
+.assessment-score-preview small {
+    margin-top:2px;
+    color:inherit;
+    font-size:9px;
+    opacity:.8
+}
 @media(max-width:620px) {
     #reviewModal.session-modal-active {
         padding:10px

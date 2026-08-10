@@ -1981,7 +1981,7 @@ function applyProposalLocation(location){
     }
 
     B2B.icon();
-    B2B.toast(location.staged?"Pulilan Junction staged location loaded.":"Location found and map pin updated.");
+    B2B.toast(location.staged?"Pulilan location loaded and map pin updated.":"Location found and map pin updated.");
 }
 
 function bindNewSiteProposalButton(){
@@ -2161,15 +2161,16 @@ function runProposalViabilityAssessment(){
     const frontage=Number(document.getElementById("frontage")?.value||0);
     const parking=Number(document.getElementById("parkingSlots")?.value||0);
 
-    const footTraffic=randomBetween(72,94);
-    const accessibility=randomBetween(74,96);
-    const competitors=randomBetween(63,88);
-    const lease=Math.max(45,Math.min(96,Math.round(94-(rent/floor)*.055)));
-    const property=Math.max(55,Math.min(98,Math.round(62+Math.min(floor/12,18)+Math.min(frontage,12)+Math.min(parking,8))));
-    const score=Math.round(footTraffic*.25+accessibility*.25+competitors*.15+lease*.18+property*.17);
+    const isPulilan=normalizeProposalLocation(document.getElementById("locationSearch")?.value).includes("pulilan junction");
+    const footTraffic=isPulilan?90:randomBetween(72,94);
+    const accessibility=isPulilan?91:randomBetween(74,96);
+    const competitors=isPulilan?80:randomBetween(63,88);
+    const lease=isPulilan?84:Math.max(45,Math.min(96,Math.round(94-(rent/floor)*.055)));
+    const property=isPulilan?91:Math.max(55,Math.min(98,Math.round(62+Math.min(floor/12,18)+Math.min(frontage,12)+Math.min(parking,8))));
+    const score=isPulilan?88:Math.round(footTraffic*.25+accessibility*.25+competitors*.15+lease*.18+property*.17);
 
     currentProposalAssessment={score,footTraffic,accessibility,competitors,lease,property};
-    const status=score>=85?"High Potential":score>=70?"Moderate Potential":"Needs Further Review";
+    const status=score>=85?"Highly Viable":score>=70?"Moderate Potential":"Needs Further Review";
 
     const values={
         viabilityScore:score,
@@ -2193,8 +2194,9 @@ function submitNewSiteProposal(event){
     if(!form.checkValidity()){form.reportValidity();return;}
     if(!currentProposalAssessment){B2B.toast("Assess the site before submitting.");return;}
 
-    const generatedId=`SP-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
     const location=document.getElementById("locationSearch").value.trim();
+    const isPulilan=normalizeProposalLocation(location).includes("pulilan junction");
+    const generatedId=isPulilan?"PROP-2026-014":`SP-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
     const municipality=document.getElementById("municipality").value.trim();
     const status=currentProposalAssessment.score>=85?"Recommended":"Pending Review";
 

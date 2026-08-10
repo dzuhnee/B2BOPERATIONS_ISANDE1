@@ -20,7 +20,7 @@ const financeHeadConfig = {
             ['Overdue Reviews', 'clock-alert', 'red', '0', 'No overdue finance reviews']
         ],
         focus: [
-            ['Evia Lifestyle Center', 'Fit-out contribution is not finalized; confirm total investment exposure.', 'Pending Review', 'warning'],
+            ['Pulilan Junction', 'Validate the Pulilan investment, lease exposure, and projected operating return.', 'Pending Review', 'warning'],
             ['Ayala Malls Manila Bay', 'Premium lease rate requires a five-year rent-cap scenario.', 'Needs Clarification', 'warning'],
             ['Circuit Makati', 'Returns exceed the investment hurdle and finance approval is complete.', 'Approved', 'success']
         ]
