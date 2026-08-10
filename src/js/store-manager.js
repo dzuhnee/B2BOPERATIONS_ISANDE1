@@ -329,7 +329,7 @@ document.addEventListener('click',event=>{
     const action=Number(postAction.dataset.postAction);
     if(action===0)openModal('daily-report',null,'Daily Operations Report');
     if(action===1)openModal('operational-log',null,'Operational Log');
-    if(action===3)openModal('corrective-action',null,correctiveAction.saved?'Edit Corrective Action':'New Corrective Action');
+    if(action===3)openModal('corrective-action',null,correctiveAction.saved?'Edit Corrective Action':'Corrective Action');
     return;
   }
   if(event.target.closest('#requestClearance')){
