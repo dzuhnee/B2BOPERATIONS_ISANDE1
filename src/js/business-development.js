@@ -1809,157 +1809,41 @@ document.addEventListener("DOMContentLoaded", ()=>{
     
     
     async function searchLocation(query){
-    
-    
-    try{
-    
-    
-    const response =
-    await fetch(
-    
-    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Philippines")}`
-    
-    );
-    
-    
-    
-    const data =
-    await response.json();
-    
-    
-    
-    if(data.length === 0){
-    
-    alert("Location not found");
-    
-    return;
-    
-    }
-    
-    
-    
-    const location =
-    data[0];
-    
-    
-    
-    const lat =
-    parseFloat(location.lat);
-    
-    
-    
-    const lon =
-    parseFloat(location.lon);
-    
-    
-    
-    
-    /*
-    MOVE MAP
-    */
-    
-    
-    proposalMap.setView(
-    [lat,lon],
-    16
-    );
-    
-    
-    
-    /*
-    REMOVE OLD MARKER
-    */
-    
-    
-    if(proposalMarker){
-    
-    proposalMap.removeLayer(
-    proposalMarker
-    );
-    
-    }
-    
-    
-    
-    
-    /*
-    CREATE NEW PIN
-    */
-    
-    
-    proposalMarker =
-L.marker(
-[lat,lon],
-{
-draggable:true
-}
-)
-.addTo(proposalMap);
+        const stagedLocation=findStagedProposalLocation(query);
+        if(stagedLocation){
+            applyProposalLocation(stagedLocation);
+            return;
+        }
 
+        setProposalLocationMessage("Searching map data…","loading");
 
+        try{
+            const response=await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(query + ", Philippines")}`
+            );
+            if(!response.ok) throw new Error(`Location service returned ${response.status}`);
 
-proposalMarker.on(
-"dragend",
-function(e){
+            const data=await response.json();
+            if(data.length===0){
+                setProposalLocationMessage("Location not found. Try a municipality, landmark, or complete address.","error");
+                return;
+            }
 
-    const position =
-    e.target.getLatLng();
-
-
-    document.getElementById("latitude").value =
-    position.lat;
-
-
-    document.getElementById("longitude").value =
-    position.lng;
-
-
-    updateLocationFromPin(
-        position.lat,
-        position.lng
-    );
-
-}
-
-);
-    
-    
-    
-    /*
-    UPDATE FORM
-    */
-    
-    
-    document.getElementById("latitude").value =
-    lat;
-    
-    
-    document.getElementById("longitude").value =
-    lon;
-    
-    
-    document.getElementById("formattedAddress").value =
-    location.display_name;
-    
-    
-    
-    document.getElementById("municipality").value =
-    query;
-    
-    
-    
-    }
-    
-    catch(error){
-    
-    console.error(
-    "Location search failed:",
-    error
-    );
-    
-    }
-    
-    
+            const location=data[0];
+            const address=location.address||{};
+            applyProposalLocation({
+                latitude:Number(location.lat),
+                longitude:Number(location.lon),
+                formattedAddress:location.display_name,
+                municipality:address.city||address.municipality||address.town||address.village||query,
+                province:address.state||address.region||address.province||"",
+                label:location.display_name,
+                staged:false
+            });
+        }catch(error){
+            console.error("Location search failed:",error);
+            setProposalLocationMessage("Map search is temporarily unavailable. You can place the pin manually.","error");
+        }
     }
 
     async function updateLocationFromPin(lat, lng){
@@ -2021,6 +1905,85 @@ let proposalMarker = null;
 let proposalRadiusCircle = null;
 let currentProposalAssessment = null;
 
+const STAGED_PROPOSAL_LOCATIONS=[
+    {
+        aliases:[
+            "Pulilan Junction, Longos, Pulilan, Bulacan",
+            "Pulilan Junction Longos Pulilan Bulacan",
+            "Pulilan Junction"
+        ],
+        label:"Pulilan Junction, Longos, Pulilan, Bulacan",
+        formattedAddress:"Pulilan Junction, Longos, Pulilan, Bulacan",
+        latitude:14.9012,
+        longitude:120.8496,
+        municipality:"Pulilan",
+        province:"Bulacan / Central Luzon",
+        staged:true
+    }
+];
+
+function normalizeProposalLocation(value){
+    return String(value||"")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g," ")
+        .trim()
+        .replace(/\s+/g," ");
+}
+
+function findStagedProposalLocation(query){
+    const normalized=normalizeProposalLocation(query);
+    return STAGED_PROPOSAL_LOCATIONS.find(location=>
+        location.aliases.some(alias=>normalizeProposalLocation(alias)===normalized)
+    )||null;
+}
+
+function setProposalLocationMessage(message,tone="info"){
+    const results=document.getElementById("locationResults");
+    if(!results) return;
+    const icon=tone==="error"?"map-pin-off":tone==="loading"?"loader-circle":"map-pin-check";
+    results.innerHTML=`<div class="proposal-location-message ${tone}"><i data-lucide="${icon}"></i><span>${escapeProposalHtml(message)}</span></div>`;
+    B2B.icon();
+}
+
+function applyProposalLocation(location){
+    const lat=Number(location.latitude);
+    const lng=Number(location.longitude);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)) return;
+
+    initializeProposalMap();
+    if(proposalMap) placeProposalMarker(lat,lng,false);
+    else updateProposalCoordinates(lat,lng);
+
+    const precision=location.staged?4:6;
+    const latInput=document.getElementById("latitude");
+    const lngInput=document.getElementById("longitude");
+    const formatted=document.getElementById("formattedAddress");
+    const municipality=document.getElementById("municipality");
+    const province=document.getElementById("province");
+
+    if(latInput) latInput.value=lat.toFixed(precision);
+    if(lngInput) lngInput.value=lng.toFixed(precision);
+    if(formatted) formatted.value=location.formattedAddress||location.label||`${lat}, ${lng}`;
+    if(municipality) municipality.value=location.municipality||"";
+    if(province) province.value=location.province||"";
+
+    const results=document.getElementById("locationResults");
+    if(results){
+        results.innerHTML=location.staged?"":`
+            <div class="proposal-location-result">
+                <span class="proposal-location-result-icon"><i data-lucide="map-pin-check"></i></span>
+                <div>
+                    <strong>${escapeProposalHtml(location.label||location.formattedAddress)}</strong>
+                    <span>Coordinates: ${lat.toFixed(precision)}, ${lng.toFixed(precision)}</span>
+                    <small>Municipality / City: ${escapeProposalHtml(location.municipality||"Not identified")} • Province / Region: ${escapeProposalHtml(location.province||"Not identified")}</small>
+                </div>
+            </div>`;
+    }
+
+    B2B.icon();
+    B2B.toast(location.staged?"Pulilan Junction staged location loaded.":"Location found and map pin updated.");
+}
+
 function bindNewSiteProposalButton(){
     const button = document.getElementById("newSiteProposalBtn");
     if(!button || button.dataset.bound === "true") return;
@@ -2038,6 +2001,13 @@ function initializeProposalControls(){
     B2B.bindModal("analysisModal");
     B2B.bindModal("proposalSuccessModal");
     B2B.bindModal("siteModal");
+
+    document.getElementById("locationSearch")?.addEventListener("keydown",event=>{
+        if(event.key!=="Enter") return;
+        event.preventDefault();
+        const query=event.currentTarget.value.trim();
+        if(query) searchLocation(query);
+    });
 
     const radius = document.getElementById("analysisRadius");
     radius?.addEventListener("input", ()=>{
@@ -2254,6 +2224,8 @@ function submitNewSiteProposal(event){
     if(submit) submit.disabled=true;
     const uploads=document.getElementById("uploadedFiles");
     if(uploads) uploads.innerHTML="";
+    const locationResults=document.getElementById("locationResults");
+    if(locationResults) locationResults.innerHTML="";
 }
 
 function escapeProposalHtml(value){

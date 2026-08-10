@@ -3004,6 +3004,87 @@ table td:nth-child(4)>span {
 }
 
 /* LOCATION SEARCH (site proposal form) */
+.location-results:empty {
+    display:none;
+}
+.location-results {
+    margin:12px 0 16px;
+}
+.proposal-location-result,
+.proposal-location-message {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    border:1px solid #dce9e1;
+    border-radius:11px;
+    background:#f4fbf7;
+    color:#2f5c40;
+}
+.proposal-location-result-icon {
+    display:grid;
+    width:36px;
+    height:36px;
+    flex:0 0 36px;
+    place-items:center;
+    border-radius:10px;
+    background:#dff2e7;
+    color:#2d7a4c;
+}
+.proposal-location-result-icon svg,
+.proposal-location-message svg {
+    width:18px;
+    height:18px;
+    flex:none
+}
+.proposal-location-result>div {
+    min-width:0;
+    flex:1
+}
+.proposal-location-result strong,
+.proposal-location-result span,
+.proposal-location-result small {
+    display:block
+}
+.proposal-location-result strong {
+    color:#332d2b;
+    font-size:12px
+}
+.proposal-location-result span {
+    margin-top:3px;
+    color:#716865;
+    font-size:11px;
+    font-weight:600
+}
+.proposal-location-result small {
+    margin-top:4px;
+    color:#897f7b;
+    font-size:9.5px;
+    line-height:1.5
+}
+.proposal-location-message {
+    border-color:#e5e1de;
+    background:#faf8f7;
+    color:#69615e;
+    font-size:11px
+}
+.proposal-location-message.error {
+    border-color:#f1c9cf;
+    background:#fff5f6;
+    color:#a02b3c
+}
+.proposal-location-message.loading svg {
+    animation:proposal-location-spin .9s linear infinite
+}
+@keyframes proposal-location-spin {
+    to { transform:rotate(360deg); }
+}
+@media(max-width:620px) {
+    .proposal-location-result {
+        align-items:flex-start;
+        flex-wrap:wrap
+    }
+}
 .location-search-wrapper {
     position:relative;
 }
