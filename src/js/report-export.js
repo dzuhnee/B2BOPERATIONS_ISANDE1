@@ -169,11 +169,11 @@
       * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { margin: 0; color: #202124; font: 9.5pt Arial, sans-serif; background: #fff; }
       .report { width: 100%; }
-      .report-header { min-height: 35mm; display: grid; grid-template-columns: 34mm 1fr auto; gap: 6mm; align-items: center; border-bottom: 2.5px solid #e31937; padding-bottom: 4mm; }
+      .report-header { min-height: 35mm; display: grid; grid-template-columns: 34mm 1fr auto; gap: 6mm; align-items: center; border-bottom: 2.5px solid #7B1D1D; padding-bottom: 4mm; }
       .report-logo { position: relative; width: 34mm; height: 28mm; overflow: hidden; border-radius: 2mm; background: #191919; }
       .report-logo img { position: absolute; top: -5mm; left: 1mm; width: 54mm; max-width: none; max-height: none; }
       h1 { margin: 0 0 2mm; color: #191919; font-size: 17pt; line-height: 1.15; }
-      .system-name { color: #e31937; font-size: 9pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+      .system-name { color: #7B1D1D; font-size: 9pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
       .header-id { text-align: right; white-space: nowrap; }
       .header-id strong { display: block; font-size: 10pt; }
       .header-id span { color: #666; font-size: 8.5pt; }
@@ -195,7 +195,7 @@
       td.number, td.currency, td.percent { text-align: right; white-space: nowrap; }
       td.status { font-weight: 700; color: #333; }
       .notes { margin-top: 5mm; display: grid; gap: 2mm; }
-      .note { border-left: 3px solid #e31937; background: #fafafa; padding: 2.5mm 3mm; }
+      .note { border-left: 3px solid #7B1D1D; background: #fafafa; padding: 2.5mm 3mm; }
       .note strong { display: block; margin-bottom: 1mm; font-size: 8pt; }
       .signatures { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15mm; margin-top: 13mm; break-inside: avoid; }
       .signature { border-top: 1px solid #555; padding-top: 2mm; color: #555; font-size: 8.5pt; }
@@ -204,7 +204,7 @@
       .report-footer span:nth-child(2) { text-align: center; }
       .report-footer span:last-child { text-align: right; }
       .page-number::after { content: "1"; }
-      .no-print { position: fixed; top: 12px; right: 12px; padding: 10px 16px; border: 0; border-radius: 7px; color: #fff; background: #e31937; font-weight: 700; cursor: pointer; box-shadow: 0 3px 12px #999; }
+      .no-print { position: fixed; top: 12px; right: 12px; padding: 10px 16px; border: 0; border-radius: 7px; color: #fff; background: #7B1D1D; font-weight: 700; cursor: pointer; box-shadow: 0 3px 12px #999; }
       @media screen { body { background: #e8e8e8; padding: 12mm; } .report { width: ${orientation === 'landscape' ? '297mm' : '210mm'}; min-height: ${orientation === 'landscape' ? '210mm' : '297mm'}; margin: 0 auto; padding: 13mm 12mm 15mm; background: white; box-shadow: 0 2px 14px #bbb; } .report-footer { left: 12mm; right: 12mm; bottom: 12mm; } }
       @media print { .no-print { display: none; } .page-number::after { content: counter(page); } }
     `;

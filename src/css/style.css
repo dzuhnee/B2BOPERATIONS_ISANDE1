@@ -12,14 +12,18 @@ body{
 
 :root{
 
-    --red:#E31937;
-    --darkRed:#B5122A;
+    --red:#7B1D1D;
+    --darkRed:#641818;
+    --brand-secondary:#9D3B3B;
+    --brand-blush:#F1C5C5;
+    --neutral:#F0ECE6;
+    --ink:#2E2E2E;
     --yellow:#FFC72C;
     --white:#ffffff;
     --bg:#FFF8F2;
     --gray:#707070;
-    --light:#F5F5F5;
-    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --light:#F0ECE6;
+    --shadow:0 10px 30px rgba(46,46,46,.06);
 
 }
 
@@ -35,6 +39,11 @@ button:hover{
 
     transform:translateY(-2px);
 
+}
+
+:where(button, a, input, select, textarea):focus-visible{
+    outline:2px solid var(--brand-secondary);
+    outline-offset:3px;
 }
 
 input,
