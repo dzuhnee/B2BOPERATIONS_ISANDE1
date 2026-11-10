@@ -39,9 +39,15 @@
                 <input id="email" type="email" placeholder="example@5joys.com" required>
 
                 <label for="password">Password</label>
-                <input id="password" type="password" placeholder="••••••••" required>
-
-                
+                <div class="password-wrapper">
+                    <input id="password" type="password" placeholder="••••••••" required>
+                    <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
 
                 <p class="login-message" id="loginMessage" aria-live="polite"></p>
                 <button type="submit">LOGIN</button>
@@ -49,11 +55,22 @@
         </div>
     </div>
 </div>
-<script src="js/login.js?v=20260804"></script>
+
+<script type="module" src="js/login.js"></script>
 <script>
-const USERS={
-"sophia.ramirez@5joys.com":{name:"Sophia Ramirez",role:"Business Development",page:"business-development.html"},"carlos.reyes@5joys.com":{name:"Carlos Reyes",role:"Operations Head",page:"operations-head.html"},"angela.santos@5joys.com":{name:"Angela Santos",role:"HR Specialist",page:"hr-specialist.html"},"michael.dela.cruz@5joys.com":{name:"Michael Dela Cruz",role:"Store Trainer",page:"store-trainer.html"},"ruth.reyes@5joys.com":{name:"Ruth Reyes",role:"Store Manager",page:"store-manager.html"},"joel.navarro@5joys.com":{name:"Joel Navarro",role:"Supply Chain Officer",page:"supply-chain.html"},"bea.hernandez@5joys.com":{name:"Bea Hernandez",role:"Area Manager",page:"area-manager.html"},"ruth.torres@5joys.com":{name:"Ruth Torres",role:"Store Manager",page:"store-manager.html"},"engr.nina.cruz@5joys.com":{name:"Engr. Nina Cruz",role:"Engineering Head",page:"engineering-head.html"},"maria.santos@5joys.com":{name:"Maria Santos",role:"Executive Management",page:"executive-management.html"},"carlo.lim@5joys.com":{name:"Carlo Lim",role:"Finance Head",page:"finance-head.html"},"atty.maya.santos@5joys.com":{name:"Atty. Maya Santos",role:"Legal Head",page:"legal-head.html"}
-};
-document.addEventListener('DOMContentLoaded',()=>{const f=document.querySelector('form');if(!f)return;let msg=document.createElement('p');msg.id='loginMessage';msg.style.color='#7B1D1D';f.appendChild(msg);f.addEventListener('submit',e=>{e.preventDefault();const email=document.querySelector('input[type=email]').value.trim().toLowerCase();const u=USERS[email];if(!u){msg.textContent='Unauthorized User';return;}localStorage.setItem('loggedInUser',JSON.stringify({email:email,name:u.name,role:u.role}));location.href=u.page;});});
-</script></body>
+const pwInput = document.getElementById("password");
+const toggleBtn = document.getElementById("togglePassword");
+const eyeIcon = document.getElementById("eyeIcon");
+
+const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+const eyeOff = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+
+toggleBtn.addEventListener("click", () => {
+  const show = pwInput.type === "password";
+  pwInput.type = show ? "text" : "password";
+  eyeIcon.innerHTML = show ? eyeOff : eyeOpen;
+  toggleBtn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+});
+</script>
+</body>
 </html>

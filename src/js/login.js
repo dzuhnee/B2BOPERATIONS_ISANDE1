@@ -1,68 +1,69 @@
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+import { auth } from "./firebase.js";
+import {
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const role = document.getElementById('role').value.trim();
-    const message = document.getElementById('loginMessage');
+// Role/page lookup only. Firebase does the actual security check.
+const USERS = {
+  "sophia.ramirez@5joys.com": { name: "Sophia Ramirez", role: "Business Development", page: "business-development.html" },
+  "carlos.reyes@5joys.com": { name: "Carlos Reyes", role: "Operations Head", page: "operations-head.html" },
+  "angela.santos@5joys.com": { name: "Angela Santos", role: "HR Specialist", page: "hr-specialist.html" },
+  "michael.dela.cruz@5joys.com": { name: "Michael Dela Cruz", role: "Store Trainer", page: "store-trainer.html" },
+  "ruth.reyes@5joys.com": { name: "Ruth Reyes", role: "Store Manager", page: "store-manager.html" },
+  "joel.navarro@5joys.com": { name: "Joel Navarro", role: "Supply Chain Officer", page: "supply-chain.html" },
+  "bea.hernandez@5joys.com": { name: "Bea Hernandez", role: "Area Manager", page: "area-manager.html" },
+  "ruth.torres@5joys.com": { name: "Ruth Torres", role: "Store Manager", page: "store-manager.html" },
+  "engr.nina.cruz@5joys.com": { name: "Engr. Nina Cruz", role: "Engineering Head", page: "engineering-head.html" },
+  "maria.santos@5joys.com": { name: "Maria Santos", role: "Executive Management", page: "executive-management.html" },
+  "carlo.lim@5joys.com": { name: "Carlo Lim", role: "Finance Head", page: "finance-head.html" },
+  "atty.maya.santos@5joys.com": { name: "Atty. Maya Santos", role: "Legal Head", page: "legal-head.html" }
+};
 
-    if (role === 'Supply Chain Officer') {
-        localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', 'Lara Mendoza');
-        window.location.href = 'supply-chain.html';
-        return;
+const DEPARTMENTS = {
+  "Operations Head": "Operations",
+  "Legal Head": "Legal",
+  "Finance Head": "Finance",
+  "Engineering Head": "Engineering"
+};
+
+const form = document.getElementById("loginForm");
+const message = document.getElementById("loginMessage");
+const button = form.querySelector("button[type=submit]");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  message.textContent = "";
+  message.style.color = "#7B1D1D";
+
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+
+  button.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+
+    const user = USERS[email];
+    if (!user) {
+      await signOut(auth);
+      message.textContent = "No dashboard is assigned to this account.";
+      return;
     }
 
-    if (role === 'Area Manager') {
-        localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', 'Bea Hernandez');
-        window.location.href = 'area-manager.html';
-        return;
+    // New-style key
+    localStorage.setItem("loggedInUser", JSON.stringify({ email, name: user.name, role: user.role }));
+    // Old-style keys, in case your dashboards still read these
+    localStorage.setItem("b2bUserRole", user.role);
+    localStorage.setItem("b2bUserName", user.name);
+    if (DEPARTMENTS[user.role]) {
+      localStorage.setItem("b2bDepartment", DEPARTMENTS[user.role]);
     }
 
-    const departmentRoles = {
-        'Operations Head': {
-            department: 'Operations',
-            name: 'Daniel Reyes',
-            page: 'operations-head.html'
-        },
-        'Department Head': {
-            department: 'Operations',
-            name: 'Daniel Reyes',
-            page: 'operations-head.html'
-        },
-        'Legal Head': {
-            department: 'Legal',
-            name: 'Atty. Maya Santos',
-            page: 'legal-head.html'
-        },
-        'Finance Head': {
-            department: 'Finance',
-            name: 'Carlo Lim',
-            page: 'finance-head.html'
-        },
-        'Engineering Head': {
-            department: 'Engineering',
-            name: 'Engr. Nina Cruz',
-            page: 'engineering-head.html'
-        }
-    };
-
-    if (departmentRoles[role]) {
-        const { department, name, page } = departmentRoles[role];
-        localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', name);
-        localStorage.setItem('b2bDepartment', department);
-        window.location.href = page;
-        return;
-    }
-
-    if (role === 'HR Specialist') {
-        localStorage.setItem('b2bUserRole', role);
-        localStorage.setItem('b2bUserName', 'Angela Santos');
-        window.location.href = 'hr-specialist.html';
-        return;
-    }
-
-    message.textContent = role
-        ? 'A dashboard for this role has not been connected yet.'
-        : 'Please select a user role.';
+    window.location.href = user.page;
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Invalid email or password.";
+  } finally {
+    button.disabled = false;
+  }
 });
