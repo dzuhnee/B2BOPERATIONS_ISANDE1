@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================================================== */
 
 
-function initializeDashboard(){
+async function initializeDashboard(){
 
     if(!window.businessDevelopmentData){
 
@@ -42,6 +42,22 @@ function initializeDashboard(){
 
         return;
 
+    }
+
+
+    // Load site data from Firestore (js/business-development-backend.js).
+    // Falls back to the bundled demo data if the backend is unreachable.
+    const content = document.getElementById("pageContent");
+    if(window.bdBackend){
+        if(content) content.innerHTML = `<p class="subtitle">Loading site data…</p>`;
+        try{
+            await window.bdBackend.ready;
+        }catch(error){
+            console.error("Could not load Business Development data from Firebase:", error);
+            setTimeout(()=>B2B.toast("Could not reach the server. Showing offline data."),0);
+        }
+    }else{
+        console.warn("Firebase backend not loaded. Showing offline data.");
     }
 
 
@@ -2188,7 +2204,7 @@ function runProposalViabilityAssessment(){
     B2B.toast("Site viability assessment completed.");
 }
 
-function submitNewSiteProposal(event){
+async function submitNewSiteProposal(event){
     event.preventDefault();
     const form=event.currentTarget;
     if(!form.checkValidity()){form.reportValidity();return;}
@@ -2199,21 +2215,56 @@ function submitNewSiteProposal(event){
     const generatedId=isPulilan?"PROP-2026-014":`SP-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
     const municipality=document.getElementById("municipality").value.trim();
     const status=currentProposalAssessment.score>=85?"Recommended":"Pending Review";
+    const value=id=>document.getElementById(id)?.value?.trim()||"";
+    let signedInUser=null;
+    try{ signedInUser=JSON.parse(localStorage.getItem("loggedInUser")||"null"); }catch{}
 
-    businessDevelopmentData.applications.unshift({
+    const application={
         id:generatedId,
         location,
         municipality,
+        province:value("province"),
+        formattedAddress:value("formattedAddress"),
+        latitude:Number(value("latitude"))||null,
+        longitude:Number(value("longitude"))||null,
+        monthlyRent:Number(value("monthlyRent"))||0,
+        leaseTerm:value("leaseTerm"),
+        lotArea:Number(value("lotArea"))||0,
+        floorArea:Number(value("floorArea"))||0,
+        frontage:Number(value("frontage"))||0,
+        parkingSlots:Number(value("parkingSlots"))||0,
+        propertyType:value("propertyType"),
         image:"",
         status,
-        aiAnalysis:{score:currentProposalAssessment.score},
+        submittedDate:new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}),
+        submittedBy:signedInUser?.name||businessDevelopmentData.user?.name||"",
+        aiAnalysis:{evaluated:true,score:currentProposalAssessment.score,traffic:currentProposalAssessment.footTraffic,accessibility:currentProposalAssessment.accessibility,competitors:currentProposalAssessment.competitors,lease:currentProposalAssessment.lease,property:currentProposalAssessment.property},
         schools:document.getElementById("schoolCount")?.textContent||"Analyzing",
         footTraffic:`${currentProposalAssessment.footTraffic}/100`,
         commercial:"Assessment completed"
-    });
+    };
 
-    businessDevelopmentData.stats.totalApplications=Number(businessDevelopmentData.stats.totalApplications||0)+1;
-    businessDevelopmentData.stats.pendingAnalysis=Number(businessDevelopmentData.stats.pendingAnalysis||0)+1;
+    const submitButton=document.getElementById("submitProposalBtn");
+    let isNew=!businessDevelopmentData.applications.some(site=>site.id===generatedId);
+    if(window.bdBackend){
+        if(submitButton) submitButton.disabled=true;
+        try{
+            ({isNew}=await window.bdBackend.saveSiteProposal(application));
+        }catch(error){
+            console.error("Failed to save site proposal:",error);
+            B2B.toast("Could not save the proposal. Please try again.");
+            if(submitButton) submitButton.disabled=false;
+            return;
+        }
+    }
+
+    businessDevelopmentData.applications=businessDevelopmentData.applications.filter(site=>site.id!==generatedId);
+    businessDevelopmentData.applications.unshift(application);
+
+    if(isNew){
+        businessDevelopmentData.stats.totalApplications=Number(businessDevelopmentData.stats.totalApplications||0)+1;
+        businessDevelopmentData.stats.pendingAnalysis=Number(businessDevelopmentData.stats.pendingAnalysis||0)+1;
+    }
     const count=document.getElementById("applicationCount");
     if(count) count.textContent=businessDevelopmentData.applications.length;
     document.getElementById("generatedSiteId").textContent=generatedId;
