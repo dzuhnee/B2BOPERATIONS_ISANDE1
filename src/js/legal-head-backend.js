@@ -64,7 +64,10 @@ function formatDecisionTime(iso){
 function applyReviews(reviews){
     const byId = new Map(reviews.map(review=>[review.id, review]));
     proposals.forEach(proposal=>{
-        const seed = seedState.get(proposal.id);
+        const seed = seedState.get(proposal.id) || {
+            status:proposal.status || "Pending Review",
+            history:proposal.history || []
+        };
         const review = byId.get(proposal.id);
         proposal.status = review?.status || seed.status;
         proposal.checklists = review?.checklist ? { Legal:review.checklist } : {};

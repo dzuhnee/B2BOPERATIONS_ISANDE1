@@ -42,6 +42,7 @@ window.B2BDepartmentHead = (() => {
         const roleRequirements = typeof roleConfig === 'string'
             ? data.requirements[department]
             : roleConfig.requirements;
+        const bundledProposals = data.proposals.map(proposal => structuredClone(proposal));
 
         let activeSection = 'overview';
         let selectedProposal = null;
@@ -58,12 +59,38 @@ window.B2BDepartmentHead = (() => {
         B2B.initShell({ onNavigate: renderSection });
         renderSection('overview');
 
-        return {
+        const controller = {
             /** Re-renders the current section, except Settings (it may hold unsaved input). */
             refresh() {
                 if (activeSection !== 'settings') renderSection(activeSection);
+            },
+            /** Replaces bundled records with the latest Firestore applications. */
+            setApplications(applications) {
+                const byId = new Map(applications.map(application => [application.id, application]));
+                const merged = bundledProposals.map(proposal => {
+                    const application = byId.get(proposal.id);
+                    if (!application) return proposal;
+                    return {
+                        ...proposal,
+                        ...application,
+                        strengths:application.departmentProposal?.strengths || proposal.strengths || application.strengths,
+                        risks:application.departmentProposal?.risks || proposal.risks || application.risks,
+                        recommendations:application.departmentProposal?.recommendations || proposal.recommendations || application.recommendations,
+                        documents:application.departmentProposal?.documents || proposal.documents || application.documents,
+                        history:application.departmentProposal?.history || proposal.history || application.history,
+                        opening:application.openingDate || proposal.opening || application.opening
+                    };
+                });
+                const knownIds = new Set(bundledProposals.map(proposal => proposal.id));
+                applications.forEach(application => {
+                    if (!knownIds.has(application.id)) merged.push(application);
+                });
+                data.proposals.splice(0, data.proposals.length, ...merged);
+                this.refresh();
             }
         };
+        window.departmentHeadController = controller;
+        return controller;
 
         function setRoleIdentity() {
             document.title = `${department} Head Dashboard | Bee-to-Bee Operations`;

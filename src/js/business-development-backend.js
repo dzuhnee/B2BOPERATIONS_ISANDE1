@@ -108,6 +108,12 @@ async function saveSiteProposal(application){
 
         transaction.set(ref, {
             ...application,
+            workflowStatus: existing.data()?.workflowStatus || {
+                legal:"Pending Review",
+                engineering:"Pending Review",
+                finance:"Pending Review",
+                operations:"Pending Review"
+            },
             order:-Date.now(), // newest first
             createdAt:serverTimestamp(),
             createdBy:auth.currentUser?.uid || null
