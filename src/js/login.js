@@ -1,5 +1,5 @@
 import { auth } from './firebase.js';
-import { GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { GoogleAuthProvider, browserLocalPersistence, browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { accountFor, clearAccount, storeAccount } from './auth-roles.js';
 const form=document.getElementById('loginForm');
 const message=document.getElementById('loginMessage');
@@ -58,9 +58,15 @@ form.addEventListener('submit',event=>{
     message.textContent='Email or password is incorrect.';
     return;
   }
-  attempt(()=>signInWithEmailAndPassword(auth,email,password));
+  attempt(async()=>{
+    await setPersistence(auth,document.getElementById('rememberMe').checked ? browserLocalPersistence : browserSessionPersistence);
+    return signInWithEmailAndPassword(auth,email,password);
+  });
 });
 googleButton.addEventListener('click',()=>attempt(()=>signInWithPopup(auth,new GoogleAuthProvider())));
+document.getElementById('forgotPassword').addEventListener('click',()=>{
+  message.textContent='These demo accounts use fixed passwords. Contact your administrator for access.';
+});
 onAuthStateChanged(auth,user=>{
   if(user){const account=accountFor(user);if(account)location.replace(account.page)}
 });

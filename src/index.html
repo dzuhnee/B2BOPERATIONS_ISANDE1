@@ -4,77 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5Joys Corporation | Bee-to-Bee Operations</title>
-
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-<div class="login-container">
-    <div class="left-panel">
-        <div class="overlay">
-           <img src="images/b2blogo.png" alt="Bee-to-Bee Logo" class="logo">
-            <h1>Bee-to-Bee Operations</h1>
-            <p class="description">
-                A Cross-Functional Franchise Launch and Operations Transaction Processing System for
-                <strong>5Joys Corporation.</strong>
-            </p>
-            <div class="features">
-                <div class="feature">✓ Smart Site Qualification</div>
-                <div class="feature">✓ Approval Workflow</div>
-                <div class="feature">✓ Recruitment &amp; Training</div>
-                <div class="feature">✓ Store Launch Readiness</div>
-                <div class="feature">✓ Operations Monitoring</div>
-            </div>
-        </div>
+<body class="login-page">
+<main class="login-container">
+    <div class="store-photo" aria-hidden="true">
+        <img src="images/JOLLIBEE__Store_Exterior-min.jpg" alt="">
     </div>
+    <svg class="bottom-wave" viewBox="0 0 620 150" preserveAspectRatio="none" aria-hidden="true"><path d="M0 150 C220 147 340 45 620 0 L620 150 Z"></path></svg>
 
-    <div class="right-panel">
+    <section class="brand-panel" aria-labelledby="brandTitle">
+        <img src="images/b2b%20logo.png" alt="Bee-to-Bee Operations" class="brand-logo">
+        <div class="brand-copy">
+            <span class="brand-rule" aria-hidden="true"></span>
+            <h1 id="brandTitle">Bee-to-Bee<br>Operations</h1>
+            <p>A Cross-Functional Franchise Launch and<br class="desktop-break"> Operations Transaction Processing System<br class="desktop-break"> for <strong>5Joys Corporation.</strong></p>
+        </div>
+    </section>
+
+    <section class="right-panel" aria-labelledby="loginTitle">
         <div class="login-card">
-            <h2>Welcome Back</h2>
-            <p>Sign in to your account.</p>
-
+            <h2 id="loginTitle">Welcome Back</h2>
+            <p class="login-subtitle">Sign in to access Bee-to-Bee Operations.</p>
             <form id="loginForm">
-                <label for="email">Email Address</label>
-                <input id="email" type="email" placeholder="example@5joys.com" required>
+                <label for="email" class="field-label">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m3 6 9 7 9-7"></path></svg>
+                    Email Address
+                </label>
+                <input id="email" name="email" type="email" placeholder="e.g. carlos.reyes@5joys.com" autocomplete="username" required>
 
-                <label for="password">Password</label>
+                <label for="password" class="field-label password-label">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="12" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><path d="M12 15v3"></path></svg>
+                    Password
+                </label>
                 <div class="password-wrapper">
-                    <input id="password" type="password" placeholder="••••••••" required>
+                    <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
                     <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password">
-                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
+                        <svg id="eyeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     </button>
                 </div>
-
-                <p class="login-message" id="loginMessage" aria-live="polite"></p>
-                <button type="submit">Sign in with email</button>
+                <div class="form-options">
+                    <label class="remember-label"><input id="rememberMe" type="checkbox"> <span>Remember me</span></label>
+                    <button type="button" id="forgotPassword" class="forgot-password">Forgot password?</button>
+                </div>
+                <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
+                <button type="submit" class="sign-in-button">Sign In <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"></path></svg></button>
             </form>
-            <div class="login-divider" aria-hidden="true"><span>or</span></div>
-            <button type="button" id="googleSignIn" class="google-sign-in">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M21.35 12.21c0-.68-.06-1.18-.19-1.7H12v3.31h5.37a4.6 4.6 0 0 1-2 3.02v2.5h3.22c1.88-1.73 2.76-4.28 2.76-7.13Z"/><path fill="#34A853" d="M12 21.5c2.69 0 4.95-.89 6.59-2.41l-3.22-2.5c-.89.6-2.03.96-3.37.96-2.6 0-4.81-1.76-5.6-4.12H3.08v2.58A9.5 9.5 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.4 13.43a5.7 5.7 0 0 1 0-3.65V7.2H3.08a9.5 9.5 0 0 0 0 8.81l3.32-2.58Z"/><path fill="#EA4335" d="M12 5.65c1.46 0 2.76.5 3.79 1.48l2.84-2.84A9.16 9.16 0 0 0 12 2.5 9.5 9.5 0 0 0 3.08 7.2L6.4 9.78c.79-2.36 3-4.13 5.6-4.13Z"/></svg>
-                Continue with Google
-            </button>
         </div>
-    </div>
-</div>
-
+        <button type="button" id="googleSignIn" class="google-sign-in">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19"><path fill="#4285F4" d="M21.35 12.21c0-.68-.06-1.18-.19-1.7H12v3.31h5.37a4.6 4.6 0 0 1-2 3.02v2.5h3.22c1.88-1.73 2.76-4.28 2.76-7.13Z"/><path fill="#34A853" d="M12 21.5c2.69 0 4.95-.89 6.59-2.41l-3.22-2.5c-.89.6-2.03.96-3.37.96-2.6 0-4.81-1.76-5.6-4.12H3.08v2.58A9.5 9.5 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.4 13.43a5.7 5.7 0 0 1 0-3.65V7.2H3.08a9.5 9.5 0 0 0 0 8.81l3.32-2.58Z"/><path fill="#EA4335" d="M12 5.65c1.46 0 2.76.5 3.79 1.48l2.84-2.84A9.16 9.16 0 0 0 12 2.5 9.5 9.5 0 0 0 3.08 7.2L6.4 9.78c.79-2.36 3-4.13 5.6-4.13Z"/></svg>
+            Continue with Google
+        </button>
+    </section>
+</main>
 <script type="module" src="js/login.js?v=20261112-1"></script>
 <script>
-const pwInput = document.getElementById("password");
-const toggleBtn = document.getElementById("togglePassword");
-const eyeIcon = document.getElementById("eyeIcon");
-
-const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-const eyeOff = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-
-toggleBtn.addEventListener("click", () => {
-  const show = pwInput.type === "password";
-  pwInput.type = show ? "text" : "password";
+const pwInput = document.getElementById('password');
+const toggleBtn = document.getElementById('togglePassword');
+const eyeIcon = document.getElementById('eyeIcon');
+const eyeOpen = '<path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle>';
+const eyeOff = '<path d="M3 3 21 21"></path><path d="M10.6 6.1A11.4 11.4 0 0 1 12 6c6.3 0 10 6 10 6a14.7 14.7 0 0 1-3.2 3.5M6.1 7.5C3.5 9.3 2 12 2 12s3.7 6 10 6a11 11 0 0 0 3.3-.5"></path><path d="M10 10a3 3 0 0 0 4 4"></path>';
+toggleBtn.addEventListener('click', () => {
+  const show = pwInput.type === 'password';
+  pwInput.type = show ? 'text' : 'password';
   eyeIcon.innerHTML = show ? eyeOff : eyeOpen;
-  toggleBtn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  toggleBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
 });
 </script>
 </body>
