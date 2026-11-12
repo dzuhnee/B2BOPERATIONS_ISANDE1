@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-pending" data-role="Business Development">
 
 <head>
 
@@ -59,6 +59,7 @@
 .site-photo-preview span{font-size:10px;color:var(--muted)}
 </style>
 
+<style>html.auth-pending body{visibility:hidden}</style>
 </head>
 
 
@@ -1930,6 +1931,7 @@ SCRIPTS
 <script src="js/account-menu.js"></script>
 
 
-<script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="Business Development"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
+<script type="module" src="js/auth-guard.js"></script>
+</body>
 
 </html>

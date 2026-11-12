@@ -86,7 +86,7 @@ function bindSignOut(){
 export async function requireRole(role){
     const user = await waitForUser();
     const email = user?.email?.toLowerCase() || "";
-    const allowed = Boolean(user) && (ROLE_ACCOUNTS[role] || []).includes(email);
+    const allowed = Boolean(user?.emailVerified) && (ROLE_ACCOUNTS[role] || []).includes(email);
 
     if(!allowed){
         if(user) await signOut(auth).catch(()=>{});

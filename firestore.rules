@@ -14,7 +14,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function signedIn() { return request.auth != null; }
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
     function email() { return signedIn() ? request.auth.token.email.lower() : ''; }
 
     // Keep in sync with ROLE_ACCOUNTS in src/js/role-backend.js.
@@ -23,6 +23,8 @@ service cloud.firestore {
     function isLegalHead()   { return email() in ['atty.maya.santos@5joys.com']; }
     function isExecutive()   { return email() in ['maria.santos@5joys.com']; }
     function isStoreManager() { return email() in ['ruth.reyes@5joys.com', 'ruth.torres@5joys.com']; }
+    function isStoreTrainer() { return email() == 'michael.dela.cruz@5joys.com'; }
+    function isEngineeringHead() { return email() == 'engr.nina.cruz@5joys.com'; }
     function isOperationsHead() { return email() == 'carlos.reyes@5joys.com'; }
     function isFinanceHead() { return email() == 'carlo.lim@5joys.com'; }
     function isHrSpecialist() { return email() == 'angela.santos@5joys.com'; }
@@ -154,20 +156,38 @@ service cloud.firestore {
       allow read, write: if signedIn() && request.auth.uid == uid;
     }
 
-    // ---------- Existing collections (assumed current access; owners should tighten) ----------
+    // ---------- Shared site workflow ----------
     match /siteApplications/{id} {
-      allow read: if signedIn();
-      allow write: if signedIn() && (!isOperationsHead() && !isFinanceHead()
-        || (resource != null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['workflowStatus','operationsUpdatedAt','operationsUpdatedBy','financeUpdatedAt','financeUpdatedBy'])));
+      allow read: if isBusinessDevelopment() || isDepartmentHead() || isExecutive();
+      allow create, delete: if isBusinessDevelopment();
+      allow update: if isBusinessDevelopment()
+        || (isOperationsHead() && resource.data.workflowStatus is map
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['workflowStatus','operationsUpdatedAt','operationsUpdatedBy'])
+          && request.resource.data.workflowStatus.diff(resource.data.workflowStatus).affectedKeys().hasOnly(['operations'])
+          && request.resource.data.operationsUpdatedBy == email())
+        || (isFinanceHead() && resource.data.workflowStatus is map
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['workflowStatus','financeUpdatedAt','financeUpdatedBy'])
+          && request.resource.data.workflowStatus.diff(resource.data.workflowStatus).affectedKeys().hasOnly(['finance'])
+          && request.resource.data.financeUpdatedBy == email())
+        || (isLegalHead() && resource.data.workflowStatus is map
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['workflowStatus','legalUpdatedAt','legalUpdatedBy'])
+          && request.resource.data.workflowStatus.diff(resource.data.workflowStatus).affectedKeys().hasOnly(['legal'])
+          && request.resource.data.legalUpdatedBy == email());
     }
     match /siteArchives/{id} {
-      allow read, write: if signedIn();
+      allow read: if isBusinessDevelopment() || isExecutive();
+      allow write: if isBusinessDevelopment();
     }
     match /businessDevelopment/{id} {
-      allow read, write: if signedIn();
+      allow read: if isBusinessDevelopment() || isExecutive();
+      allow write: if isBusinessDevelopment();
     }
     match /executiveReviews/{id} {
-      allow read, write: if signedIn();
+      allow read: if isExecutive();
+      allow create, update: if isExecutive()
+        && request.resource.data.reviewedBy == request.auth.uid
+        && shortText('note', 1000);
+      allow delete: if false;
     }
   }
 }

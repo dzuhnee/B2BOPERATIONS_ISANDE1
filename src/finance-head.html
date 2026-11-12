@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-pending" data-role="Finance Head">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/dashboard.css?v=20260804-3">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+<style>html.auth-pending body{visibility:hidden}</style>
 </head>
 <body class="dashboard-body">
 <div class="app-shell">
@@ -115,5 +116,6 @@
 <script src="js/report-export.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/account-menu.js"></script>
-<script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="Finance Head"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
+<script type="module" src="js/auth-guard.js"></script>
+</body>
 </html>
