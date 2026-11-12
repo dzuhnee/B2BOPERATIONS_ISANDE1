@@ -15,7 +15,7 @@ export const ACCOUNTS = Object.freeze({
 });
 export const accountFor = user => {
   const email=user?.email?.toLowerCase();
-  return user && user.emailVerified && ACCOUNTS[email] ? {...ACCOUNTS[email],email} : null;
+  return user && ACCOUNTS[email] ? {...ACCOUNTS[email],email} : null;
 };
 export function storeAccount(account){
   localStorage.setItem('loggedInUser',JSON.stringify({email:account.email,name:account.name,role:account.role}));

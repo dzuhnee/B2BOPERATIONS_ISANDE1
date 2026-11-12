@@ -14,7 +14,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function signedIn() { return request.auth != null; }
     function email() { return signedIn() ? request.auth.token.email.lower() : ''; }
 
     // Keep in sync with ROLE_ACCOUNTS in src/js/role-backend.js.
