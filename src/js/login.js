@@ -5,6 +5,22 @@ const form=document.getElementById('loginForm');
 const message=document.getElementById('loginMessage');
 const passwordButton=form.querySelector('button[type=submit]');
 const googleButton=document.getElementById('googleSignIn');
+// Fixed password credentials for the assigned demo accounts. This check is
+// followed by Firebase sign-in so Firestore can authorize dashboard requests.
+const PASSWORDS=Object.freeze({
+  'sophia.ramirez@5joys.com':'Sophia@B2B2026',
+  'carlos.reyes@5joys.com':'Carlos@B2B2026',
+  'angela.santos@5joys.com':'Angela@B2B2026',
+  'michael.dela.cruz@5joys.com':'Michael@B2B2026',
+  'ruth.reyes@5joys.com':'RuthR@B2B2026',
+  'joel.navarro@5joys.com':'Joel@B2B2026',
+  'bea.hernandez@5joys.com':'Bea@B2B2026',
+  'ruth.torres@5joys.com':'RuthT@B2B2026',
+  'engr.nina.cruz@5joys.com':'Nina@B2B2026',
+  'maria.santos@5joys.com':'Maria@B2B2026',
+  'carlo.lim@5joys.com':'Carlo@B2B2026',
+  'atty.maya.santos@5joys.com':'Maya@B2B2026'
+});
 function setBusy(busy){passwordButton.disabled=busy;googleButton.disabled=busy}
 async function complete(user){
   const account=accountFor(user);
@@ -36,7 +52,13 @@ async function attempt(action){
 }
 form.addEventListener('submit',event=>{
   event.preventDefault();
-  attempt(()=>signInWithEmailAndPassword(auth,document.getElementById('email').value.trim().toLowerCase(),document.getElementById('password').value));
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const password=document.getElementById('password').value;
+  if(PASSWORDS[email]!==password){
+    message.textContent='Email or password is incorrect.';
+    return;
+  }
+  attempt(()=>signInWithEmailAndPassword(auth,email,password));
 });
 googleButton.addEventListener('click',()=>attempt(()=>signInWithPopup(auth,new GoogleAuthProvider())));
 onAuthStateChanged(auth,user=>{
