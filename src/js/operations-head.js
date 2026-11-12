@@ -1,6 +1,7 @@
 /** Operations-specific identity, metrics, review focus, and requirements. */
 const operationsHeadConfig = {
     department: 'Operations',
+    persistent: true,
     user: {
         name: 'Daniel Reyes',
         initials: 'DR',
@@ -35,7 +36,8 @@ const operationsHeadConfig = {
 };
 
 function initializeOperationsHeadDashboard() {
-    B2BDepartmentHead.initialize(operationsHeadConfig);
+    const controller = B2BDepartmentHead.initialize(operationsHeadConfig);
+    window.departmentRole = { config: operationsHeadConfig, controller };
 }
 
 initializeOperationsHeadDashboard();

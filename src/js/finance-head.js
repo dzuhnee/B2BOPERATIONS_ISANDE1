@@ -1,6 +1,7 @@
 /** Finance-specific identity, metrics, review focus, and requirements. */
 const financeHeadConfig = {
     department: 'Finance',
+    persistent: true,
     user: {
         name: 'Carlo Lim',
         initials: 'CL',
@@ -35,7 +36,8 @@ const financeHeadConfig = {
 };
 
 function initializeFinanceHeadDashboard() {
-    B2BDepartmentHead.initialize(financeHeadConfig);
+    const controller = B2BDepartmentHead.initialize(financeHeadConfig);
+    window.departmentRole = { config: financeHeadConfig, controller };
 }
 
 initializeFinanceHeadDashboard();

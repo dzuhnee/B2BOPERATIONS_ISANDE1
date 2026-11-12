@@ -33,7 +33,10 @@ import {
 export const ROLE_ACCOUNTS = {
     "Area Manager": ["bea.hernandez@5joys.com"],
     "Supply Chain Officer": ["joel.navarro@5joys.com"],
-    "Legal Head": ["atty.maya.santos@5joys.com"]
+    "Legal Head": ["atty.maya.santos@5joys.com"],
+    "Operations Head": ["carlos.reyes@5joys.com"],
+    "Finance Head": ["carlo.lim@5joys.com"],
+    "HR Specialist": ["angela.santos@5joys.com"]
 };
 
 const SESSION_KEYS = ["loggedInUser", "b2bUserRole", "b2bUserName", "b2bDepartment"];

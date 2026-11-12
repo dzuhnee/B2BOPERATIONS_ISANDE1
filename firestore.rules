@@ -23,6 +23,9 @@ service cloud.firestore {
     function isLegalHead()   { return email() in ['atty.maya.santos@5joys.com']; }
     function isExecutive()   { return email() in ['maria.santos@5joys.com']; }
     function isStoreManager() { return email() in ['ruth.reyes@5joys.com', 'ruth.torres@5joys.com']; }
+    function isOperationsHead() { return email() == 'carlos.reyes@5joys.com'; }
+    function isFinanceHead() { return email() == 'carlo.lim@5joys.com'; }
+    function isHrSpecialist() { return email() == 'angela.santos@5joys.com'; }
 
     function stamped() {
       return request.resource.data.updatedBy == email() || request.resource.data.createdBy == email()
@@ -91,6 +94,36 @@ service cloud.firestore {
         && request.resource.data.status in ['Approved', 'Revision Requested', 'Rejected']
         && shortText('remarks', 1000);
     }
+    match /operationsReviews/{proposalId} {
+      allow read: if isOperationsHead() || isExecutive();
+      allow create, update: if isOperationsHead() && request.resource.data.updatedBy == email()
+        && request.resource.data.status in ['Approved', 'Revision Requested', 'Rejected']
+        && shortText('remarks', 1000);
+      allow delete: if false;
+    }
+    match /financeReviews/{proposalId} {
+      allow read: if isFinanceHead() || isExecutive();
+      allow create, update: if isFinanceHead() && request.resource.data.updatedBy == email()
+        && request.resource.data.status in ['Approved', 'Revision Requested', 'Rejected']
+        && shortText('remarks', 1000);
+      allow delete: if false;
+    }
+    match /hrApplicants/{id} {
+      allow read: if isHrSpecialist();
+      allow create, update: if isHrSpecialist() && request.resource.data.updatedBy == email()
+        && request.resource.data.status in ['New Applicant','For Screening','Shortlisted','Interview Scheduled','Interview Completed','For Further Review','Hired','Rejected','Assigned to Training']
+        && request.resource.data.certification in ['Not Started','In Training','Certified','Retraining Required']
+        && (!request.resource.data.get('deployed', false) || request.resource.data.certification == 'Certified');
+      allow delete: if false;
+    }
+    match /hrBatches/{id} {
+      allow read: if isHrSpecialist();
+      allow create, update: if isHrSpecialist() && request.resource.data.updatedBy == email()
+        && request.resource.data.capacity is int && request.resource.data.capacity > 0
+        && request.resource.data.assigned is int && request.resource.data.assigned >= 0
+        && request.resource.data.assigned <= request.resource.data.capacity;
+      allow delete: if false;
+    }
 
     // ---------- Site proposal documents (uploaded by Business Development) ----------
     function isBusinessDevelopment() { return email() in ['sophia.ramirez@5joys.com']; }
@@ -123,7 +156,9 @@ service cloud.firestore {
 
     // ---------- Existing collections (assumed current access; owners should tighten) ----------
     match /siteApplications/{id} {
-      allow read, write: if signedIn();
+      allow read: if signedIn();
+      allow write: if signedIn() && (!isOperationsHead() && !isFinanceHead()
+        || (resource != null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['workflowStatus','operationsUpdatedAt','operationsUpdatedBy','financeUpdatedAt','financeUpdatedBy'])));
     }
     match /siteArchives/{id} {
       allow read, write: if signedIn();
