@@ -17,6 +17,8 @@
 .login-card h2{font-size:clamp(35px,2.95vw,48px);font-weight:700;line-height:1.2;letter-spacing:-.035em;color:#752225;margin:0 0 7px}
 .login-subtitle{font-size:clamp(16px,1.25vw,20px);color:#5b5050;line-height:1.5;margin:0 0 42px}
 .login-card form{margin:0}
+.login-card form[hidden],.google-sign-in[hidden]{display:none}
+.back-to-login{display:block;margin:20px auto 0}
 .field-label{display:flex;align-items:center;gap:11px;font-size:18px;font-weight:600;color:#322527;margin:0 0 10px}
 .field-label svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .login-card input[type="email"],.login-card input[type="password"],.login-card input[type="text"]{display:block;width:100%;height:58px;padding:0 21px;margin:0;border:1.5px solid #d8c7c6;border-radius:14px;background:rgba(255,255,255,.45);color:#372b2c;font-size:18px;font-weight:400;outline:none}

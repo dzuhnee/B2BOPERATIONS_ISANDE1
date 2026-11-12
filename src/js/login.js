@@ -1,27 +1,14 @@
 import { auth } from './firebase.js';
-import { GoogleAuthProvider, browserLocalPersistence, browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { GoogleAuthProvider, browserLocalPersistence, browserSessionPersistence, onAuthStateChanged, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { accountFor, clearAccount, storeAccount } from './auth-roles.js';
 const form=document.getElementById('loginForm');
 const message=document.getElementById('loginMessage');
 const passwordButton=form.querySelector('button[type=submit]');
 const googleButton=document.getElementById('googleSignIn');
-// Fixed password credentials for the assigned demo accounts. This check is
-// followed by Firebase sign-in so Firestore can authorize dashboard requests.
-const PASSWORDS=Object.freeze({
-  'sophia.ramirez@5joys.com':'Sophia@B2B2026',
-  'carlos.reyes@5joys.com':'Carlos@B2B2026',
-  'angela.santos@5joys.com':'Angela@B2B2026',
-  'michael.dela.cruz@5joys.com':'Michael@B2B2026',
-  'ruth.reyes@5joys.com':'RuthR@B2B2026',
-  'joel.navarro@5joys.com':'Joel@B2B2026',
-  'bea.hernandez@5joys.com':'Bea@B2B2026',
-  'ruth.torres@5joys.com':'RuthT@B2B2026',
-  'engr.nina.cruz@5joys.com':'Nina@B2B2026',
-  'maria.santos@5joys.com':'Maria@B2B2026',
-  'carlo.lim@5joys.com':'Carlo@B2B2026',
-  'atty.maya.santos@5joys.com':'Maya@B2B2026'
-});
-function setBusy(busy){passwordButton.disabled=busy;googleButton.disabled=busy}
+const resetForm=document.getElementById('resetForm');
+const resetEmail=document.getElementById('resetEmail');
+const resetMessage=document.getElementById('resetMessage');
+function setBusy(busy){passwordButton.disabled=busy;googleButton.disabled=busy;resetForm.querySelector('button[type=submit]').disabled=busy}
 async function complete(user){
   const account=accountFor(user);
   if(!account){
@@ -54,18 +41,42 @@ form.addEventListener('submit',event=>{
   event.preventDefault();
   const email=document.getElementById('email').value.trim().toLowerCase();
   const password=document.getElementById('password').value;
-  if(PASSWORDS[email]!==password){
-    message.textContent='Email or password is incorrect.';
-    return;
-  }
   attempt(async()=>{
     await setPersistence(auth,document.getElementById('rememberMe').checked ? browserLocalPersistence : browserSessionPersistence);
     return signInWithEmailAndPassword(auth,email,password);
   });
 });
-googleButton.addEventListener('click',()=>attempt(()=>signInWithPopup(auth,new GoogleAuthProvider())));
+googleButton.addEventListener('click',()=>attempt(async()=>{
+  await setPersistence(auth,document.getElementById('rememberMe').checked ? browserLocalPersistence : browserSessionPersistence);
+  return signInWithPopup(auth,new GoogleAuthProvider());
+}));
 document.getElementById('forgotPassword').addEventListener('click',()=>{
-  message.textContent='These demo accounts use fixed passwords. Contact your administrator for access.';
+  resetEmail.value=document.getElementById('email').value.trim();
+  form.hidden=true;googleButton.hidden=true;resetForm.hidden=false;
+  document.getElementById('loginTitle').textContent='Reset your password';
+  document.querySelector('.login-subtitle').textContent='Enter your email address to receive a password reset link.';
+  resetMessage.textContent='';resetEmail.focus();
+});
+document.getElementById('backToLogin').addEventListener('click',()=>{
+  resetForm.hidden=true;form.hidden=false;googleButton.hidden=false;
+  document.getElementById('loginTitle').textContent='Welcome Back';
+  document.querySelector('.login-subtitle').textContent='Sign in to access Bee-to-Bee Operations.';
+  document.getElementById('email').value=resetEmail.value.trim();
+  message.textContent='';
+});
+resetForm.addEventListener('submit',async event=>{
+  event.preventDefault();resetMessage.textContent='';setBusy(true);
+  try{
+    await sendPasswordResetEmail(auth,resetEmail.value.trim());
+    resetMessage.textContent='If this email has a password sign-in account, a reset link will be sent. Check your inbox and spam folder.';
+  }catch(error){
+    console.error('Password reset failed',error);
+    resetMessage.textContent={
+      'auth/invalid-email':'Enter a valid email address.',
+      'auth/too-many-requests':'Too many attempts. Please wait and try again.',
+      'auth/network-request-failed':'Could not reach Firebase. Check your connection.'
+    }[error.code] || 'Could not send the reset email. Please try again.';
+  }finally{setBusy(false)}
 });
 onAuthStateChanged(auth,user=>{
   if(user){const account=accountFor(user);if(account)location.replace(account.page)}

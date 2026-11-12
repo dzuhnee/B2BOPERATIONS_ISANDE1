@@ -32,7 +32,7 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m3 6 9 7 9-7"></path></svg>
                     Email Address
                 </label>
-                <input id="email" name="email" type="email" placeholder="e.g. carlos.reyes@5joys.com" autocomplete="username" required>
+                <input id="email" name="email" type="email" placeholder="Enter your email address" autocomplete="username" required>
 
                 <label for="password" class="field-label password-label">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="12" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><path d="M12 15v3"></path></svg>
@@ -51,6 +51,13 @@
                 <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
                 <button type="submit" class="sign-in-button">Sign In <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"></path></svg></button>
             </form>
+            <form id="resetForm" hidden>
+                <label for="resetEmail" class="field-label">Email Address</label>
+                <input id="resetEmail" name="resetEmail" type="email" placeholder="Enter your email address" autocomplete="email" required>
+                <p class="login-message" id="resetMessage" role="status" aria-live="polite"></p>
+                <button type="submit" class="sign-in-button">Send reset link</button>
+                <button type="button" id="backToLogin" class="forgot-password back-to-login">Back to sign in</button>
+            </form>
         </div>
         <button type="button" id="googleSignIn" class="google-sign-in">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19"><path fill="#4285F4" d="M21.35 12.21c0-.68-.06-1.18-.19-1.7H12v3.31h5.37a4.6 4.6 0 0 1-2 3.02v2.5h3.22c1.88-1.73 2.76-4.28 2.76-7.13Z"/><path fill="#34A853" d="M12 21.5c2.69 0 4.95-.89 6.59-2.41l-3.22-2.5c-.89.6-2.03.96-3.37.96-2.6 0-4.81-1.76-5.6-4.12H3.08v2.58A9.5 9.5 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.4 13.43a5.7 5.7 0 0 1 0-3.65V7.2H3.08a9.5 9.5 0 0 0 0 8.81l3.32-2.58Z"/><path fill="#EA4335" d="M12 5.65c1.46 0 2.76.5 3.79 1.48l2.84-2.84A9.16 9.16 0 0 0 12 2.5 9.5 9.5 0 0 0 3.08 7.2L6.4 9.78c.79-2.36 3-4.13 5.6-4.13Z"/></svg>
@@ -58,7 +65,7 @@
         </button>
     </section>
 </main>
-<script type="module" src="js/login.js?v=20261112-1"></script>
+<script type="module" src="js/login.js?v=20261112-2"></script>
 <script>
 const pwInput = document.getElementById('password');
 const toggleBtn = document.getElementById('togglePassword');
