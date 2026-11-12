@@ -4,9 +4,24 @@
  * Role-specific entry files call B2BDepartmentHead.initialize() with a fixed
  * department. This keeps each URL explicit while avoiding four copies of the
  * same proposal filtering, modal, and decision workflow.
+ *
+ * Optional persistence (used by Legal Head; other departments are unchanged):
+ *   roleConfig.persistent = true   decisions require roleConfig.backend
+ *   roleConfig.backend = {
+ *     saveDecision(decision) -> Promise<{message?}>  write a decision
+ *     describeError(error)   -> string               user-facing error text
+ *     saveSettings(button)   -> Promise              persist the Settings section
+ *     afterRender(section, pageContentElement)       e.g. restore saved settings
+ *   }
+ * The backend may be attached after initialize(); call the returned refresh()
+ * when persisted data changes.
  */
 window.B2BDepartmentHead = (() => {
     const VALID_DEPARTMENTS = ['Operations', 'Legal', 'Finance', 'Engineering'];
+    const CHECKLIST_OPTIONS = ['Satisfied', 'Needs Clarification', 'Incomplete', 'Not Applicable'];
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[character]));
 
     function initialize(roleConfig) {
         const data = window.departmentHeadData;
@@ -42,6 +57,13 @@ window.B2BDepartmentHead = (() => {
         B2B.bindModal('confirmModal');
         B2B.initShell({ onNavigate: renderSection });
         renderSection('overview');
+
+        return {
+            /** Re-renders the current section, except Settings (it may hold unsaved input). */
+            refresh() {
+                if (activeSection !== 'settings') renderSection(activeSection);
+            }
+        };
 
         function setRoleIdentity() {
             document.title = `${department} Head Dashboard | Bee-to-Bee Operations`;
@@ -402,6 +424,7 @@ window.B2BDepartmentHead = (() => {
 
             document.getElementById('pageContent').innerHTML = html;
             if (document.getElementById('proposalRows')) renderProposalRows();
+            roleConfig.backend?.afterRender?.(section, document.getElementById('pageContent'));
             B2B.icon();
         }
 
@@ -425,6 +448,7 @@ window.B2BDepartmentHead = (() => {
 
         function renderProposalDetail() {
             const requirements = roleRequirements;
+            const savedChecklist = selectedProposal.checklists?.[department] || {};
             const currentStage = data.progress.indexOf(getEffectiveStage(selectedProposal));
 
             return `
@@ -447,17 +471,20 @@ window.B2BDepartmentHead = (() => {
                         <section class="detail-section">
                             <h3>${department} Requirements Checklist</h3>
                             <div class="detail-section-body checklist">
-                                ${requirements.map((requirement, index) => `
+                                ${requirements.map((requirement, index) => {
+                                    const chosen = savedChecklist[requirement]
+                                        || (index === 2 ? 'Needs Clarification' : 'Satisfied');
+                                    return `
                                     <div class="check-row">
                                         <strong style="flex:1">${requirement}</strong>
-                                        <select aria-label="${requirement} status">
-                                            <option>Satisfied</option>
-                                            <option ${index === 2 ? 'selected' : ''}>Needs Clarification</option>
-                                            <option>Incomplete</option>
-                                            <option>Not Applicable</option>
+                                        <select aria-label="${requirement} status" data-requirement="${requirement}">
+                                            ${CHECKLIST_OPTIONS.map(option => `
+                                                <option ${option === chosen ? 'selected' : ''}>${option}</option>
+                                            `).join('')}
                                         </select>
                                     </div>
-                                `).join('')}
+                                `;
+                                }).join('')}
                             </div>
                         </section>
 
@@ -525,11 +552,11 @@ window.B2BDepartmentHead = (() => {
                                     <div class="history-row">
                                         <span class="history-marker"><i data-lucide="message-square"></i></span>
                                         <div>
-                                            <strong>${history[0]} — ${history[1]}</strong>
-                                            <p>${history[3]}</p>
-                                            <small>${history[2]} • ${history[4]}</small>
+                                            <strong>${escapeHtml(history[0])} — ${escapeHtml(history[1])}</strong>
+                                            <p>${escapeHtml(history[3])}</p>
+                                            <small>${escapeHtml(history[2])} • ${escapeHtml(history[4])}</small>
                                         </div>
-                                        ${B2B.badge(history[2])}
+                                        ${B2B.badge(escapeHtml(history[2]))}
                                     </div>
                                 `).join('')}
                             </div>
@@ -548,9 +575,15 @@ window.B2BDepartmentHead = (() => {
                 return;
             }
 
+            const checklist = {};
+            document.querySelectorAll('#proposalDetail select[data-requirement]').forEach(select => {
+                checklist[select.dataset.requirement] = select.value;
+            });
+
             pendingDecision = {
                 status: decision,
-                remarks: remarks || 'Approved with no additional remarks.'
+                remarks: remarks || 'Approved with no additional remarks.',
+                checklist
             };
 
             document.getElementById('confirmTitle').textContent = `Confirm ${decision}?`;
@@ -560,8 +593,47 @@ window.B2BDepartmentHead = (() => {
             B2B.openModal('confirmModal');
         }
 
+        async function saveDecisionToBackend() {
+            const backend = roleConfig.backend;
+            if (!backend) {
+                B2B.toast('Still connecting to Firebase. Try again in a moment.');
+                return;
+            }
+
+            const button = document.getElementById('confirmDecision');
+            const label = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Saving…';
+            let result;
+            try {
+                result = await backend.saveDecision({
+                    proposal: selectedProposal,
+                    department,
+                    requirements: roleRequirements,
+                    ...pendingDecision
+                });
+            } catch (error) {
+                console.error('Could not save the department decision:', error);
+                B2B.toast(backend.describeError?.(error) || 'Could not save the decision. Please try again.');
+                return; // keep both modals open so the reviewer can retry
+            } finally {
+                button.disabled = false;
+                button.textContent = label;
+            }
+
+            B2B.closeModal('confirmModal');
+            B2B.closeModal('proposalModal');
+            B2B.toast(result?.message || `Proposal ${pendingDecision.status.toLowerCase()} successfully.`);
+            pendingDecision = null;
+            // The backend's live listener calls refresh() with the saved state.
+        }
+
         function saveDecision() {
             if (!selectedProposal || !pendingDecision) return;
+            if (roleConfig.persistent) {
+                saveDecisionToBackend();
+                return;
+            }
 
             selectedProposal.status = pendingDecision.status;
             if (selectedProposal.id === 'PROP-2026-014'
@@ -603,8 +675,10 @@ window.B2BDepartmentHead = (() => {
                     B2B.toast('Document preview is ready for backend file integration.');
                 }
 
-                if (event.target.closest('.save-settings')) {
-                    B2B.toast('Profile settings saved.');
+                const settingsButton = event.target.closest('.save-settings');
+                if (settingsButton) {
+                    if (roleConfig.backend?.saveSettings) roleConfig.backend.saveSettings(settingsButton);
+                    else B2B.toast('Profile settings saved.');
                 }
             });
 

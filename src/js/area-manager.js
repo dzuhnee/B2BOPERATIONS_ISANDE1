@@ -1,3 +1,13 @@
+/* Area Manager dashboard. Records persist in Firestore (see role-backend.js):
+   areaBranches, areaDailyReports, areaIncidents, areaCorrectiveActions,
+   areaPerformance, areaActivity, plus userSettings/{uid}. The arrays below are
+   the seed data for an empty database and the in-memory view of Firestore. */
+import {
+  ValidationError, applySettingsForm, createWithSequence, describeError, formatWhen,
+  highestNumber, isoDate, loadSettings, logActivity, oneOf, optionalText, readSettingsForm,
+  requireRole, requiredText, saveRecord, saveSettings, watchCollection, wholeNumber
+} from './role-backend.js';
+
 const sidebar = document.getElementById('sidebar');
 const modal = document.getElementById('reviewModal');
 const modalTitle = document.getElementById('modalTitle');
@@ -45,13 +55,33 @@ const performanceRows = [
 ];
 
 const activityHistory = [
-  ['Daily report submitted','Pulilan, Bulacan completed its operations report.','12 minutes ago','green'],
-  ['New incident reported','Equipment issue logged by Paombong, Bulacan.','38 minutes ago','red'],
-  ['Corrective action updated','Pandi, Bulacan submitted improvement evidence.','1 hour ago','yellow'],
-  ['Branch manager comment','Mexico, Pampanga responded to your review note.','2 hours ago','gray'],
-  ['Daily report reviewed','Pandi’s July 19 report was accepted.','Yesterday, 4:35 PM','green'],
-  ['Reminder sent','Malolos received a missing-report reminder.','Yesterday, 3:10 PM','yellow']
+  {id:'ACT-SEED-01',title:'Daily report submitted',description:'Pulilan, Bulacan completed its operations report.',when:'12 minutes ago',tone:'green'},
+  {id:'ACT-SEED-02',title:'New incident reported',description:'Equipment issue logged by Paombong, Bulacan.',when:'38 minutes ago',tone:'red'},
+  {id:'ACT-SEED-03',title:'Corrective action updated',description:'Pandi, Bulacan submitted improvement evidence.',when:'1 hour ago',tone:'yellow'},
+  {id:'ACT-SEED-04',title:'Branch manager comment',description:'Mexico, Pampanga responded to your review note.',when:'2 hours ago',tone:'gray'},
+  {id:'ACT-SEED-05',title:'Daily report reviewed',description:'Pandi’s July 19 report was accepted.',when:'Yesterday, 4:35 PM',tone:'green'},
+  {id:'ACT-SEED-06',title:'Reminder sent',description:'Malolos received a missing-report reminder.',when:'Yesterday, 3:10 PM',tone:'yellow'}
 ];
+
+const REPORT_STATUSES = ['For Review','Reviewed','Action Required'];
+const PRIORITIES = ['High','Medium','Low'];
+const NEW_INCIDENT_STATUSES = ['Under Investigation','Action Required','Monitoring'];
+const INCIDENT_STATUSES = [...NEW_INCIDENT_STATUSES,'Resolved'];
+const ACTION_STATUSES = ['In Progress','Monitoring','Overdue','Completed'];
+
+// Firestore collection → in-memory array it fills, with a copy of the seed data.
+const STORES = {
+  areaBranches:{records:branches},
+  areaDailyReports:{records:dailyReports},
+  areaIncidents:{records:incidents},
+  areaCorrectiveActions:{records:correctiveActions},
+  areaPerformance:{records:performanceRows},
+  areaActivity:{records:activityHistory}
+};
+Object.values(STORES).forEach(store=>{ store.seed=structuredClone(store.records); });
+
+let session = null;
+let savedSettings = null;
 
 let currentSection = 'overview';
 let activeWorkflow = null;
@@ -127,15 +157,20 @@ function applySearch(query=document.getElementById('globalSearch').value){
   const normalized=query.trim().toLowerCase();
   document.querySelectorAll('.page-content [data-search]').forEach(item=>item.classList.toggle('hidden-by-search',Boolean(normalized)&&!item.dataset.search.toLowerCase().includes(normalized)));
 }
-function renderSection(section=currentSection){
+function renderSection(section=currentSection,{scroll=true}={}){
   currentSection=section;
   pageContent.innerHTML=section==='overview'?overviewHTML:sectionTemplates[section]();
   pageContent.dataset.currentSection=section;
+  if(section==='settings') applySettingsForm(pageContent,savedSettings);
   applySearch();
   initIcons();
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(scroll) window.scrollTo({top:0,behavior:'smooth'});
 }
-function rerender(){ renderSection(currentSection); }
+function rerender(){ renderSection(currentSection,{scroll:false}); }
+function updateBadges(){
+  const badge=document.querySelector('.nav-item[data-section="incidents"] em');
+  if(badge) badge.textContent=incidents.filter(item=>item.status!=='Resolved').length;
+}
 
 function fieldGrid(contents){ return `<div class="area-modal-grid">${contents}</div>`; }
 function openDialog(kind,id){
@@ -149,7 +184,7 @@ function openDialog(kind,id){
 
   if(kind==='activity-history'){
     title='Recent Activity History'; description='Review the latest operational updates across assigned branches.'; saveButton.textContent='Done'; cancelButton.hidden=true;
-    fields=`<div class="area-activity-list">${activityHistory.map(item=>`<article><span class="dot ${item[3]}">${icon(item[3]==='red'?'triangle-alert':item[3]==='green'?'check':'clock-3')}</span><div><strong>${escapeHtml(item[0])}</strong><p>${escapeHtml(item[1])}</p><small>${escapeHtml(item[2])}</small></div></article>`).join('')}</div>`;
+    fields=`<div class="area-activity-list">${activityHistory.map(item=>`<article><span class="dot ${escapeHtml(item.tone)}">${icon(item.tone==='red'?'triangle-alert':item.tone==='green'?'check':'clock-3')}</span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.description)}</p><small>${escapeHtml(item.createdAt?formatWhen(item.createdAt):item.when)}</small></div></article>`).join('')}</div>`;
   }
   if(kind==='branch-note'){
     title='Add Branch Note'; description='Record a coaching note or operational instruction for an assigned branch.'; saveButton.textContent='Save Note';
@@ -215,37 +250,164 @@ function validateDialog(){
   if(invalid){ invalid.reportValidity(); invalid.focus(); return false; }
   return true;
 }
-function recordActivity(title,description){ activityHistory.unshift([title,description,'Just now','green']); }
+function recordActivity(title,description,tone='green'){
+  // The activity feed is secondary: a failed log must not fail the main save.
+  return logActivity('areaActivity',session,{title,description,tone}).catch(error=>console.error('Could not log activity:',error));
+}
+function selectedBranch(){
+  const branch=branches.find(item=>item.id===value('areaBranch'));
+  if(!branch) throw new ValidationError('Select one of your assigned branches.');
+  return branch;
+}
+function findRecord(records,id,label){
+  const record=records.find(item=>item.id===id);
+  if(!record) throw new ValidationError(`${label} ${id} no longer exists. Refresh and try again.`);
+  return record;
+}
+function actionFields(){
+  return {
+    title:requiredText(value('areaTitle'),'Corrective action',160),
+    branch:selectedBranch().name,
+    owner:requiredText(value('areaOwner'),'Owner',80),
+    due:isoDate(value('areaDue'),'Due date'),
+    progress:wholeNumber(value('areaProgress'),'Progress',0,100),
+    status:oneOf(value('areaStatus'),ACTION_STATUSES,'Status'),
+    note:optionalText(value('areaNote'),'Follow-up note')
+  };
+}
 
-function saveDialog(){
+/** Validates the open dialog and writes it to Firestore. Returns the success message. */
+async function persistWorkflow(kind,id){
+  if(kind==='branch-note'){
+    const branch=selectedBranch(); const note=requiredText(value('areaNote'),'Area Manager note',1000);
+    await saveRecord('areaBranches',branch.id,{note},session);
+    recordActivity('Branch note added',`${branch.name}: ${note}`);
+    return 'Branch note saved successfully.';
+  }
+  if(kind==='branch-detail'){
+    const branch=findRecord(branches,id,'Branch'); const note=optionalText(value('areaNote'),'Area Manager note');
+    await saveRecord('areaBranches',branch.id,{note},session);
+    recordActivity('Branch note updated',`${branch.name} received a management note.`);
+    return 'Branch details updated successfully.';
+  }
+  if(kind==='report-review'){
+    const report=findRecord(dailyReports,id,'Daily report');
+    const status=oneOf(value('areaStatus'),REPORT_STATUSES,'Review status');
+    const managerNote=requiredText(value('areaNote'),'Area Manager note',1000);
+    await saveRecord('areaDailyReports',report.id,{status,managerNote},session);
+    recordActivity('Daily report reviewed',`${report.branch} was marked ${status}.`,status==='Action Required'?'red':'green');
+    return 'Daily report review saved successfully.';
+  }
+  if(kind==='incident-create'){
+    const incident={
+      title:requiredText(value('areaTitle'),'Incident title',160),
+      branch:selectedBranch().name,
+      reported:formatWhen({toDate:()=>new Date()}),
+      priority:oneOf(value('areaPriority'),PRIORITIES,'Priority'),
+      status:oneOf(value('areaStatus'),NEW_INCIDENT_STATUSES,'Initial status'),
+      owner:requiredText(value('areaOwner'),'Assigned owner',80),
+      note:requiredText(value('areaNote'),'Incident details',1000)
+    };
+    const newId=await createWithSequence('areaIncidents',{counter:'areaIncidents',start:highestNumber(incidents,/^INC-2026-(\d+)$/)+1,format:n=>`INC-2026-${String(n).padStart(4,'0')}`},incident,session);
+    recordActivity('New incident logged',`${incident.title} — ${incident.branch}.`,'red');
+    return `${newId} created successfully.`;
+  }
+  if(kind==='incident-review'){
+    const incident=findRecord(incidents,id,'Incident');
+    const update={
+      priority:oneOf(value('areaPriority'),PRIORITIES,'Priority'),
+      status:oneOf(value('areaStatus'),INCIDENT_STATUSES,'Status'),
+      owner:requiredText(value('areaOwner'),'Corrective action owner',80),
+      note:requiredText(value('areaNote'),'Area Manager note',1000)
+    };
+    await saveRecord('areaIncidents',incident.id,update,session);
+    recordActivity('Incident review updated',`${incident.id} was marked ${update.status}.`,update.status==='Resolved'?'green':'yellow');
+    return 'Incident review saved successfully.';
+  }
+  if(kind==='action-create'){
+    const action=actionFields();
+    const newId=await createWithSequence('areaCorrectiveActions',{counter:'areaCorrectiveActions',start:highestNumber(correctiveActions,/^CA-2026-(\d+)$/)+1,format:n=>`CA-2026-${String(n).padStart(3,'0')}`},action,session);
+    recordActivity('Corrective action created',`${newId} assigned to ${action.owner}.`,'yellow');
+    return `${newId} created successfully.`;
+  }
+  if(kind==='action-edit'){
+    const existing=findRecord(correctiveActions,id,'Corrective action'); const action=actionFields();
+    await saveRecord('areaCorrectiveActions',existing.id,action,session);
+    recordActivity('Corrective action updated',`${existing.id} is ${action.progress}% complete.`,action.status==='Completed'?'green':'yellow');
+    return 'Corrective action updated successfully.';
+  }
+  if(kind==='performance-detail'){
+    const item=findRecord(performanceRows,id,'Performance record'); const note=optionalText(value('areaNote'),'Coaching note');
+    await saveRecord('areaPerformance',item.id,{note},session);
+    recordActivity('Performance note saved',`${item.branch} received a coaching or recognition note.`);
+    return 'Performance note saved successfully.';
+  }
+  throw new ValidationError('This action cannot be saved.');
+}
+
+function setBusy(button,busy,label='Saving…'){
+  if(!button) return;
+  if(busy){ button.dataset.label=button.textContent; button.textContent=label; }
+  else if(button.dataset.label){ button.textContent=button.dataset.label; }
+  button.disabled=busy;
+}
+function ensureConnected(){
+  if(session) return true;
+  showToast('Still connecting to Firebase. Try again in a moment.');
+  return false;
+}
+
+async function saveDialog(){
   if(!activeWorkflow||!validateDialog()) return;
   const {kind,id}=activeWorkflow;
   if(['activity-history','performance-compare'].includes(kind)){ closeDialog(); return; }
-  if(kind==='branch-note'){
-    const branch=branches.find(item=>item.id===value('areaBranch')); branch.note=value('areaNote'); recordActivity('Branch note added',`${branch.name}: ${branch.note}`); closeDialog(); showToast('Branch note saved successfully.'); return;
+  // Reporting date and period only change what is displayed, so they stay local.
+  if(kind==='report-date'){ reportDate=value('areaReportDate'); closeDialog(); renderSection(currentSection); showToast(`Showing reports for ${formatDate(reportDate)}.`); return; }
+  if(kind==='performance-period'){ performancePeriod=value('areaPeriod'); closeDialog(); renderSection(currentSection); showToast(`Performance period changed to ${formatMonth(performancePeriod)}.`); return; }
+  if(!ensureConnected()) return;
+
+  setBusy(saveButton,true);
+  try{
+    const message=await persistWorkflow(kind,id);
+    closeDialog();
+    showToast(message);
+  }catch(error){
+    if(!(error instanceof ValidationError)) console.error(`Could not save ${kind}:`,error);
+    showToast(describeError(error,'save this update'));
+  }finally{
+    setBusy(saveButton,false);
   }
-  if(kind==='branch-detail'){
-    const branch=branches.find(item=>item.id===id); branch.note=value('areaNote'); recordActivity('Branch note updated',`${branch.name} received a management note.`); closeDialog(); showToast('Branch details updated successfully.'); return;
+}
+
+async function sendReminder(button){
+  if(!ensureConnected()) return;
+  const report=dailyReports.find(item=>item.id===button.dataset.id);
+  if(!report) return;
+  setBusy(button,true,'Sending…');
+  try{
+    await saveRecord('areaDailyReports',report.id,{reminderSent:true},session);
+    recordActivity('Report reminder sent',`${report.branch} was reminded to submit ${report.id}.`,'yellow');
+    showToast(`Reminder sent to ${report.branch}.`);
+  }catch(error){
+    console.error('Could not record reminder:',error);
+    showToast(describeError(error,'send this reminder'));
+    setBusy(button,false);
   }
-  if(kind==='report-date'){ reportDate=value('areaReportDate'); closeDialog(); rerender(); showToast(`Showing reports for ${formatDate(reportDate)}.`); return; }
-  if(kind==='report-review'){
-    const report=dailyReports.find(item=>item.id===id); report.status=value('areaStatus'); report.managerNote=value('areaNote'); recordActivity('Daily report reviewed',`${report.branch} was marked ${report.status}.`); closeDialog(); rerender(); showToast('Daily report review saved successfully.'); return;
-  }
-  if(kind==='incident-create'){
-    const branch=branches.find(item=>item.id===value('areaBranch')); const incident={id:`INC-2026-${String(720+incidents.length).padStart(4,'0')}`,title:value('areaTitle'),branch:branch.name,reported:'Just now',priority:value('areaPriority'),status:value('areaStatus'),owner:value('areaOwner'),note:value('areaNote')}; incidents.unshift(incident); recordActivity('New incident logged',`${incident.title} — ${incident.branch}.`); closeDialog(); rerender(); showToast(`${incident.id} created successfully.`); return;
-  }
-  if(kind==='incident-review'){
-    const incident=incidents.find(item=>item.id===id); Object.assign(incident,{priority:value('areaPriority'),status:value('areaStatus'),owner:value('areaOwner'),note:value('areaNote')}); recordActivity('Incident review updated',`${incident.id} was marked ${incident.status}.`); closeDialog(); rerender(); showToast('Incident review saved successfully.'); return;
-  }
-  if(kind==='action-create'){
-    const branch=branches.find(item=>item.id===value('areaBranch')); const action={id:`CA-2026-${String(42+correctiveActions.length).padStart(3,'0')}`,title:value('areaTitle'),branch:branch.name,owner:value('areaOwner'),due:value('areaDue'),progress:Number(value('areaProgress')),status:value('areaStatus'),note:value('areaNote')}; correctiveActions.unshift(action); recordActivity('Corrective action created',`${action.id} assigned to ${action.owner}.`); closeDialog(); rerender(); showToast(`${action.id} created successfully.`); return;
-  }
-  if(kind==='action-edit'){
-    const action=correctiveActions.find(item=>item.id===id); const branch=branches.find(item=>item.id===value('areaBranch')); Object.assign(action,{title:value('areaTitle'),branch:branch.name,owner:value('areaOwner'),due:value('areaDue'),progress:Number(value('areaProgress')),status:value('areaStatus'),note:value('areaNote')}); recordActivity('Corrective action updated',`${action.id} is ${action.progress}% complete.`); closeDialog(); rerender(); showToast('Corrective action updated successfully.'); return;
-  }
-  if(kind==='performance-period'){ performancePeriod=value('areaPeriod'); closeDialog(); rerender(); showToast(`Performance period changed to ${formatMonth(performancePeriod)}.`); return; }
-  if(kind==='performance-detail'){
-    const item=performanceRows.find(row=>row.id===id); item.note=value('areaNote'); recordActivity('Performance note saved',`${item.branch} received a coaching or recognition note.`); closeDialog(); showToast('Performance note saved successfully.');
+}
+
+async function saveSettingsSection(button){
+  if(!ensureConnected()) return;
+  setBusy(button,true);
+  try{
+    const settings=readSettingsForm(pageContent);
+    await saveSettings(session,settings);
+    savedSettings=settings;
+    showToast('Settings saved.');
+  }catch(error){
+    if(!(error instanceof ValidationError)) console.error('Could not save settings:',error);
+    showToast(describeError(error,'save your settings'));
+  }finally{
+    setBusy(button,false);
   }
 }
 
@@ -262,12 +424,11 @@ document.addEventListener('click',event=>{
   if(legacyIncident){ const incident=incidents.find(item=>item.title===legacyIncident.dataset.incident); if(incident) openDialog('incident-review',incident.id); return; }
   const action=event.target.closest('[data-area-action]');
   if(action){
-    if(action.dataset.areaAction==='send-reminder'){
-      const report=dailyReports.find(item=>item.id===action.dataset.id); report.reminderSent=true; recordActivity('Report reminder sent',`${report.branch} was reminded to submit ${report.id}.`); rerender(); showToast(`Reminder sent to ${report.branch}.`); return;
-    }
+    if(action.dataset.areaAction==='send-reminder'){ sendReminder(action); return; }
     openDialog(action.dataset.areaAction,action.dataset.id); return;
   }
-  if(event.target.closest('.save-settings')) showToast('Settings updated successfully.');
+  const settingsButton=event.target.closest('.save-settings');
+  if(settingsButton) saveSettingsSection(settingsButton);
 });
 
 document.getElementById('closeModal').addEventListener('click',closeDialog);
@@ -276,5 +437,31 @@ saveButton.addEventListener('click',saveDialog);
 modal.addEventListener('click',event=>{ if(event.target===modal) closeDialog(); });
 document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&modal.classList.contains('open')) closeDialog(); });
 document.getElementById('globalSearch').addEventListener('input',event=>applySearch(event.target.value));
-document.getElementById('logoutBtn').addEventListener('click',()=>{ localStorage.removeItem('b2bUserRole'); localStorage.removeItem('b2bUserName'); window.location.href='index.html'; });
+// Fallback only: once requireRole() resolves, role-backend.js handles logout and also ends the Firebase session.
+document.getElementById('logoutBtn').addEventListener('click',()=>{ localStorage.removeItem('loggedInUser'); localStorage.removeItem('b2bUserRole'); localStorage.removeItem('b2bUserName'); window.location.href='index.html'; });
 initIcons();
+
+async function connectBackend(){
+  session=await requireRole('Area Manager');
+  loadSettings(session).then(settings=>{ savedSettings=settings; if(currentSection==='settings') rerender(); })
+    .catch(error=>console.error('Could not load settings:',error));
+
+  let lastError=0;
+  const reportError=name=>error=>{
+    console.error(`Firestore ${name} listener failed:`,error);
+    if(Date.now()-lastError>3000){ lastError=Date.now(); showToast(describeError(error,'load Area Manager records')); }
+  };
+  Object.entries(STORES).forEach(([name,store])=>{
+    watchCollection(name,store.seed,records=>{
+      store.records.splice(0,store.records.length,...records);
+      updateBadges();
+      // Overview is static markup and Settings holds unsaved typing, so neither is redrawn.
+      if(!['overview','settings'].includes(currentSection)) rerender();
+    },reportError(name));
+  });
+}
+
+connectBackend().catch(error=>{
+  console.error('Could not connect the Area Manager dashboard to Firebase:',error);
+  showToast('Could not connect to Firebase. Changes will not be saved.');
+});

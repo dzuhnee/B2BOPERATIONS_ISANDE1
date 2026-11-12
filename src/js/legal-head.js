@@ -31,11 +31,16 @@ const legalHeadConfig = {
         'Zoning compliance',
         'Permit requirements',
         'Contractual risks'
-    ]
+    ],
+    // Decisions are saved to Firestore by js/legal-head-backend.js, which
+    // attaches `backend` once the Legal Head's Firebase session is confirmed.
+    persistent: true,
+    backend: null
 };
 
 function initializeLegalHeadDashboard() {
-    B2BDepartmentHead.initialize(legalHeadConfig);
+    const controller = B2BDepartmentHead.initialize(legalHeadConfig);
+    window.legalHead = { config: legalHeadConfig, controller };
 }
 
 initializeLegalHeadDashboard();

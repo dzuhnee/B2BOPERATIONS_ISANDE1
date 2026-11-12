@@ -1,0 +1,118 @@
+rules_version = '2';
+
+// Bee-to-Bee Operations — Firestore security rules.
+//
+// Role-restricted sections were added for IG2S5-42 (Area Manager, Supply Chain
+// Officer, Legal Head). The "existing collections" section is an assumption:
+// it grants any signed-in user access, which is what the Business Development
+// and Executive Management dashboards need today. BEFORE DEPLOYING, compare
+// this file with the rules currently published in the Firebase console
+// (Firestore Database → Rules) and merge rather than overwrite.
+//
+// Deploy: paste into the console and Publish, or `firebase deploy --only firestore:rules`.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function email() { return signedIn() ? request.auth.token.email.lower() : ''; }
+
+    // Keep in sync with ROLE_ACCOUNTS in src/js/role-backend.js.
+    function isAreaManager() { return email() in ['bea.hernandez@5joys.com']; }
+    function isSupplyChain() { return email() in ['joel.navarro@5joys.com']; }
+    function isLegalHead()   { return email() in ['atty.maya.santos@5joys.com']; }
+    function isExecutive()   { return email() in ['maria.santos@5joys.com']; }
+    function isStoreManager() { return email() in ['ruth.reyes@5joys.com', 'ruth.torres@5joys.com']; }
+
+    function stamped() {
+      return request.resource.data.updatedBy == email() || request.resource.data.createdBy == email()
+        || 'seededAt' in request.resource.data;
+    }
+    function shortText(field, max) {
+      return !(field in request.resource.data)
+        || (request.resource.data[field] is string && request.resource.data[field].size() <= max);
+    }
+
+    // ---------- Area Manager ----------
+    match /areaBranches/{id} {
+      allow read: if isAreaManager() || isExecutive();
+      allow write: if isAreaManager() && stamped() && shortText('note', 1000);
+    }
+    match /areaDailyReports/{id} {
+      allow read: if isAreaManager() || isExecutive();
+      allow write: if isAreaManager() && stamped() && shortText('managerNote', 1000)
+        && request.resource.data.status in ['For Review', 'Reviewed', 'Action Required', 'Pending'];
+    }
+    match /areaIncidents/{id} {
+      allow read: if isAreaManager() || isExecutive();
+      allow write: if isAreaManager() && stamped()
+        && shortText('title', 160) && shortText('note', 1000) && shortText('owner', 80)
+        && request.resource.data.priority in ['High', 'Medium', 'Low']
+        && request.resource.data.status in ['Under Investigation', 'Action Required', 'Monitoring', 'Resolved'];
+    }
+    match /areaCorrectiveActions/{id} {
+      allow read: if isAreaManager() || isExecutive();
+      allow write: if isAreaManager() && stamped()
+        && shortText('title', 160) && shortText('note', 1000) && shortText('owner', 80)
+        && request.resource.data.progress is int
+        && request.resource.data.progress >= 0 && request.resource.data.progress <= 100
+        && request.resource.data.status in ['In Progress', 'Monitoring', 'Overdue', 'Completed'];
+    }
+    match /areaPerformance/{id} {
+      allow read: if isAreaManager() || isExecutive();
+      allow write: if isAreaManager() && stamped() && shortText('note', 1000);
+    }
+    match /areaActivity/{id} {
+      allow read: if isAreaManager();
+      allow create: if isAreaManager();
+      allow update, delete: if false; // append-only audit trail
+    }
+
+    // ---------- Supply Chain Officer ----------
+    match /supplyDeliveries/{id} {
+      allow read: if isSupplyChain() || isStoreManager() || isExecutive();
+      allow write: if isSupplyChain() && stamped()
+        && shortText('item', 80) && shortText('supplier', 80) && shortText('note', 1000)
+        && request.resource.data.expected is int && request.resource.data.expected >= 1
+        && request.resource.data.received is int && request.resource.data.received >= 0
+        && request.resource.data.received <= request.resource.data.expected
+        && request.resource.data.status in ['Scheduled', 'In Transit', 'Received', 'Incomplete', 'Delayed', 'Damaged'];
+    }
+    match /supplyLaunchConfirmations/{id} {
+      allow read: if isSupplyChain() || isStoreManager() || isExecutive();
+      allow write: if isSupplyChain() && stamped()
+        && shortText('subject', 160) && shortText('message', 1000);
+    }
+
+    // ---------- Legal Head ----------
+    match /legalReviews/{proposalId} {
+      allow read: if isLegalHead() || isExecutive();
+      allow write: if isLegalHead() && stamped()
+        && request.resource.data.status in ['Approved', 'Revision Requested', 'Rejected']
+        && shortText('remarks', 1000);
+    }
+
+    // ---------- Shared ----------
+    match /counters/{name} {
+      allow read, write: if (name in ['areaIncidents', 'areaCorrectiveActions'] && isAreaManager())
+        || (name == 'supplyDeliveries' && isSupplyChain());
+    }
+    match /userSettings/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // ---------- Existing collections (assumed current access; owners should tighten) ----------
+    match /siteApplications/{id} {
+      allow read, write: if signedIn();
+    }
+    match /siteArchives/{id} {
+      allow read, write: if signedIn();
+    }
+    match /businessDevelopment/{id} {
+      allow read, write: if signedIn();
+    }
+    match /executiveReviews/{id} {
+      allow read, write: if signedIn();
+    }
+  }
+}
