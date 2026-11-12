@@ -280,8 +280,8 @@ Operational
 </section>
 
 <section class="panel">
-<div class="panel-heading"><div><h2>Pulilan Branch Lifecycle</h2><p>One shared view of PROP-2026-014 from proposal to opening clearance</p></div><span class="status good">Conditional Clearance</span></div>
-<div class="table-wrap"><table><thead><tr><th>Branch</th><th>Department Approval</th><th>Staffing & Training</th><th>Supply</th><th>Launch Readiness</th><th>Management Attention</th></tr></thead><tbody><tr data-search="Pulilan Bulacan approval staffing supply conditional"><td><strong>Pulilan, Bulacan</strong><span>Pulilan Junction • PROP-2026-014</span></td><td><span class="table-status monitoring">Approved</span></td><td><span class="table-status monitoring">Deployment Ready</span></td><td><span class="table-status investigating">92% — POS Blocker</span></td><td><span class="table-status investigating">Conditional</span></td><td><span class="priority high">2 POS Units Missing</span></td></tr></tbody></table></div>
+<div class="panel-heading"><div><h2>Site Application Reviews</h2><p>Proposal status and cross-department review progress</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>Site</th><th>Department Review</th><th>Legal</th><th>Engineering</th><th>Finance</th><th>Application Status</th><th>Executive Review</th></tr></thead><tbody id="executiveApplicationsTable"><tr><td colspan="7">Loading site applications...</td></tr></tbody></table></div>
 </section>
 
 `,

@@ -82,18 +82,9 @@
             <article class="stat-card">
                 <div class="stat-icon red"><i data-lucide="building-2"></i></div>
                 <div>
-                    <span>Total Projects</span>
-                    <div class="quarter-dropdown">
-                        <button class="quarter-btn" id="quarterBtn" type="button">Q3 2026 <i data-lucide="chevron-down"></i></button>
-                        <div class="quarter-menu" id="quarterMenu">
-                            <button type="button" data-quarter="Q1 2026">Q1 2026</button>
-                            <button type="button" data-quarter="Q2 2026">Q2 2026</button>
-                            <button type="button" data-quarter="Q3 2026">Q3 2026</button>
-                            <button type="button" data-quarter="Q4 2026">Q4 2026</button>
-                        </div>
-                    </div>
+                    <span>Total Applications</span>
                     <strong id="totalProjectsValue">10</strong>
-                    <small id="totalProjectsLabel">Nationwide expansion &middot; Q3 2026</small>
+                    <small id="totalProjectsLabel">Across all site proposals</small>
                 </div>
             </article>
 
@@ -104,12 +95,12 @@
 
             <article class="stat-card">
                 <div class="stat-icon yellow"><i data-lucide="clock-3"></i></div>
-                <div><span>Active Projects</span><strong id="activeProjectsValue">3</strong><small id="activeProjectsLabel">Currently progressing</small></div>
+                <div><span>Active Sites</span><strong id="activeProjectsValue">3</strong><small id="activeProjectsLabel">Currently progressing</small></div>
             </article>
 
             <article class="stat-card">
                 <div class="stat-icon orange"><i data-lucide="triangle-alert"></i></div>
-                <div><span>High Risk</span><strong id="highRiskValue">3</strong><small id="highRiskLabel">Needs attention</small></div>
+                <div><span>Pending Analysis</span><strong id="highRiskValue">3</strong><small id="highRiskLabel">Awaiting assessment</small></div>
             </article>
         </div>
 
@@ -150,25 +141,8 @@
                     <div><h2>Regional Performance</h2><p>Expansion performance by operating region</p></div>
                     <button class="text-btn" data-open-section="performance">View analytics <i data-lucide="arrow-right"></i></button>
                 </div>
-                <div class="branch-list">
-                    <article class="branch-row">
-                        <div class="branch-rank">1</div>
-                        <div class="branch-name"><strong>Pulilan, Bulacan</strong><span>PROP-2026-014 • Active Expansion</span></div>
-                        <div class="score"><strong>96%</strong><div><span style="width:96%"></span></div></div>
-                        <span class="status strong">Excellent</span>
-                    </article>
-                    <article class="branch-row">
-                        <div class="branch-rank">2</div>
-                        <div class="branch-name"><strong>Central Luzon Portfolio</strong><span>7 Active Projects</span></div>
-                        <div class="score"><strong>88%</strong><div><span style="width:88%"></span></div></div>
-                        <span class="status good">Stable</span>
-                    </article>
-                    <article class="branch-row">
-                        <div class="branch-rank">3</div>
-                        <div class="branch-name"><strong>Pandi, Bulacan</strong><span>2 Active Projects</span></div>
-                        <div class="score"><strong>82%</strong><div><span style="width:82%"></span></div></div>
-                        <span class="status good">Stable</span>
-                    </article>
+                <div class="branch-list" id="executiveProjectList" aria-live="polite">
+                    <p class="subtitle">Loading site applications...</p>
                 </div>
             </section>
 
@@ -194,7 +168,7 @@
         <div class="modal-icon"><i data-lucide="clipboard-list"></i></div>
         <p class="eyebrow">EXECUTIVE REVIEW</p>
         <h2 id="modalTitle">Executive Decision</h2>
-        <p>Review the selected item, provide management notes, and confirm the appropriate action.</p>
+        <p>Record a management note for the selected site application.</p>
         <label for="managerNote">Executive Note</label>
         <textarea id="managerNote" placeholder="Enter your decision or instruction..."></textarea>
         <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveReview">Save Review</button></div>
@@ -209,64 +183,6 @@
 <script src="js/report-export.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/account-menu.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const quarterBtn = document.getElementById('quarterBtn');
-    const quarterMenu = document.getElementById('quarterMenu');
-
-    const totalProjectsValue = document.getElementById('totalProjectsValue');
-    const totalProjectsLabel = document.getElementById('totalProjectsLabel');
-    const approvedSitesValue = document.getElementById('approvedSitesValue');
-    const approvedSitesLabel = document.getElementById('approvedSitesLabel');
-    const activeProjectsValue = document.getElementById('activeProjectsValue');
-    const activeProjectsLabel = document.getElementById('activeProjectsLabel');
-    const highRiskValue = document.getElementById('highRiskValue');
-    const highRiskLabel = document.getElementById('highRiskLabel');
-
-    // All four KPI cards pull from this table so they change together when the quarter changes
-    const quarterData = {
-        'Q1 2026': { total: 4,  approved: 2, active: 1, risk: 1 },
-        'Q2 2026': { total: 7,  approved: 4, active: 2, risk: 2 },
-        'Q3 2026': { total: 10, approved: 6, active: 3, risk: 3 },
-        'Q4 2026': { total: '—', approved: '—', active: '—', risk: '—' }
-    };
-
-    function applyQuarter(quarter) {
-        const data = quarterData[quarter];
-        if (!data) return;
-
-        totalProjectsValue.textContent = data.total;
-        totalProjectsLabel.textContent = `Nationwide expansion \u00b7 ${quarter}`;
-
-        approvedSitesValue.textContent = data.approved;
-        approvedSitesLabel.textContent = data.approved === '—' ? `Not yet available \u00b7 ${quarter}` : `Ready for deployment \u00b7 ${quarter}`;
-
-        activeProjectsValue.textContent = data.active;
-        activeProjectsLabel.textContent = data.active === '—' ? `Not yet available \u00b7 ${quarter}` : `Currently progressing \u00b7 ${quarter}`;
-
-        highRiskValue.textContent = data.risk;
-        highRiskLabel.textContent = data.risk === '—' ? `Not yet available \u00b7 ${quarter}` : `Needs attention \u00b7 ${quarter}`;
-    }
-
-    if (quarterBtn && quarterMenu) {
-        quarterBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            quarterMenu.classList.toggle('open');
-        });
-
-        quarterMenu.querySelectorAll('button[data-quarter]').forEach(opt => {
-            opt.addEventListener('click', () => {
-                const quarter = opt.dataset.quarter;
-                quarterBtn.innerHTML = `${quarter} <i data-lucide="chevron-down"></i>`;
-                applyQuarter(quarter);
-                quarterMenu.classList.remove('open');
-                if (window.lucide) lucide.createIcons();
-            });
-        });
-
-        document.addEventListener('click', () => quarterMenu.classList.remove('open'));
-    }
-});
-</script>
+<script type="module" src="js/executive-management-backend.js"></script>
 <script>const u=JSON.parse(localStorage.getItem('loggedInUser')||'null');if(!u||u.role!=="Executive Management"){alert("Unauthorized User");location.href="index.html";}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('userName'))userName.textContent=u.name;if(document.getElementById('userRole'))userRole.textContent=u.role;if(document.getElementById('userEmail'))userEmail.textContent=u.email;});</script></body>
 </html>
