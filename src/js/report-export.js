@@ -223,7 +223,7 @@
     const report = REPORTS[reportKey];
     const now = new Date();
     const id = reportId(report);
-    const logoUrl = new URL('../images/b2blogo.png', reportScriptUrl).href;
+    const logoUrl = new URL('../images/b2b%20logo.png', reportScriptUrl).href;
     const summary = report.summary.map(([label, value]) => `<div class="summary-item"><span class="label">${escapeHtml(label)}</span><span class="value">${escapeHtml(value)}</span></div>`).join('');
     const wideColumn = Number.isInteger(report.wideColumn) ? report.wideColumn : report.columns.length - 1;
     const headers = report.columns.map((column, index) => `<th class="${index === wideColumn ? 'wide' : ''}">${escapeHtml(column)}</th>`).join('');

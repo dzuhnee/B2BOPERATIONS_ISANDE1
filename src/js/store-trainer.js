@@ -434,7 +434,7 @@ function updateAssessmentPreview() {
 
 // ---- Certificate generation (jsPDF) ----
 
-// Loads images/b2blogo.png once and caches it as a data URL so it can be embedded in the PDF.
+// Loads images/b2b%20logo.png once and caches it as a data URL so it can be embedded in the PDF.
 let cachedLogoDataUrl;
 function loadLogoDataUrl() {
   if (cachedLogoDataUrl !== undefined) return Promise.resolve(cachedLogoDataUrl);
@@ -456,7 +456,7 @@ function loadLogoDataUrl() {
       cachedLogoDataUrl = null;
       resolve(null);
     };
-    img.src = 'images/b2blogo.png';
+    img.src = 'images/b2b%20logo.png';
   });
 }
 
