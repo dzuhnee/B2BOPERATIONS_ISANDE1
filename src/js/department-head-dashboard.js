@@ -47,6 +47,7 @@ window.B2BDepartmentHead = (() => {
         let activeSection = 'overview';
         let selectedProposal = null;
         let pendingDecision = null;
+        let uploadedDocuments = new Map();
 
         data.proposals.forEach(proposal => {
             proposal.stage = proposal.stage.replace(/ Review$/, '');
@@ -471,6 +472,88 @@ window.B2BDepartmentHead = (() => {
             document.getElementById('proposalDetail').innerHTML = renderProposalDetail();
             B2B.openModal('proposalModal');
             B2B.icon();
+            loadUploadedDocuments(selectedProposal.id);
+        }
+
+        /** Lists files Business Development uploaded for this proposal (js/site-documents.js). */
+        async function loadUploadedDocuments(proposalId) {
+            const container = document.getElementById('uploadedDocuments');
+            if (!container) return;
+            const store = window.siteDocuments;
+            if (!store) {
+                container.innerHTML = '<p class="uploaded-documents-note">Uploaded documents are unavailable on this page.</p>';
+                return;
+            }
+
+            container.innerHTML = '<p class="uploaded-documents-note">Loading uploaded documents…</p>';
+            try {
+                const documents = await store.listSiteDocuments(proposalId);
+                if (selectedProposal?.id !== proposalId) return; // another proposal was opened meanwhile
+                uploadedDocuments = new Map(documents.map(item => [item.id, item]));
+                container.innerHTML = documents.length
+                    ? documents.map(item => `
+                        <div class="document-row">
+                            <i data-lucide="${item.type === 'application/pdf' ? 'file-text' : 'file-image'}"></i>
+                            <div>
+                                <strong>${escapeHtml(item.name)}</strong>
+                                <small>${escapeHtml(item.category || 'Document')} • ${escapeHtml(formatBytes(item.size))} • Uploaded by ${escapeHtml(item.uploadedByName || item.uploadedBy)}</small>
+                            </div>
+                            ${B2B.badge('Uploaded')}
+                            <button class="document-action" data-document-id="${escapeHtml(item.id)}" aria-label="Open ${escapeHtml(item.name)}">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    `).join('')
+                    : '<p class="uploaded-documents-note">No files were uploaded with this proposal.</p>';
+                B2B.icon();
+            } catch (error) {
+                console.error('Could not load uploaded documents:', error);
+                container.innerHTML = '<p class="uploaded-documents-note">Could not load uploaded documents. Check your connection and reopen the proposal.</p>';
+            }
+        }
+
+        async function openUploadedDocument(button) {
+            const item = uploadedDocuments.get(button.dataset.documentId);
+            if (!item || !window.siteDocuments) return;
+            button.disabled = true;
+            try {
+                await window.siteDocuments.openSiteDocument(item);
+            } catch (error) {
+                console.error('Could not open document:', error);
+                B2B.toast(error.code ? 'Could not open the document. Please try again.' : error.message);
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        /** Opens the proposal's site photo full size in a new tab. */
+        async function openSitePhoto() {
+            const image = selectedProposal?.image;
+            if (!image) return;
+            if (!image.startsWith('data:')) {
+                window.open(image, '_blank', 'noopener');
+                return;
+            }
+            // Browsers block opening data: URLs directly, so convert to a blob URL.
+            const tab = window.open('', '_blank');
+            try {
+                const blob = await (await fetch(image)).blob();
+                const url = URL.createObjectURL(blob);
+                if (tab) tab.location.href = url;
+                else Object.assign(document.createElement('a'), { href: url, download: `${selectedProposal.site} site photo.jpg` }).click();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+            } catch (error) {
+                tab?.close();
+                console.error('Could not open the site photo:', error);
+                B2B.toast('Could not open the site photo.');
+            }
+        }
+
+        function formatBytes(bytes) {
+            const size = Number(bytes) || 0;
+            if (size < 1024) return `${size} B`;
+            if (size < 1048576) return `${(size / 1024).toFixed(1)} KB`;
+            return `${(size / 1048576).toFixed(1)} MB`;
         }
 
         function renderProposalDetail() {
@@ -535,6 +618,20 @@ window.B2BDepartmentHead = (() => {
                         <section class="detail-section">
                             <h3>Supporting Documents</h3>
                             <div class="detail-section-body document-list">
+                                ${selectedProposal.image ? `
+                                    <div class="document-row">
+                                        <img class="document-thumb" src="${escapeHtml(selectedProposal.image)}"
+                                            alt="${escapeHtml(selectedProposal.site)} site photo">
+                                        <div>
+                                            <strong>Site Photo</strong>
+                                            <small>Image • Submitted with the proposal</small>
+                                        </div>
+                                        ${B2B.badge('Uploaded')}
+                                        <button class="document-action" data-site-photo="true" aria-label="View site photo">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
                                 ${selectedProposal.documents.map(document => `
                                     <div class="document-row">
                                         <i data-lucide="file-text"></i>
@@ -548,6 +645,7 @@ window.B2BDepartmentHead = (() => {
                                         </button>
                                     </div>
                                 `).join('')}
+                                <div class="uploaded-documents" id="uploadedDocuments"></div>
                             </div>
                         </section>
 
@@ -698,8 +796,13 @@ window.B2BDepartmentHead = (() => {
                 const decisionButton = event.target.closest('.decision');
                 if (decisionButton) beginDecision(decisionButton.dataset.decision);
 
-                if (event.target.closest('.document-action')) {
-                    B2B.toast('Document preview is ready for backend file integration.');
+                const documentButton = event.target.closest('.document-action');
+                if (documentButton?.dataset.sitePhoto) {
+                    openSitePhoto();
+                } else if (documentButton?.dataset.documentId) {
+                    openUploadedDocument(documentButton);
+                } else if (documentButton) {
+                    B2B.toast('This is a sample document; no file is attached. Uploaded files are listed below it.');
                 }
 
                 const settingsButton = event.target.closest('.save-settings');

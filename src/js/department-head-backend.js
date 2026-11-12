@@ -22,9 +22,6 @@ function mapApplication(application){
     const department = document.body.dataset.department;
     const score = Number(application.aiAnalysis?.score ?? application.score ?? 0);
     const workflow = application.workflowStatus || {};
-    const documents = [
-        ["Site Proposal", "Proposal", application.submittedDate || "Today", "Submitted"]
-    ];
 
     return {
         ...application.departmentProposal,
@@ -43,7 +40,8 @@ function mapApplication(application){
         strengths:application.recommendation || "Proposal submitted for cross-department review.",
         risks:application.risks || "Department review is pending.",
         recommendations:application.recommendation || "Review the proposal and supporting site information.",
-        documents:application.departmentProposal?.documents || documents,
+        // Real uploads (site photo, land titles) are listed by department-head-dashboard.js.
+        documents:application.departmentProposal?.documents || [],
         history:application.departmentProposal?.history || [[
             "Business Development",
             application.submittedBy || "Business Development",
@@ -51,7 +49,8 @@ function mapApplication(application){
             "Proposal submitted for Finance, Legal, Engineering, and Operations review.",
             application.submittedDate || "Today"
         ]],
-        workflowStatus:workflow
+        workflowStatus:workflow,
+        image:application.image || ""
     };
 }
 

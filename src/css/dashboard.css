@@ -3841,3 +3841,19 @@ table td:nth-child(4)>span {
     .report-access-note { display:grid; }
     .report-access-note span { text-align:left; }
 }
+
+/* Uploaded site proposal documents (js/site-documents.js) */
+.uploaded-documents-note {
+    font-size: 10px;
+    color: var(--muted, #777);
+    padding: 10px 0;
+    margin: 0;
+}
+.document-thumb {
+    width: 44px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 7px;
+    flex-shrink: 0;
+    background: #f0eeea;
+}

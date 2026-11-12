@@ -2046,6 +2046,8 @@ function initializeProposalControls(){
     });
 
     document.getElementById("landTitleFiles")?.addEventListener("change", renderProposalFiles);
+    document.getElementById("sitePhotoFile")?.addEventListener("change", handleSitePhotoSelection);
+    document.getElementById("removeSitePhoto")?.addEventListener("click", clearSitePhoto);
 
     document.getElementById("assessSiteBtn")?.addEventListener("click", ()=>{
         if(!validateProposalFields()) return;
@@ -2150,6 +2152,88 @@ function renderProposalFiles(event){
     B2B.icon();
 }
 
+/* ---------- Site photo ----------
+   The photo is resized in the browser and stored on the application document
+   as a JPEG data URL (Firestore documents are limited to 1 MB). */
+const SITE_PHOTO_MAX_SOURCE_BYTES=15*1024*1024;
+const SITE_PHOTO_MAX_DATA_URL_LENGTH=600*1024;
+let sitePhotoDataUrl="";
+
+function loadImageFile(file){
+    return new Promise((resolve,reject)=>{
+        const url=URL.createObjectURL(file);
+        const image=new Image();
+        image.onload=()=>{URL.revokeObjectURL(url);resolve(image);};
+        image.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("The selected file could not be read as an image."));};
+        image.src=url;
+    });
+}
+
+/** Downscales until the JPEG data URL fits within SITE_PHOTO_MAX_DATA_URL_LENGTH. */
+async function compressSitePhoto(file){
+    const image=await loadImageFile(file);
+    const canvas=document.createElement("canvas");
+    const context=canvas.getContext("2d");
+    for(const [maxSide,quality] of [[1280,.8],[1280,.65],[1024,.6],[800,.55],[640,.5]]){
+        const scale=Math.min(1,maxSide/Math.max(image.naturalWidth,image.naturalHeight));
+        canvas.width=Math.round(image.naturalWidth*scale);
+        canvas.height=Math.round(image.naturalHeight*scale);
+        context.fillStyle="#ffffff"; // transparent PNG areas become white, not black
+        context.fillRect(0,0,canvas.width,canvas.height);
+        context.drawImage(image,0,0,canvas.width,canvas.height);
+        const dataUrl=canvas.toDataURL("image/jpeg",quality);
+        if(dataUrl.length<=SITE_PHOTO_MAX_DATA_URL_LENGTH) return dataUrl;
+    }
+    throw new Error("This photo is too detailed to store. Please choose a smaller image.");
+}
+
+async function handleSitePhotoSelection(event){
+    const input=event.target;
+    const file=input.files?.[0];
+    clearSitePhoto({keepInput:true});
+    if(!file) return;
+
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+        input.value="";
+        B2B.toast("Choose a JPG, PNG, or WEBP image for the site photo.");
+        return;
+    }
+    if(file.size>SITE_PHOTO_MAX_SOURCE_BYTES){
+        input.value="";
+        B2B.toast("The site photo must be 15 MB or smaller.");
+        return;
+    }
+
+    const submit=document.getElementById("submitProposalBtn");
+    const wasDisabled=submit?.disabled;
+    if(submit) submit.disabled=true;
+    document.getElementById("sitePhotoName").textContent=`Processing ${file.name}…`;
+    document.getElementById("sitePhotoSize").textContent="";
+    document.getElementById("sitePhotoPreview").hidden=false;
+    try{
+        sitePhotoDataUrl=await compressSitePhoto(file);
+        document.getElementById("sitePhotoPreviewImage").src=sitePhotoDataUrl;
+        document.getElementById("sitePhotoName").textContent=file.name;
+        document.getElementById("sitePhotoSize").textContent=`${formatProposalBytes(file.size)} • saved as ${formatProposalBytes(Math.round(sitePhotoDataUrl.length*.75))}`;
+    }catch(error){
+        console.error("Site photo processing failed:",error);
+        clearSitePhoto();
+        B2B.toast(error.message||"Could not process the site photo.");
+    }finally{
+        if(submit) submit.disabled=wasDisabled;
+    }
+}
+
+function clearSitePhoto({keepInput=false}={}){
+    sitePhotoDataUrl="";
+    const input=document.getElementById("sitePhotoFile");
+    if(input&&!keepInput) input.value="";
+    const preview=document.getElementById("sitePhotoPreview");
+    if(preview) preview.hidden=true;
+    const image=document.getElementById("sitePhotoPreviewImage");
+    if(image) image.removeAttribute("src");
+}
+
 function formatProposalBytes(bytes){
     if(bytes<1024) return `${bytes} B`;
     if(bytes<1048576) return `${(bytes/1024).toFixed(1)} KB`;
@@ -2234,7 +2318,7 @@ async function submitNewSiteProposal(event){
         frontage:Number(value("frontage"))||0,
         parkingSlots:Number(value("parkingSlots"))||0,
         propertyType:value("propertyType"),
-        image:"",
+        image:sitePhotoDataUrl,
         status,
         submittedDate:new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}),
         submittedBy:signedInUser?.name||businessDevelopmentData.user?.name||"",
@@ -2247,14 +2331,41 @@ async function submitNewSiteProposal(event){
     const submitButton=document.getElementById("submitProposalBtn");
     let isNew=!businessDevelopmentData.applications.some(site=>site.id===generatedId);
     if(window.bdBackend){
+        const landTitles=Array.from(document.getElementById("landTitleFiles")?.files||[]);
+        if(!window.siteDocuments){
+            B2B.toast("Document upload is still loading. Try again in a moment.");
+            return;
+        }
+        try{
+            window.siteDocuments.validateFiles(landTitles);
+        }catch(error){
+            B2B.toast(error.message);
+            return;
+        }
+
+        const submitLabel=submitButton?.textContent;
         if(submitButton) submitButton.disabled=true;
         try{
+            // Documents first, so a saved proposal always has its land titles.
+            await window.siteDocuments.uploadSiteDocuments(generatedId,landTitles,{
+                uploaderName:application.submittedBy,
+                onProgress:(done,total)=>{
+                    if(submitButton) submitButton.textContent=`Uploading documents ${Math.round(done/total*100)}%`;
+                }
+            });
+            application.documentCount=landTitles.length;
+            if(submitButton) submitButton.textContent="Saving proposal…";
             ({isNew}=await window.bdBackend.saveSiteProposal(application));
         }catch(error){
             console.error("Failed to save site proposal:",error);
-            B2B.toast("Could not save the proposal. Please try again.");
+            // Firestore errors carry a `code`; upload validation errors are already readable.
+            B2B.toast(error.code||!error.message
+                ? "Could not save the proposal and its documents. Please try again."
+                : error.message);
             if(submitButton) submitButton.disabled=false;
             return;
+        }finally{
+            if(submitButton&&submitLabel) submitButton.textContent=submitLabel;
         }
     }
 
@@ -2277,6 +2388,7 @@ async function submitNewSiteProposal(event){
     if(submit) submit.disabled=true;
     const uploads=document.getElementById("uploadedFiles");
     if(uploads) uploads.innerHTML="";
+    clearSitePhoto();
     const locationResults=document.getElementById("locationResults");
     if(locationResults) locationResults.innerHTML="";
 }

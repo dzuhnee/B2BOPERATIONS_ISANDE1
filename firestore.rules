@@ -92,6 +92,26 @@ service cloud.firestore {
         && shortText('remarks', 1000);
     }
 
+    // ---------- Site proposal documents (uploaded by Business Development) ----------
+    function isBusinessDevelopment() { return email() in ['sophia.ramirez@5joys.com']; }
+    function isDepartmentHead() {
+      return email() in ['carlos.reyes@5joys.com', 'carlo.lim@5joys.com',
+                         'engr.nina.cruz@5joys.com', 'atty.maya.santos@5joys.com'];
+    }
+    match /siteDocuments/{documentId} {
+      allow read: if isBusinessDevelopment() || isDepartmentHead() || isExecutive();
+      allow create: if isBusinessDevelopment()
+        && request.resource.data.uploadedBy == email()
+        && request.resource.data.size is int && request.resource.data.size <= 10 * 1024 * 1024
+        && request.resource.data.type in ['application/pdf', 'image/jpeg', 'image/png'];
+      allow update, delete: if false;
+      match /chunks/{chunk} {
+        allow read: if isBusinessDevelopment() || isDepartmentHead() || isExecutive();
+        allow create: if isBusinessDevelopment();
+        allow update, delete: if false;
+      }
+    }
+
     // ---------- Shared ----------
     match /counters/{name} {
       allow read, write: if (name in ['areaIncidents', 'areaCorrectiveActions'] && isAreaManager())
