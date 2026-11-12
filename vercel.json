@@ -1,1 +1,19 @@
-{ "buildCommand": "", "outputDirectory": "src", "framework": null }
+{
+  "buildCommand": "",
+  "outputDirectory": "src",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/js/login.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}
